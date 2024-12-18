@@ -1,0 +1,145 @@
+from pathlib import Path
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+LUNO_API_KEY = "kc8yscuuw72cm"
+LUNO_API_SECRET = "rLB2aJAt-DRysys6Hvh2Kg__Qw1M2SWKf9m8qnnAQrQ"
+
+# admin
+# LUNO_API_KEY = "bdtg7692gjwt3"
+# LUNO_API_SECRET = "pcRczM8t3tL2H5wrF54KMcif4ABKBcTK-OjjB6mqEVU"
+
+POLONIEX_API_KEY = "BFIB8QLW-D667IHQA-J305ITJG-Q6H2NE9Z"
+POLONIEX_SECRET_KEY = "cf810ecf1aa8ad0b66a36bee6d1072bf9e8b0f2935d0062ccc27b506faf092005691650095e4e3309cf15b5d9f2b80870288c94e6bdd3763df9c8b3645999d18"
+
+# POLONIEX_API_KEY = os.getenv('POLONIEX_API_KEY')
+# POLONIEX_SECRET_KEY = os.getenv('POLONIEX_SECRET_KEY')
+
+BINANCE_API_KEY = "8DYDIi3BXx8SANk7pCUX1VBA8VEvxTtxMg78dk04418ctILHetrjD7QVkwKfZNDt"
+BINANCE_SECRET_KEY = "PiVTqEjitltvVXb1Zw6KSRQmBKe1LtZsz0MfqmPwv3gohoOLbGTBFfC3PFvhPN0N"
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = "django-insecure-$)^1s5m&dj6vf0b29a+^6wjli1i)o=wi$99yo0&j4vo!loz&dh"
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = []
+
+# Application definition
+
+INSTALLED_APPS = [
+	"django.contrib.admin",
+	"django.contrib.auth",
+	"django.contrib.contenttypes",
+	"django.contrib.sessions",
+	"django.contrib.messages",
+	"django.contrib.staticfiles",
+	"django.contrib.humanize",
+	"widget_tweaks",
+	"api",
+	"assets",
+	"incomes",
+	"credits",
+	"expenses",
+	"history_records",
+	"main",
+	"sellables",
+]
+
+MIDDLEWARE = [
+	"django.middleware.security.SecurityMiddleware",
+	"django.contrib.sessions.middleware.SessionMiddleware",
+	"django.middleware.common.CommonMiddleware",
+	"django.middleware.csrf.CsrfViewMiddleware",
+	"django.contrib.auth.middleware.AuthenticationMiddleware",
+	"django.contrib.messages.middleware.MessageMiddleware",
+	"django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+ROOT_URLCONF = "myMoney.urls"
+
+TEMPLATES = [
+	{
+		"BACKEND": "django.template.backends.django.DjangoTemplates",
+		"DIRS": [BASE_DIR / "templates"],
+		"APP_DIRS": True,
+		"OPTIONS": {
+			"context_processors": [
+				"django.template.context_processors.debug",
+				"django.template.context_processors.request",
+				"django.contrib.auth.context_processors.auth",
+				"django.contrib.messages.context_processors.messages",
+			],
+		},
+	},
+]
+
+WSGI_APPLICATION = "myMoney.wsgi.application"
+
+# Database
+# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+
+DATABASES = {
+	"default": {
+		"ENGINE": "django.db.backends.sqlite3",
+		"NAME": BASE_DIR / "db.sqlite3",
+	}
+}
+
+# Password validation
+# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
+AUTH_PASSWORD_VALIDATORS = [
+	{
+		"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+	},
+	{
+		"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+	},
+	{
+		"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+	},
+	{
+		"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+	},
+]
+
+# settings.py
+
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+
+# Redirect user after login
+LOGIN_REDIRECT_URL = "home"
+
+# Redirect user to login page if not authenticated
+LOGIN_URL = "login"
+
+# Logout URL
+LOGOUT_REDIRECT_URL = "/"
+
+# Internationalization
+# https://docs.djangoproject.com/en/5.1/topics/i18n/
+
+LANGUAGE_CODE = "en-us"
+
+TIME_ZONE = "UTC"
+
+USE_I18N = True
+
+USE_TZ = True
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.1/howto/static-files/
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+STATICFILES_DIRS = [
+	BASE_DIR / "static",
+]
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

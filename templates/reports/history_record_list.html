@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}
+    History Records
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <h1 class="text-center mb-4">History List</h1>
+        <canvas id="historyChart" width="400" height="100"></canvas>
+        <br>
+        <hr>
+        <br>
+
+        <!-- Add a scrollable container with fixed height -->
+        <div class="table-responsive" style="max-height: 600px; overflow-y: scroll;">
+            <table class="table table- table-striped table-hover">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Date</th>
+                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Value</th>
+                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Category</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for history_record in history_records %}
+                    <tr>
+                        <td>{{ history_record.timestamp|date:"Y-m-d H:i:s" }}</td>
+                        <td>{{ history_record.total_value|floatformat:2 }}</td>
+                        <td>{{ history_record.get_category_display }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center">No records available</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('historyChart').getContext('2d');
+        const historyChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ labels|safe }}.reverse(),  // Reverse the labels
+                datasets: [{
+                    label: 'Total Value Over Time',
+                    data: {{ values|safe }}.reverse(),  // Reverse the data
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    fill: false,
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}

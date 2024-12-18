@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {% if form.instance.id %}
+        Edit Asset - ID {{ form.instance.id }}
+    {% else %}
+        Create New Asset
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">
+            {% if form.instance.id %}
+                Edit  {{ form.instance.name }}
+            {% else %}
+                Create New Asset
+            {% endif %}
+        </h1>
+
+        <form method="POST" class="bg-light p-4 border rounded">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                {{ form.name.label_tag }}
+                {{ form.name|add_class:"form-control" }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.description.label_tag }}
+                {{ form.description|add_class:"form-control" }}
+            </div>
+        
+            <div class="mb-3">
+                {{ form.exchange.label_tag }}
+                {{ form.exchange|add_class:"form-control" }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.balance.label_tag }}
+                {{ form.balance|add_class:"form-control" }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.converted_zar.label_tag }}
+                {{ form.converted_zar|add_class:"form-control" }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.converted_usd.label_tag }}
+                {{ form.converted_usd|add_class:"form-control" }}
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    {% if form.instance.id %}
+                        Update Asset
+                    {% else %}
+                        Create Asset
+                    {% endif %}
+                </button>
+                <a href="{% url 'asset_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}
+    Assets
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <h1 class="text-center mb-3">Assets</h1>
+        <a class="text-primary" href="{% url 'asset_create' %}">New Asset</a>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover mt-3">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Exchange</th>
+                    <th scope="col">Account ID</th>
+                    <th scope="col">Currency Balance</th>
+                    <th scope="col">ZAR</th>
+                    {#                    <th scope="col">Converted USD</th>#}
+                    <th scope="col">Timestamp</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for asset in assets %}
+                    <tr>
+                        <td>{{ asset.name }}</td>
+                        <td>{{ asset.exchange }}</td>
+                        <td>{{ asset.account_id }}</td>
+                        <td>{{ asset.balance|floatformat:4 }}</td>
+                        <td>R {{ asset.converted_zar|floatformat:2|intcomma }}</td>
+                        {#                        <td>$ {{ asset.converted_usd|floatformat:2|intcomma }}</td>#}
+                        <td>{{ asset.timestamp|date:"Y-m-d H:i:s" }}</td>
+                        <td>
+                            <a href="{% url 'asset_update' asset.id %}">Edit</a>
+                            <a href="{% url 'asset_delete' asset.id %}">Delete</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">No assets available</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot class="table-light fw-bold">
+                <tr>
+                    <td colspan="4" class="text-end fw-bold">Totals:</td>
+                    {#                    <td>{{ total_balance|floatformat:6|intcomma }}</td>#}
+                    <td>R {{ total_converted_zar|floatformat:2|intcomma }}</td>
+                    {#                    <td>$ {{ total_converted_usd|floatformat:2|intcomma }}</td>#}
+                    <td colspan="2"></td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+{% endblock %}

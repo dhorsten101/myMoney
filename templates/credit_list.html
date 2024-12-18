@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}
+    Credits
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <h1 class="text-center mb-3">Creditors </h1>
+        <a class="text-primary" href="{% url 'credit_create' %}">New Credit</a>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover mt-3">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Balance</th>
+                    <th scope="col">Created At</th>
+                    <th scope="col">Updated At</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for credit in credits %}
+                    <tr>
+                        <td>{{ credit.name }}</td>
+                        <td>{{ credit.description }}</td>
+                        <td>{{ credit.balance|floatformat:2 }}</td>
+                        <td>{{ credit.created_at|date:"Y-m-d H:i:s" }}</td>
+                        <td>{{ credit.updated_at|date:"Y-m-d H:i:s" }}</td>
+                        <td>
+                            <a href="{% url 'credit_update' credit.id %}">Edit</a>
+                            <a href="{% url 'credit_delete' credit.id %}">Delete</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">No Credits available</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot class="table-light fw-bold">
+                <tr>
+                    <td colspan="2" class="text-end fw-bold">Totals:</td>
+                    <td>{{ total_balance|floatformat:2|intcomma }}</td>
+                    <td colspan="3"></td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+{% endblock %}

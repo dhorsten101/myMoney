@@ -10,7 +10,9 @@ from .binance_service import BinanceService
 from .luno_service import LunoService
 from .models import CryptoBalance
 from .models import LunoPrice
-from .poloniex_service import PoloniexService
+
+
+# from .poloniex_service import PoloniexService
 
 
 def home(request):
@@ -43,7 +45,7 @@ def luno_view(request):
 def dashboard(request):
 	luno_service = LunoService()
 	binance_service = BinanceService()
-	poloniex_service = PoloniexService()  # Add Poloniex service
+	# poloniex_service = PoloniexService()  # Add Poloniex service
 	
 	# Fetching Luno balances and conversion
 	balance = luno_service.get_balance()
@@ -66,17 +68,17 @@ def dashboard(request):
 	binance_service.save_balances_to_model(binance_balances, zar_to_usd_rate)
 	
 	# Fetching Poloniex balances and conversions
-	poloniex_balances, poloniex_exchange_rates, poloniex_total_zar, poloniex_total_usd = (
-		poloniex_service.convert_balances_to_currencies(
-			poloniex_service.get_balance()
-		)
-	)
+	# poloniex_balances, poloniex_exchange_rates, poloniex_total_zar, poloniex_total_usd = (
+	# 	poloniex_service.convert_balances_to_currencies(
+	# 		poloniex_service.get_balance()
+	# 	)
+	# )
 	
 	# Calculate the grand total in ZAR
 	grand_total_zar = (
 			Decimal(str(total_converted_zar))
 			+ Decimal(str(binance_total_converted_zar))
-			+ Decimal(str(poloniex_total_zar))
+		# + Decimal(str(poloniex_total_zar))
 	)
 	
 	# Save the grand total to history
@@ -114,10 +116,10 @@ def dashboard(request):
 		"binance_total_converted_usd": binance_total_converted_usd,
 		"binance_total_converted_zar": binance_total_converted_zar,
 		# Poloniex data
-		"poloniex_balances": poloniex_balances,
-		"poloniex_total_zar": poloniex_total_zar,
-		"poloniex_total_usd": poloniex_total_usd,
-		"poloniex_exchange_rates": poloniex_exchange_rates,
+		# "poloniex_balances": poloniex_balances,
+		# "poloniex_total_zar": poloniex_total_zar,
+		# "poloniex_total_usd": poloniex_total_usd,
+		# "poloniex_exchange_rates": poloniex_exchange_rates,
 		# Total data
 		"grand_total_zar": grand_total_zar,
 		"grand_total_history": grand_total_history,

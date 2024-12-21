@@ -8,6 +8,7 @@ django = "*"
 sdk = "*"
 poloniex = "*"
 django-widget-tweaks = "*"
+luno_python = "*"
 
 [dev-packages]
 

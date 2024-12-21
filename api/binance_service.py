@@ -1,4 +1,4 @@
-from binance import Client
+from binance.client import Client
 from django.conf import settings
 from django.utils import timezone
 

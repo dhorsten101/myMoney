@@ -9,7 +9,6 @@ sdk = "*"
 poloniex = "*"
 django-widget-tweaks = "*"
 luno_python = "*"
-binance = "*"
 
 [dev-packages]
 

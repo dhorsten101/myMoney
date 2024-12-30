@@ -28,8 +28,6 @@ DEBUG = True
 # ALLOWED_HOSTS = ["192.168.0.100"]
 ALLOWED_HOSTS = ['*']
 
-# Application definition
-
 INSTALLED_APPS = [
 	"django.contrib.admin",
 	"django.contrib.auth",
@@ -39,6 +37,7 @@ INSTALLED_APPS = [
 	"django.contrib.staticfiles",
 	"django.contrib.humanize",
 	"widget_tweaks",
+	"django_cron",
 	"api",
 	"assets",
 	"incomes",

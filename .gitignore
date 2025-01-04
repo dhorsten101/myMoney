@@ -9,6 +9,9 @@ media/
 # Environment files
 .env
 *.env
+venv/
+VENV/
+
 
 # Pipenv
 Pipfile.lock

@@ -60,6 +60,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "myMoney.urls"
 
+CRONJOBS = [
+	("*/10 * * * *", "api.cron.MyCronJob"),
+]
+
 TEMPLATES = [
 	{
 		"BACKEND": "django.template.backends.django.DjangoTemplates",

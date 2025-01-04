@@ -9,6 +9,7 @@ sdk = "*"
 poloniex = "*"
 django-widget-tweaks = "*"
 luno_python = "*"
+django-cron = "0.5.0"
 
 [dev-packages]
 

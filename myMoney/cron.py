@@ -1,11 +1,14 @@
 from django_cron import CronJobBase, Schedule
 
+from api.utils import process_dashboard_data
+
 
 class MyCronJob(CronJobBase):
-	RUN_EVERY_MINS = 1  # Set to the desired frequency (in minutes)
-	
+	RUN_EVERY_MINS = 10  # Run every 10 minutes
 	schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
-	code = 'my_app.my_cron_job'  # Unique code
+	code = 'myMoney.my_cron_job'  # Unique identifier
 	
 	def do(self):
-		print("Running my cron job!")
+		# Call the shared function for processing
+		process_dashboard_data()
+		print("Cron job completed: Dashboard data processed!")

@@ -37,7 +37,7 @@ INSTALLED_APPS = [
 	"django.contrib.staticfiles",
 	"django.contrib.humanize",
 	"widget_tweaks",
-	"django_cron",
+	# "django_cron",
 	"api",
 	"assets",
 	"incomes",

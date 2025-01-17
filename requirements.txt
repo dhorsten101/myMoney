@@ -1,3 +1,2 @@
 Django~=5.1.1
 requests~=2.32.3
-poloniex~=0.0.17

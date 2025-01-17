@@ -1,22 +1,15 @@
 from decimal import Decimal
 
-from poloniex import Poloniex
-
 from history_records.models import HistoryRecord
 from .binance_service import BinanceService
 from .luno_service import LunoService
+from .poloniex_service import PoloniexService
 
 
 def process_dashboard_data():
-	polo = Poloniex('F8CU5JIM-6OCAZ7N9-P32460M3-VKCES34I', '444d90c68422d77b1e29c8f72b72c4289d13aa56e76130df2675a8ec0533d0281647fb38819675d9cd665a4e25b6116e89b44bf6182d2aff0e0905d4883e5cdd')
-	
-	# poloniex_service = PoloniexService()
 	luno_service = LunoService()
 	binance_service = BinanceService()
-	
-	# Fetch and process Poloniex balances
-	balances = polo.returnBalances()
-	print("Balances:", balances)
+	poloniex_service = PoloniexService()
 	
 	# Fetch and process Luno balances
 	balance = luno_service.get_balance()
@@ -38,9 +31,16 @@ def process_dashboard_data():
 	)
 	binance_service.save_balances_to_model(binance_balances, zar_to_usd_rate)
 	
+	# Fetch and process Poloniex balances
+	poloniex_balances, poloniex_total_converted_usd, poloniex_total_converted_zar = (
+		poloniex_service.convert_balances_to_currencies(zar_to_usd_rate)
+	)
+	poloniex_service.save_balances_to_model(poloniex_balances)
+	
 	# Calculate grand total in ZAR
 	grand_total_zar = Decimal(str(total_converted_zar)) + Decimal(
-		str(binance_total_converted_zar)
+		str(binance_total_converted_zar) + poloniex_total_converted_zar
+	
 	)
 	
 	# Save grand total to history
@@ -78,7 +78,9 @@ def process_dashboard_data():
 		"binance_balances": binance_balances,
 		"binance_total_converted_usd": binance_total_converted_usd,
 		"binance_total_converted_zar": binance_total_converted_zar,
-		# Total data
+		# Poloniex data
+		"poloniex_balances": poloniex_balances,
+		# Total dat
 		"grand_total_zar": grand_total_zar,
 		"grand_total_history": grand_total_history,
 		# up or down data

@@ -1,6 +1,5 @@
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 LUNO_API_KEY = "kc8yscuuw72cm"
@@ -61,7 +60,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = "myMoney.urls"
 
 CRONJOBS = [
-	("*/10 * * * *", "api.cron.MyCronJob"),
+	# ("*/10 * * * *", "api.cron.MyCronJob"),
 ]
 
 TEMPLATES = [
@@ -82,18 +81,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "myMoney.wsgi.application"
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
 	"default": {
 		"ENGINE": "django.db.backends.sqlite3",
 		"NAME": BASE_DIR / "db.sqlite3",
 	}
 }
-
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
 	{
@@ -109,8 +102,6 @@ AUTH_PASSWORD_VALIDATORS = [
 		"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
 	},
 ]
-
-# settings.py
 
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 

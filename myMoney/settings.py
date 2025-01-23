@@ -54,7 +54,27 @@ MIDDLEWARE = [
 	"django.contrib.auth.middleware.AuthenticationMiddleware",
 	"django.contrib.messages.middleware.MessageMiddleware",
 	"django.middleware.clickjacking.XFrameOptionsMiddleware",
+	# "corsheaders.middleware.CorsMiddleware",
 ]
+
+CSRF_COOKIE_SECURE = "false"
+CSRF_TRUSTED_ORIGINS = []
+
+INTERNAL_IPS = ["0.0.0.0"]
+
+CORS_ALLOWED_ORIGINS = [
+	"https://192.168.0.100",
+	"http://localhost:4200",
+	"http://localhost:8000",
+	"http://192.168.0.100",
+	"http://192.168.0.100:8000",
+	"https://192.168.0.100:8000",
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_HEADERS = ["*"]
 
 ROOT_URLCONF = "myMoney.urls"
 

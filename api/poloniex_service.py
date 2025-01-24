@@ -1,15 +1,16 @@
-import ccxt
+import poloniex
 from django.conf import settings
 from django.utils import timezone
+
 from assets.models import Asset
 
 
 class PoloniexService:
 	def __init__(self):
-		self.client = ccxt.poloniex({
+		self.client = (poloniex.Poloniex({
 			'apiKey': settings.POLONIEX_API_KEY,
 			'secret': settings.POLONIEX_SECRET_KEY,
-		})
+		}))
 	
 	def get_balances(self):
 		try:

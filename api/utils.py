@@ -39,7 +39,7 @@ def process_dashboard_data():
 	
 	# Calculate grand total in ZAR
 	grand_total_zar = Decimal(str(total_converted_zar)) + Decimal(
-		str(binance_total_converted_zar) + poloniex_total_converted_zar
+		str(binance_total_converted_zar)
 	
 	)
 	

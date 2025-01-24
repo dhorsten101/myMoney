@@ -23,7 +23,7 @@ def process_dashboard_data():
 	
 	luno_service.save_balances_to_model(converted_balances)
 	profit_loss_data = luno_service.calculate_profit_loss()
-	orders = luno_service.get_orders(state="COMPLETE")
+	orders = luno_service.get_orders()
 	
 	# Fetch and process Binance balances
 	binance_balances, binance_total_converted_usd, binance_total_converted_zar = (

@@ -35,7 +35,7 @@ INSTALLED_APPS = [
 	"django.contrib.staticfiles",
 	"django.contrib.humanize",
 	"widget_tweaks",
-	# "django_cron",
+	"django_cron",
 	"api",
 	"assets",
 	"incomes",
@@ -54,7 +54,6 @@ MIDDLEWARE = [
 	"django.contrib.auth.middleware.AuthenticationMiddleware",
 	"django.contrib.messages.middleware.MessageMiddleware",
 	"django.middleware.clickjacking.XFrameOptionsMiddleware",
-	# "corsheaders.middleware.CorsMiddleware",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -62,7 +61,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 ROOT_URLCONF = "myMoney.urls"
 
 CRONJOBS = [
-	# ("*/10 * * * *", "api.cron.MyCronJob"),
+	('*/10 * * * *', 'api.management.commands.process_dashboard'),
 ]
 
 TEMPLATES = [

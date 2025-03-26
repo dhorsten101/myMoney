@@ -8,7 +8,8 @@
 {% block content %}
     <div class="container mt-3">
         <h1 class="text-center mb-3">Sellable Items</h1>
-        <button class="btn btn-sm btn-primary" href="{% url "sellable_create" %}">New</button>
+        <a class="text-primary" href="{% url 'sellable_create' %}">New</a>
+
 
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover mt-3">

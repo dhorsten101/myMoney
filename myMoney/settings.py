@@ -44,6 +44,8 @@ INSTALLED_APPS = [
 	"history_records",
 	"main",
 	"sellables",
+	"to_do",
+
 ]
 
 MIDDLEWARE = [

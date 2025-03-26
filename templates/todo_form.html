@@ -3,9 +3,9 @@
 
 {% block title %}
     {% if form.instance.id %}
-        Edit Expense - ID {{ form.instance.id }}
+        Edit ToDo - ID {{ form.instance.id }}
     {% else %}
-        Create New Expense
+        Create New To Do
     {% endif %}
 {% endblock %}
 
@@ -15,7 +15,7 @@
             {% if form.instance.id %}
                 Edit  {{ form.instance.name }}
             {% else %}
-                Create New Expense
+                Create New To Do
             {% endif %}
         </h1>
 
@@ -27,16 +27,6 @@
                 {{ form.name|add_class:"form-control" }}
             </div>
 
-            <div class="mb-3">
-                {{ form.description.label_tag }}
-                {{ form.description|add_class:"form-control" }}
-            </div>
-
-            <div class="mb-3">
-                {{ form.balance.label_tag }}
-                {{ form.balance|add_class:"form-control" }}
-            </div>
-
             <div class="mt-4">
                 <button type="submit" class="btn btn-primary">
                     {% if form.instance.id %}
@@ -45,7 +35,7 @@
                         Create
                     {% endif %}
                 </button>
-                <a href="{% url 'expense_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+                <a href="{% url 'todo_list' %}" class="btn btn-secondary ms-2">Cancel</a>
             </div>
         </form>
     </div>

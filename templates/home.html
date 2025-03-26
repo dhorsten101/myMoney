@@ -7,9 +7,9 @@
 
 {% block content %}
     <div class="container">
- 
+
         <div class="text-center mb-5">
-            <h1 class="display-5 mb-4"> Welcome <b class=" text-warning"> {{ user.username }} </b> to MyMoney Stats</h1>
+            <h1 class="display-5 mb-4"> Welcome <b class=" text-warning"> {{ user.username }} </b> to MyMoney App</h1>
             {% if user.is_authenticated %}
                 <a href="{% url 'dashboard' %}" target="_blank" class="btn btn-primary mx-3 btn-lg mb-2">Go to Dashboard</a>
             {% else %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}
+    To Do
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <h1 class="text-center mb-3">To Do's</h1>
+        <a class="text-primary" href="{% url 'todo_create' %}">New</a>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover mt-3">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Created At</th>
+                    <th scope="col">Actions</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                {% for todo in to_do %}
+                    <tr>
+                        <td>{{ todo.name }}</td>
+                        <td>{{ todo.created_at|date:"Y-m-d H:i:s" }}</td>
+                        <td>
+                            <a href="{% url 'todo_update' todo.id %}">Edit</a> -
+                            <a href="{% url 'todo_delete' todo.id %}">Done</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">No ToDo available</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

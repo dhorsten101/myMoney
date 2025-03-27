@@ -61,6 +61,12 @@ MIDDLEWARE = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+CSRF_TRUSTED_ORIGINS = [
+	'https://192.168.0.100',
+	'http://192.168.0.100',
+	'https://192.168.0.100',
+]
+
 ROOT_URLCONF = "myMoney.urls"
 
 CRONJOBS = [

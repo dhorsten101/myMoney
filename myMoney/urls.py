@@ -12,5 +12,6 @@ urlpatterns = [
 	path("", include("history_records.urls")),
 	path("", include("sellables.urls")),
 	path("", include("to_do.urls")),
+	path("", include("weight.urls")),
 
 ]

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 	"main",
 	"sellables",
 	"to_do",
+	"weight",
 
 ]
 

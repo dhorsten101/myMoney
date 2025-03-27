@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {% if form.instance.id %}
+        Edit Weight - ID {{ form.instance.id }}
+    {% else %}
+        Create New Weight
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">
+            {% if form.instance.id %}
+                Edit  {{ form.instance.weight }}
+            {% else %}
+                Create New Weight
+            {% endif %}
+        </h1>
+
+        <form method="POST" class="bg-light p-4 border rounded">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                {{ form.weight.label_tag }}
+                {{ form.weight|add_class:"form-control" }}
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    {% if form.instance.id %}
+                        Update
+                    {% else %}
+                        Create
+                    {% endif %}
+                </button>
+                <a href="{% url 'weight_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

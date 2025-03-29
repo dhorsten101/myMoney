@@ -5,7 +5,7 @@
     {% if form.instance.id %}
         Edit Idea - ID {{ form.instance.id }}
     {% else %}
-        Create New Idea Item
+        Create New Idea
     {% endif %}
 {% endblock %}
 
@@ -15,7 +15,7 @@
             {% if form.instance.id %}
                 Edit  {{ form.instance.name }}
             {% else %}
-                Create New Idea Item
+                Create New Idea
             {% endif %}
         </h1>
         <form method="POST" enctype="multipart/form-data" class="bg-light p-4 border rounded">

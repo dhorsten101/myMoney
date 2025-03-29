@@ -11,7 +11,7 @@ from ideas.models import Idea
 @login_required
 def idea_list(request):
 	ideas = Idea.objects.all()
-	return render(request, "idea_list.html")
+	return render(request, "idea_list.html", {'ideas': ideas})
 
 
 @login_required
@@ -24,6 +24,22 @@ def idea_create(request):
 			return redirect("idea_list")
 	else:
 		form = IdeaForm()
+	
+	return render(request, "idea_form.html", {"form": form})
+
+
+@login_required
+def idea_update(request, id):
+	idea = get_object_or_404(Idea, id=id)
+	
+	if request.method == "POST":
+		form = IdeaForm(request.POST, request.FILES, instance=idea)
+		
+		if form.is_valid():
+			form.save()
+			return redirect("idea_list")
+	else:
+		form = IdeaForm(instance=idea)
 	
 	return render(request, "idea_form.html", {"form": form})
 
@@ -49,21 +65,6 @@ def idea_delete(request, id):
 # 	# Redirect back to the sellable detail page
 # 	return redirect('sellable_detail', pk=sellable.pk)
 
-#
-# @login_required
-# def idea_update(request, id):
-# 	idea = get_object_or_404(Idea, id=id)
-#
-# 	if request.method == "POST":
-# 		form = IdeaForm(request.POST, request.FILES, instance=sellable)
-#
-# 		if form.is_valid():
-# 			form.save()
-# 			return redirect("sellable_list")
-# 	else:
-# 		form = IdeaForm(instance=sellable)
-#
-# 	return render(request, "sellable_form.html", {"form": form})
 #
 
 # @login_required

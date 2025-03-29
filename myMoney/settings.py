@@ -36,7 +36,7 @@ INSTALLED_APPS = [
 	"sellables",
 	"to_do",
 	"weight",
-	"idea",
+	"ideas",
 ]
 
 MIDDLEWARE = [

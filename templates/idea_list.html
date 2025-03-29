@@ -2,14 +2,14 @@
 {% load humanize %}
 
 {% block title %}
-    Sellables
+    Ideas
 {% endblock %}
 
 {% block content %}
     <div class="container mt-3">
         <div class="position-relative mb-4 text-center">
             <a href="{% url 'sellable_create' %}" class="btn btn-primary position-absolute top-0 start-0">New</a>
-            <h1 class="mb-0">Sellable Items</h1>
+            <h1 class="mb-0">Ideas</h1>
         </div>
 
         <div class="table-responsive">
@@ -23,31 +23,22 @@
                            data-bs-toggle="tooltip"
                            title="Right-click on the item name to edit"></i>
                     </th>
-                    <th scope="col">Asking Price</th>
-                    <th scope="col">Sold Price</th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for sellable in sellables %}
-                    <tr class="sellable-row" data-edit-url="{% url 'sellable_update' sellable.id %}">
+                {% for idea in ideas %}
+                    <tr class="idea-row" data-edit-url="{% url 'idea_update' idea.id %}">
                         <td>
-                            <a href="{% url 'sellable_detail' sellable.id %}">{{ sellable.name }}</a>
+                            <a href="{% url 'idea_detail' idea.id %}">{{ idea.name }}</a>
                         </td>
-                        <td>{{ sellable.price|floatformat:2 }}</td>
-                        <td>{{ sellable.sold_price|floatformat:2 }}</td>
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="8" class="text-center">No Sellable</td>
+                        <td colspan="8" class="text-center">No ideas</td>
                     </tr>
                 {% endfor %}
                 </tbody>
                 <tfoot class="table-light fw-bold">
-                <tr>
-                    <td colspan="1" class="text-end fw-bold">Totals:</td>
-                    <td>{{ total_price|floatformat:2|intcomma }}</td>
-                    <td>{{ total_sold_price|floatformat:2|intcomma }}</td>
-                </tr>
                 </tfoot>
             </table>
         </div>
@@ -56,11 +47,11 @@
     <!-- JavaScript for handling right-click -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.sellable-row').forEach(function (row) {
+            document.querySelectorAll('.idea-row').forEach(function (row) {
                 row.addEventListener('contextmenu', function (event) {
-                    event.preventDefault();  // Prevent the default right-click menu
+                    event.preventDefault();
                     let editUrl = this.getAttribute('data-edit-url');
-                    window.location.href = editUrl;  // Redirect to the edit page
+                    window.location.href = editUrl;
                 });
             });
         });
@@ -75,7 +66,7 @@
             });
 
             // Right-click edit functionality
-            document.querySelectorAll('.sellable-row').forEach(function (row) {
+            document.querySelectorAll('.idea-row').forEach(function (row) {
                 row.addEventListener('contextmenu', function (event) {
                     event.preventDefault();  // Prevent the default right-click menu
                     let editUrl = this.getAttribute('data-edit-url');

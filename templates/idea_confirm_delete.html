@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Confirm Delete - {{ sellable.name }}
+    Confirm Delete - {{ idea.name }}
 {% endblock %}
 
 {% block content %}
     <div class="container mt-5">
         <div class="card border-danger">
             <div class="card-body">
-                <h1 class="text-danger text-center">Are you sure you want to delete "{{ sellable.name }}"?</h1>
+                <h1 class="text-danger text-center">Are you sure you want to delete "{{ idea.name }}"?</h1>
                 <form method="POST" class="text-center mt-4">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger">Yes, delete</button>
-                    <a href="{% url 'sellable_list' %}" class="btn btn-secondary">Cancel</a>
+                    <a href="{% url 'idea_list' %}" class="btn btn-secondary">Cancel</a>
                 </form>
             </div>
         </div>

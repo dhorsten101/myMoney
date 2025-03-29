@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {% if form.instance.id %}
+        Edit Sellables - ID {{ form.instance.id }}
+    {% else %}
+        Create New Sellable Item
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">
+            {% if form.instance.id %}
+                Edit  {{ form.instance.name }}
+            {% else %}
+                Create New Sellable Item
+            {% endif %}
+        </h1>
+        <form method="POST" enctype="multipart/form-data" class="bg-light p-4 border rounded">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.name.label_tag }}
+                {{ form.name|add_class:"form-control" }}
+            </div>
+            <div class="mb-3">
+                {{ form.description.label_tag }}
+                {{ form.description|add_class:"form-control" }}
+            </div>
+            <div class="mb-3">
+                {{ form.price.label_tag }}
+                {{ form.price|add_class:"form-control" }}
+            </div>
+            <div class="mb-3">
+                {{ form.sold_price.label_tag }}
+                {{ form.sold_price|add_class:"form-control" }}
+            </div>
+            
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{% url 'sellable_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+        </form>
+    </div>
+{% endblock %}

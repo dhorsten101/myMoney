@@ -1,6 +1,7 @@
 # Create your views here.
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
 from django.shortcuts import render
 
 from ideas.models import Idea
@@ -34,22 +35,18 @@ def idea_delete(request, id):
 		return redirect("idea_list")
 	return render(request, "idea_confirm_delete.html", {"idea": idea})
 
-
-from django.shortcuts import redirect
-
-
-@login_required
-def delete_image(request, image_id):
-	image = get_object_or_404(SellableImage, id=image_id)
-	
-	# Keep track of the associated sellable
-	sellable = image.sellable
-	
-	# Delete the image
-	image.delete()
-	
-	# Redirect back to the sellable detail page
-	return redirect('sellable_detail', pk=sellable.pk)
+# @login_required
+# def delete_image(request, image_id):
+# 	image = get_object_or_404(SellableImage, id=image_id)
+#
+# 	# Keep track of the associated sellable
+# 	sellable = image.sellable
+#
+# 	# Delete the image
+# 	image.delete()
+#
+# 	# Redirect back to the sellable detail page
+# 	return redirect('sellable_detail', pk=sellable.pk)
 
 #
 # @login_required

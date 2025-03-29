@@ -11,6 +11,7 @@ django-widget-tweaks = "*"
 luno_python = "*"
 django-cron = "==0.5.0"
 python-binance = "*"
+django-crontab = "*"
 
 [dev-packages]
 

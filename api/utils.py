@@ -3,13 +3,11 @@ from decimal import Decimal
 from history_records.models import HistoryRecord
 from .binance_service import BinanceService
 from .luno_service import LunoService
-from .poloniex_service import PoloniexService
 
 
 def process_dashboard_data():
 	luno_service = LunoService()
 	binance_service = BinanceService()
-	poloniex_service = PoloniexService()
 	
 	# Fetch and process Luno balances
 	balance = luno_service.get_balance()
@@ -31,16 +29,9 @@ def process_dashboard_data():
 	)
 	binance_service.save_balances_to_model(binance_balances, zar_to_usd_rate)
 	
-	# Fetch and process Poloniex balances
-	poloniex_balances, poloniex_total_converted_usd, poloniex_total_converted_zar = (
-		poloniex_service.convert_balances_to_currencies(zar_to_usd_rate)
-	)
-	poloniex_service.save_balances_to_model(poloniex_balances)
-	
 	# Calculate grand total in ZAR
 	grand_total_zar = Decimal(str(total_converted_zar)) + Decimal(
 		str(binance_total_converted_zar)
-	
 	)
 	
 	# Save grand total to history

@@ -9,12 +9,6 @@ LUNO_API_SECRET = "rLB2aJAt-DRysys6Hvh2Kg__Qw1M2SWKf9m8qnnAQrQ"
 # LUNO_API_KEY = "bdtg7692gjwt3"
 # LUNO_API_SECRET = "pcRczM8t3tL2H5wrF54KMcif4ABKBcTK-OjjB6mqEVU"
 
-POLONIEX_API_KEY = "BFIB8QLW-D667IHQA-J305ITJG-Q6H2NE9Z"
-POLONIEX_SECRET_KEY = "cf810ecf1aa8ad0b66a36bee6d1072bf9e8b0f2935d0062ccc27b506faf092005691650095e4e3309cf15b5d9f2b80870288c94e6bdd3763df9c8b3645999d18"
-
-# POLONIEX_API_KEY = os.getenv('POLONIEX_API_KEY')
-# POLONIEX_SECRET_KEY = os.getenv('POLONIEX_SECRET_KEY')
-
 BINANCE_API_KEY = "8DYDIi3BXx8SANk7pCUX1VBA8VEvxTtxMg78dk04418ctILHetrjD7QVkwKfZNDt"
 BINANCE_SECRET_KEY = "PiVTqEjitltvVXb1Zw6KSRQmBKe1LtZsz0MfqmPwv3gohoOLbGTBFfC3PFvhPN0N"
 
@@ -35,7 +29,7 @@ INSTALLED_APPS = [
 	"django.contrib.staticfiles",
 	"django.contrib.humanize",
 	"widget_tweaks",
-	"django_cron",
+	"django_crontab",
 	"api",
 	"assets",
 	"incomes",

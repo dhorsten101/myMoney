@@ -8,7 +8,7 @@
 {% block content %}
     <div class="container mt-3">
         <div class="position-relative mb-4 text-center">
-            <a href="{% url 'sellable_create' %}" class="btn btn-primary position-absolute top-0 start-0">New</a>
+            <a href="{% url 'idea_create' %}" class="btn btn-primary position-absolute top-0 start-0">New</a>
             <h1 class="mb-0">Ideas</h1>
         </div>
 
@@ -18,10 +18,11 @@
                 <tr>
                     <th scope="col">
                         Name
-                        <!-- Icon with tooltip -->
-                        <i class="bi bi-info-circle ms-2 text-danger"
-                           data-bs-toggle="tooltip"
-                           title="Right-click on the item name to edit"></i>
+                        = <i class="bi bi-info-circle ms-2 text-danger" data-bs-toggle="tooltip" title="Right-click on the item name to edit"></i>
+                    </th>
+                    <th scope="col">
+                        Description
+                        = <i class="bi bi-info-circle ms-2 text-danger" data-bs-toggle="tooltip" title="Right-click on the item name to edit"></i>
                     </th>
                 </tr>
                 </thead>
@@ -29,7 +30,10 @@
                 {% for idea in ideas %}
                     <tr class="idea-row" data-edit-url="{% url 'idea_update' idea.id %}">
                         <td>
-                            <a href="{% url 'idea_detail' idea.id %}">{{ idea.name }}</a>
+                            <a href="{% url 'idea_name' idea.id %}">{{ idea.name }}</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'idea_description' idea.id %}">{{ idea.description }}</a>
                         </td>
                     </tr>
                 {% empty %}

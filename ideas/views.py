@@ -10,8 +10,8 @@ from ideas.models import Idea
 
 @login_required
 def idea_list(request):
-	ideas = Idea.objects.all()
-	return render(request, "idea_list.html", {'ideas': ideas})
+	idea = Idea.objects.all()
+	return render(request, "idea_list.html", {'idea': idea})
 
 
 @login_required

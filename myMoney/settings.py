@@ -5,10 +5,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 LUNO_API_KEY = "kc8yscuuw72cm"
 LUNO_API_SECRET = "rLB2aJAt-DRysys6Hvh2Kg__Qw1M2SWKf9m8qnnAQrQ"
 
-# admin
-# LUNO_API_KEY = "bdtg7692gjwt3"
-# LUNO_API_SECRET = "pcRczM8t3tL2H5wrF54KMcif4ABKBcTK-OjjB6mqEVU"
-
 BINANCE_API_KEY = "8DYDIi3BXx8SANk7pCUX1VBA8VEvxTtxMg78dk04418ctILHetrjD7QVkwKfZNDt"
 BINANCE_SECRET_KEY = "PiVTqEjitltvVXb1Zw6KSRQmBKe1LtZsz0MfqmPwv3gohoOLbGTBFfC3PFvhPN0N"
 
@@ -40,7 +36,7 @@ INSTALLED_APPS = [
 	"sellables",
 	"to_do",
 	"weight",
-	# "idea",
+	"idea",
 ]
 
 MIDDLEWARE = [

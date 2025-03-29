@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
 
+from ideas.forms import IdeaForm
 from ideas.models import Idea
 
 
@@ -14,7 +15,7 @@ def idea_list(request):
 
 
 @login_required
-def sellable_create(request):
+def idea_create(request):
 	if request.method == "POST":
 		form = IdeaForm(request.POST, request.FILES)
 		

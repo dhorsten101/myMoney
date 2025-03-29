@@ -11,7 +11,28 @@
             <a href="{% url 'asset_create' %}" class="btn btn-primary position-absolute top-0 start-0">New</a>
             <h1 class="mb-0">Assets</h1>
         </div>
-    
+
+        <div class="position-relative mb-4 text-center">
+            <form method="get" class="mb-4">
+                <div class="row g-2 align-items-center">
+                    <div class="btn-group mb-2" role="group">
+                        <a href="?period=1hour" class="btn btn-outline-primary {% if current_period == '1hour' %}active{% endif %}">1 Hour</a>
+                        <a href="?period=1day" class="btn btn-outline-primary {% if current_period == '1day' %}active{% endif %}">1 Day</a>
+                        <a href="?period=1week" class="btn btn-outline-primary {% if current_period == '1week' %}active{% endif %}">1 Week</a>
+                        <a href="?period=1month" class="btn btn-outline-primary {% if current_period == '1month' %}active{% endif %}">1 Month</a>
+                        <a href="?period=3month" class="btn btn-outline-primary {% if current_period == '3month' %}active{% endif %}">3 Month</a>
+                        <a href="?period=6month" class="btn btn-outline-primary {% if current_period == '6month' %}active{% endif %}">6 Month</a>
+                        <a href="?period=1year" class="btn btn-outline-primary {% if current_period == '1year' %}active{% endif %}">1 Year</a>
+                        <a href="?period=all" class="btn btn-outline-primary {% if current_period == 'all' %}active{% endif %}">All</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <canvas id="assetChart" width="400" height="200"></canvas>
+        <br>
+        <hr>
+        <br>
+
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover mt-3">
                 <thead class="table-dark">
@@ -59,4 +80,60 @@
             </table>
         </div>
     </div>
+    <script>
+        const ctx = document.getElementById('assetChart').getContext('2d');
+        const assetChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ labels|safe }},  // Reverse the labels
+                datasets: [{
+                    label: 'Total Assets Over Time',
+                    data: {{ values|safe }},  // Reverse the data
+                    backgroundColor: 'rgba(75, 192, 192, 0.03)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    },
+
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: false,
+                            text: 'Date',
+                            color: '#fff',
+                            padding: 5,
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: false,
+                            text: 'Weight (Kg)',
+                            color: '#fff',
+                            padding: 5,
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            stepSize: 1  // optional: show tick marks in steps of 1 kg
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 {% endblock %}

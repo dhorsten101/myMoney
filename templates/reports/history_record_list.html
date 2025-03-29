@@ -7,14 +7,30 @@
 
 {% block content %}
     <div class="container mt-3">
-        <h1 class="text-center mb-4">Crypto</h1>
-        <canvas id="historyChart" width="400" height="180"></canvas>
+        <h1 class="text-center mb-4">Crypto Stats</h1>
+
+        <div class="position-relative mb-4 text-center">
+            <form method="get" class="mb-4">
+                <div class="row g-2 align-items-center">
+                    <div class="btn-group mb-2" role="group">
+                        <a href="?period=1hour" class="btn btn-outline-primary {% if current_period == '1hour' %}active{% endif %}">1 Hour</a>
+                        <a href="?period=1day" class="btn btn-outline-primary {% if current_period == '1day' %}active{% endif %}">1 Day</a>
+                        <a href="?period=1week" class="btn btn-outline-primary {% if current_period == '1week' %}active{% endif %}">1 Week</a>
+                        <a href="?period=1month" class="btn btn-outline-primary {% if current_period == '1month' %}active{% endif %}">1 Month</a>
+                        <a href="?period=3month" class="btn btn-outline-primary {% if current_period == '3month' %}active{% endif %}">3 Month</a>
+                        <a href="?period=6month" class="btn btn-outline-primary {% if current_period == '6month' %}active{% endif %}">6 Month</a>
+                        <a href="?period=1year" class="btn btn-outline-primary {% if current_period == '1year' %}active{% endif %}">1 Year</a>
+                        <a href="?period=all" class="btn btn-outline-primary {% if current_period == 'all' %}active{% endif %}">All</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <canvas id="historyChart" width="400" height="200"></canvas>
         <br>
         <hr>
         <br>
-
         <!-- Add a scrollable container with fixed height -->
-        <div class="table-responsive" style="max-height: 300px; overflow-y: scroll;">
+        <div class="table-responsive" style="max-height: 320px; overflow-y: scroll;">
             <table class="table table- table-striped table-hover">
                 <thead class="table-dark">
                 <tr>
@@ -49,10 +65,10 @@
                 datasets: [{
                     label: 'Total Value Over Time',
                     data: {{ values|safe }}.reverse(),  // Reverse the data
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.03)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1,
-                    fill: false,
+                    fill: true,
                 }]
             },
             options: {

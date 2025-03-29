@@ -63,9 +63,9 @@ CSRF_TRUSTED_ORIGINS = [
 
 ROOT_URLCONF = "myMoney.urls"
 
-CRONJOBS = [
-	('*/10 * * * *', 'api.management.commands.process_dashboard.handle', '>> /var/log/dashboard.log 2>&1'),
-]
+# CRONJOBS = [
+# 	('*/10 * * * *', 'api.management.commands.process_dashboard.handle', '>> /var/log/dashboard.log 2>&1'),
+# ]
 
 TEMPLATES = [
 	{

@@ -63,8 +63,16 @@ CSRF_TRUSTED_ORIGINS = [
 
 ROOT_URLCONF = "myMoney.urls"
 
+# CRONJOBS = [
+# 	('*/10 * * * *', 'api.management.commands.process_dashboard'),
+# ]
+
+# CRONJOBS = [
+# 	('*/10 * * * *', 'django.core.management.call_command', ['process_dashboard']),
+# ]
+
 CRONJOBS = [
-	('*/10 * * * *', 'api.management.commands.process_dashboard'),
+	('*/10 * * * *', 'django.core.management.call_command', ['process_dashboard'], '>> /var/log/dashboard.log 2>&1'),
 ]
 
 TEMPLATES = [

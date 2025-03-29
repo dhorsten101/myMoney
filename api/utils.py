@@ -69,9 +69,7 @@ def process_dashboard_data():
 		"binance_balances": binance_balances,
 		"binance_total_converted_usd": binance_total_converted_usd,
 		"binance_total_converted_zar": binance_total_converted_zar,
-		# Poloniex data
-		"poloniex_balances": poloniex_balances,
-		# Total dat
+		# Total data
 		"grand_total_zar": grand_total_zar,
 		"grand_total_history": grand_total_history,
 		# up or down data

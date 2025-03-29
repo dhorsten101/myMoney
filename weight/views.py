@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 
@@ -5,15 +7,17 @@ from weight.forms import WeightForm
 from weight.models import Weight
 
 
-@login_required
 def weight_list(request):
-	weight = Weight.objects.all()
+	weights = Weight.objects.order_by('created_at')  # oldest first
+	labels = [w.created_at.strftime('%Y-%m-%d') for w in weights]
+	values = [float(w.weight) for w in weights]  # convert Decimal to float
 	
-	return render(
-		request,
-		"weight_list.html",
-		{"weight": weight},
-	)
+	context = {
+		'weight': weights,
+		'labels': json.dumps(labels),
+		'values': json.dumps(values),
+	}
+	return render(request, 'weight_list.html', context)
 
 
 @login_required

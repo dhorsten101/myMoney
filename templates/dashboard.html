@@ -7,15 +7,19 @@
 
 {% block content %}
     <div class="container">
+        <div class="position-relative mb-4 text-center">
+            <a href="{% url 'update_dashboard' %}" class="btn btn-primary position-absolute top-0 start-0">Update</a>
+            <h1 class="mb-2">Dashboard</h1>
 
+        </div>
         <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
             <!-- Heading on the Left -->
-            <h1 class="me-auto">My Crypto Stats</h1>
+            <h2 class="me-auto">My Crypto Stats</h2>
             <div class="d-flex justify-content-center">
                 <!-- Button to show/hide history table -->
-{#                <button class="btn btn-danger d-flex align-items-center justify-content-center " style="font-size: 0.9rem; padding: 0.15rem 0.5rem;" type="button" data-bs-toggle="collapse" data-bs-target="#historyTable" aria-expanded="false" aria-controls="historyTable">#}
-{#                    <i class="bi bi-clock-history me-1"></i> History#}
-{#                </button>#}
+                {#                <button class="btn btn-danger d-flex align-items-center justify-content-center " style="font-size: 0.9rem; padding: 0.15rem 0.5rem;" type="button" data-bs-toggle="collapse" data-bs-target="#historyTable" aria-expanded="false" aria-controls="historyTable">#}
+                {#                    <i class="bi bi-clock-history me-1"></i> History#}
+                {#                </button>#}
                 <!-- Button to toggle showing/hiding the total -->
                 <button id="toggleTotalBtn" class="btn btn-danger d-flex align-items-center justify-content-center mx-4" style="font-size: 0.9rem; padding: 0.15rem 0.5rem;" type="button">
                     <i class="bi bi-eye me-1"></i> Show
@@ -25,7 +29,7 @@
             <!-- Total Value, Arrow, and Value Change Section on the Right -->
             <div class="d-flex flex-column align-items-end">
                 <div class="d-flex align-items-center">
-                    <h2 id="totalValue" class="float-end text-success" style="min-width: 100px; display: none;">R {{ grand_total_zar|floatformat:2|intcomma}}</h2>
+                    <h2 id="totalValue" class="float-end text-success" style="min-width: 100px; display: none;">R {{ grand_total_zar|floatformat:2|intcomma }}</h2>
                     <h1 id="hiddenTotal" class="float-end text-success" style="min-width: 100px;"> * * * * * * * </h1>
 
                     {% if went_up is not None %}

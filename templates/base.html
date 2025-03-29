@@ -31,6 +31,9 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
+                    <a class="nav-link active" href="/dashboard/">Dashboard</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link active" href="/todo/">ToDo</a>
                 </li>
                 <li class="nav-item">
@@ -54,13 +57,13 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="/weight/">Weight</a>
                 </li>
-                {#                <li class="nav-item">#}
-                {#                    <a class="nav-link active" href="/sellable/">Health</a>#}
-                {#                </li>#}
             </ul>
         </div>
-        <a class="nav-link active text-black mx-2" href="/dashboard/" target="_blank">Dashboard</a>
-        {#        <a class="nav-link active text-black mx-2" href="/history_record/">History</a>#}
+        {#        <div class="position-relative mb-4 text-center">#}
+        {#            <a href="{% url 'update_dashboard' %}" class="btn btn-primary position-absolute top-0 start-0">Update</a>#}
+        {#        </div>#}
+        {#        <a class="nav-link active text-black mx-2" href="/update_dashboard/" target="_blank">Update Dashboard</a>#}
+
         <a class="nav-link active text-black mx-2" href="/">Pricing</a>
         <div class="text-white mx-4">
             {% if user.is_authenticated %}

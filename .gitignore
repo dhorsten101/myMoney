@@ -19,3 +19,5 @@ Pipfile.lock
 # IDE Files
 .vscode/
 .idea/
+process
+.log

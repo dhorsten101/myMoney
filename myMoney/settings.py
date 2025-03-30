@@ -8,10 +8,8 @@ LUNO_API_SECRET = "rLB2aJAt-DRysys6Hvh2Kg__Qw1M2SWKf9m8qnnAQrQ"
 BINANCE_API_KEY = "8DYDIi3BXx8SANk7pCUX1VBA8VEvxTtxMg78dk04418ctILHetrjD7QVkwKfZNDt"
 BINANCE_SECRET_KEY = "PiVTqEjitltvVXb1Zw6KSRQmBKe1LtZsz0MfqmPwv3gohoOLbGTBFfC3PFvhPN0N"
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-$)^1s5m&dj6vf0b29a+^6wjli1i)o=wi$99yo0&j4vo!loz&dh"
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -58,10 +56,6 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 ROOT_URLCONF = "myMoney.urls"
-
-# CRONJOBS = [
-# 	('*/10 * * * *', 'api.management.commands.process_dashboard.handle', '>> /var/log/dashboard.log 2>&1'),
-# ]
 
 TEMPLATES = [
 	{
@@ -114,9 +108,6 @@ LOGIN_URL = "login"
 # Logout URL
 LOGOUT_REDIRECT_URL = "/"
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
@@ -125,8 +116,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
@@ -134,7 +123,5 @@ MEDIA_ROOT = BASE_DIR / "media"
 STATICFILES_DIRS = [
 	BASE_DIR / "static",
 ]
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

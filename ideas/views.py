@@ -11,20 +11,20 @@ from ideas.models import Idea
 @login_required
 def idea_list(request):
 	idea = Idea.objects.all()
-	return render(request, "idea_list.html", {'idea': idea})
+	
+	return render(request, "idea_list.html", {"idea": idea},
+	)
 
 
 @login_required
 def idea_create(request):
 	if request.method == "POST":
-		form = IdeaForm(request.POST, request.FILES)
-		
+		form = IdeaForm(request.POST)
 		if form.is_valid():
 			form.save()
 			return redirect("idea_list")
 	else:
 		form = IdeaForm()
-	
 	return render(request, "idea_form.html", {"form": form})
 
 
@@ -33,7 +33,7 @@ def idea_update(request, id):
 	idea = get_object_or_404(Idea, id=id)
 	
 	if request.method == "POST":
-		form = IdeaForm(request.POST, request.FILES, instance=idea)
+		form = IdeaForm(request.POST, instance=idea)
 		
 		if form.is_valid():
 			form.save()

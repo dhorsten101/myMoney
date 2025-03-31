@@ -2,7 +2,7 @@
 {% load humanize %}
 
 {% block title %}
-    Ideas
+    Idea
 {% endblock %}
 
 {% block content %}
@@ -16,25 +16,21 @@
             <table class="table table-bordered table-striped table-hover mt-3">
                 <thead class="table-dark">
                 <tr>
-                    <th scope="col">
-                        Name
-                        = <i class="bi bi-info-circle ms-2 text-danger" data-bs-toggle="tooltip" title="Right-click on the item name to edit"></i>
-                    </th>
-                    <th scope="col">
-                        Description
-                        = <i class="bi bi-info-circle ms-2 text-danger" data-bs-toggle="tooltip" title="Right-click on the item name to edit"></i>
-                    </th>
+                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Name</th>
+                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Description</th>
+                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Action</th>
+
                 </tr>
                 </thead>
                 <tbody>
 
-                {% for idea in ideas %}
-                    <tr class="idea-row" data-edit-url="{% url 'idea_update' idea.id %}">
+                {% for idea in idea %}
+                    <tr>
+                        <td>{{ idea.name }}</td>
+                        <td>{{ idea.description }}</td>
                         <td>
-                            <a href="{% url 'idea_name' idea.id %}">{{ idea.name }}</a>
-                        </td>
-                        <td>
-                            <a href="{% url 'idea_description' idea.id %}">{{ idea.description }}</a>
+                            <a href="{% url 'idea_update' idea.id %}">Edit</a> -
+                            <a href="{% url 'idea_delete' idea.id %}">Delete</a>
                         </td>
                     </tr>
                 {% empty %}
@@ -50,34 +46,5 @@
     </div>
 
     <!-- JavaScript for handling right-click -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.idea-row').forEach(function (row) {
-                row.addEventListener('contextmenu', function (event) {
-                    event.preventDefault();
-                    let editUrl = this.getAttribute('data-edit-url');
-                    window.location.href = editUrl;
-                });
-            });
-        });
-    </script>
-    <!-- Initialize tooltips -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Enable Bootstrap tooltips
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl)
-            });
 
-            // Right-click edit functionality
-            document.querySelectorAll('.idea-row').forEach(function (row) {
-                row.addEventListener('contextmenu', function (event) {
-                    event.preventDefault();  // Prevent the default right-click menu
-                    let editUrl = this.getAttribute('data-edit-url');
-                    window.location.href = editUrl;  // Redirect to the edit page
-                });
-            });
-        });
-    </script>
 {% endblock %}ß

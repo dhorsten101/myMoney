@@ -48,19 +48,32 @@
     </div>
 
     <script>
+        const goalWeight = 80;  // 🎯 Set your goal weight here
+
         const ctx = document.getElementById('weightChart').getContext('2d');
         const weightChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: {{ labels|safe }},  // Reverse the labels
-                datasets: [{
-                    label: 'Total Weight Over Time',
-                    data: {{ values|safe }},  // Reverse the data
-                    backgroundColor: 'rgba(75, 192, 192, 0.03)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1,
-                    fill: true,
-                }]
+                labels: {{ labels|safe }},
+                datasets: [
+                    {
+                        label: 'Total Weight Over Time',
+                        data: {{ values|safe }},
+                        backgroundColor: 'rgba(75, 192, 192, 0.03)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        fill: true,
+                    },
+                    {
+                        label: 'Goal Weight',
+                        data: Array({{ labels|length }}).fill(goalWeight),  // 👈 Repeat goal weight
+                        borderColor: 'rgba(255, 99, 132, 0.8)',
+                        borderDash: [5, 5],  // Dashed line
+                        pointRadius: 0,
+                        fill: false,
+                        tension: 0
+                    }
+                ]
             },
             options: {
                 responsive: true,
@@ -68,35 +81,20 @@
                     legend: {
                         display: true
                     },
-
                 },
                 scales: {
                     x: {
                         title: {
                             display: false,
-                            text: 'Date',
-                            color: '#fff',
-                            padding: 5,
-                            font: {
-                                size: 14,
-                                weight: 'bold'
-                            }
                         }
                     },
                     y: {
                         beginAtZero: true,
                         title: {
                             display: false,
-                            text: 'Weight (Kg)',
-                            color: '#fff',
-                            padding: 5,
-                            font: {
-                                size: 14,
-                                weight: 'bold'
-                            }
                         },
                         ticks: {
-                            stepSize: 1  // optional: show tick marks in steps of 1 kg
+                            stepSize: 1
                         }
                     }
                 }

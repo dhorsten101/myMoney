@@ -1,8 +1,5 @@
-# Create your views here.
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 
 from ideas.forms import IdeaForm
 from ideas.models import Idea
@@ -12,7 +9,10 @@ from ideas.models import Idea
 def idea_list(request):
 	idea = Idea.objects.all()
 	
-	return render(request, "idea_list.html", {"idea": idea},
+	return render(
+		request,
+		"idea_list.html",
+		{"idea": idea},
 	)
 
 
@@ -31,16 +31,13 @@ def idea_create(request):
 @login_required
 def idea_update(request, id):
 	idea = get_object_or_404(Idea, id=id)
-	
 	if request.method == "POST":
 		form = IdeaForm(request.POST, instance=idea)
-		
 		if form.is_valid():
 			form.save()
 			return redirect("idea_list")
 	else:
 		form = IdeaForm(instance=idea)
-	
 	return render(request, "idea_form.html", {"form": form})
 
 

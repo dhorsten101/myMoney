@@ -8,7 +8,7 @@ from weight.models import Weight
 
 
 def weight_list(request):
-	weights = Weight.objects.order_by('created_at')  # oldest first
+	weights = Weight.objects.order_by('-created_at')
 	labels = [w.created_at.strftime('%Y-%m-%d') for w in weights]
 	values = [float(w.weight) for w in weights]  # convert Decimal to float
 	

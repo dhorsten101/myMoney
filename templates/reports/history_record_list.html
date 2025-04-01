@@ -13,8 +13,9 @@
             <form method="get" class="mb-4">
                 <div class="row g-2 align-items-center">
                     <div class="btn-group mb-2" role="group">
-                        <a href="?period=1hour" class="btn btn-outline-primary {% if current_period == '1hour' %}active{% endif %}">1 Hour</a>
+                        {#                        <a href="?period=1hour" class="btn btn-outline-primary {% if current_period == '1hour' %}active{% endif %}">1 Hour</a>#}
                         <a href="?period=1day" class="btn btn-outline-primary {% if current_period == '1day' %}active{% endif %}">1 Day</a>
+                        <a href="?period=2day" class="btn btn-outline-primary {% if current_period == '2day' %}active{% endif %}">2 Day</a>
                         <a href="?period=1week" class="btn btn-outline-primary {% if current_period == '1week' %}active{% endif %}">1 Week</a>
                         <a href="?period=1month" class="btn btn-outline-primary {% if current_period == '1month' %}active{% endif %}">1 Month</a>
                         <a href="?period=3month" class="btn btn-outline-primary {% if current_period == '3month' %}active{% endif %}">3 Month</a>

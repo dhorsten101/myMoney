@@ -14,6 +14,8 @@ def history_record_list(request):
 		since = now - timedelta(hours=1)
 	elif period == "1day":
 		since = now - timedelta(days=1)
+	elif period == "2day":
+		since = now - timedelta(days=2)
 	elif period == "1week":
 		since = now - timedelta(days=7)
 	elif period == "1month":

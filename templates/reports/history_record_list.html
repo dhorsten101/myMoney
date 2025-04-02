@@ -58,7 +58,7 @@
     </div>
 
     <script>
-        const moneyInvested = 100000;  // 🎯 Set your goal weight here
+        const moneyInvested = 100000;
 
         const ctx = document.getElementById('historyChart').getContext('2d');
         const historyChart = new Chart(ctx, {
@@ -76,7 +76,7 @@
                         },
                         {
                             label: 'Money Invested',
-                            data: Array({{ labels|length }}).fill(moneyInvested),  // 👈 Repeat goal weight
+                            data: Array({{ labels|length }}).fill(moneyInvested),
                             borderColor: 'rgba(255, 99, 132, 0.8)',
                             borderDash: [5, 5],  // Dashed line
                             pointRadius: 0,
@@ -89,7 +89,7 @@
                 options: {
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: false
                         }
                     }
                 }

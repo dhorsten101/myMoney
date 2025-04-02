@@ -34,7 +34,7 @@ def history_record_list(request):
 	else:
 		history_records = HistoryRecord.objects.order_by("-timestamp")
 	
-	labels = [record.timestamp.strftime("%Y-%m-%d") for record in history_records]
+	labels = [record.timestamp.strftime("%Y-%m-%d %H:%M") for record in history_records]
 	values = [
 		float(record.total_value) if record.total_value else 0
 		for record in history_records

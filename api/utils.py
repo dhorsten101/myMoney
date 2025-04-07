@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from crypto.models import CryptoStats
 from history_records.models import HistoryRecord
 from .binance_service import BinanceService
 from .luno_service import LunoService
@@ -44,6 +45,8 @@ def process_dashboard_data():
 		went_up = None  # No previous record
 	
 	HistoryRecord.objects.create(total_value=grand_total_zar, category="crypto")
+	CryptoStats.objects.create(total_value=grand_total_zar)
+	
 	grand_total_history = HistoryRecord.objects.filter(category="crypto").order_by("-timestamp")[:15]
 	
 	# Return data for rendering (optional)

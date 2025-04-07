@@ -14,5 +14,6 @@ urlpatterns = [
 	path("", include("to_do.urls")),
 	path("", include("ideas.urls")),
 	path("", include("weight.urls")),
+	path("", include("crypto.urls")),
 
 ]

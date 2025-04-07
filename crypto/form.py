@@ -1,17 +1,12 @@
 # forms.py
 from django import forms
 
-from .models import Crypto
+from .models import CryptoStats
 
 
 class CryptoForm(forms.ModelForm):
 	class Meta:
-		model = Crypto
+		model = CryptoStats
 		fields = [
-			"name",
-			"description",
-			"balance",
-			"exchange",
-			"converted_zar",
-			"price",
+			"total_value",
 		]

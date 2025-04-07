@@ -39,7 +39,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for c in crypto %}
+                {% for crypto in cryptos %}
                     <tr>
                         <td>{{ crypto.timestamp|date:"Y-m-d H:i:s" }}</td>
                         <td>{{ crypto.total_value|floatformat:2 }}</td>

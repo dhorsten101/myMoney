@@ -34,3 +34,17 @@ class CryptoRecord(models.Model):
 	
 	def __str__(self):
 		return f"{self.exchange} - {self.total_value}"
+
+
+class CryptoStats(models.Model):
+	EXCHANGE_CHOICES = [
+		("binance", "Binance"),
+		("luno", "Luno"),
+	]
+	
+	total_value = models.DecimalField(max_digits=20, decimal_places=2)
+	exchange = models.CharField(max_length=50, choices=EXCHANGE_CHOICES)
+	timestamp = models.DateTimeField(auto_now_add=True)
+	
+	def __str__(self):
+		return f"{self.exchange} - {self.total_value}"

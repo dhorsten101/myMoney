@@ -21,3 +21,5 @@ Pipfile.lock
 .idea/
 process
 .log
+
+process_dashboard.log

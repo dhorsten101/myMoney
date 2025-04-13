@@ -17,6 +17,17 @@
             {% endif %}
         </div>
 
+        {% if quote %}
+            <div class="alert alert-info text-center">
+                <blockquote class="blockquote">
+                    <p class="mb-0">“{{ quote.text }}”</p>
+                    <footer class="blockquote-footer mt-2 text-white">{{ quote.author }}</footer>
+                </blockquote>
+            </div>
+        {% else %}
+            <p class="text-center text-danger">No quote available.</p>
+        {% endif %}
+
         <hr>
 
         <div class="row mt-5 text-center">

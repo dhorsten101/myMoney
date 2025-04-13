@@ -1,12 +1,16 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from .models import CryptoBalance
+from .models import CryptoBalance, Quote
 from .utils import process_dashboard_data
 
 
 def home(request):
-	return render(request, "home.html")
+	latest_quote = Quote.objects.order_by('-created_at').first()
+	
+	return render(request, 'home.html', {
+		'quote': latest_quote,
+	})
 
 
 @login_required

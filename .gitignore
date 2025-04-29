@@ -23,3 +23,4 @@ process
 .log
 
 process_dashboard.log
+fetch_quote.log

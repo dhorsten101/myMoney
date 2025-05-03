@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}
+    Quote
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <div class="position-relative mb-4 text-center">
+            <h1 class="mb-0">Quotes</h1>
+        </div>
+
+        {% if quote %}
+            <div class="alert alert-info text-center mb-4">
+                <blockquote class="blockquote">
+                    <p class="mb-0">“{{ quote.text }}”</p>
+                    <footer class="blockquote-footer mt-2 text-white">{{ quote.author }}</footer>
+                </blockquote>
+            </div>
+        {% else %}
+            <p class="text-center text-danger">Latest quote not available.</p>
+        {% endif %}
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover mt-3">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Quote</th>
+                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Author</th>
+                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Created At</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for quote in quotes %}
+                    <tr>
+                        <td>"{{ quote.text }}"</td>
+                        <td>{{ quote.author }}</td>
+                        <td>{{ quote.created_at }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">No Quotes</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot class="table-light fw-bold">
+                </tfoot>
+            </table>
+        </div>
+    </div>
+{% endblock %}ß

@@ -28,3 +28,9 @@ def update_dashboard(request):
 def assets(request):
 	balances = CryptoBalance.objects.all()
 	return render(request, "asset_list.html", {"balances": balances})
+
+
+@login_required
+def quote_list(request):
+	quotes = Quote.objects.all()
+	return render(request, "quote_list.html", {"quotes": quotes})

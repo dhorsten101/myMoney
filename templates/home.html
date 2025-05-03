@@ -7,11 +7,15 @@
 
 {% block content %}
     <div class="container">
+        <div class="position-relative mb-3 text-center">
+            <a href="{% url 'update_dashboard' %}" class="btn btn-primary position-absolute top-0 start-0 ">Update</a>
+        </div>
 
         <div class="text-center mb-3">
+
             <h1 class="display-5 mb-4"> Welcome <b class=" text-warning"> {{ user.username }} </b> to MyMoney App</h1>
             {% if user.is_authenticated %}
-                <a href="{% url 'dashboard' %}" class="btn btn-primary mx-3 btn-lg mb-3">Go to Dashboard</a>
+                {#                <a href="{% url 'dashboard' %}" class="btn btn-primary mx-3 btn-lg mb-3">Go to Dashboard</a>#}
             {% else %}
                 <h5>Please <a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Register</a>.</h5>
             {% endif %}
@@ -30,91 +34,139 @@
 
         <hr>
 
-        <div class="row mt-4 text-center">
-            <!-- Free Plan Card -->
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <div class="card-header bg-danger text-white">
-                        <h3>Free Plan</h3>$0.00 Per User p/m
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Great to get started</h4>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">✔ All features</li>
-                            <li class="list-group-item">✔ Live stats</li>
-                            <li class="list-group-item">✔ Email only support</li>
-                            <li class="list-group-item">✔ Community portal</li>
-                            <li class="list-group-item">✔ No API access</li>
-                            <li class="list-group-item">✔</li>
-                            <li class="list-group-item">✔</li>
-                            <li class="list-group-item">✔</li>
-                            <li class="list-group-item">✔</li>
-                            <li class="list-group-item">✔</li>
-                            <li class="list-group-item">✔</li>
-                            <li class="list-group-item">✔</li>
-                            <li class="list-group-item">✔</li>
-                            <li class="list-group-item">✔</li>
-                        </ul>
-                    </div>
-                </div>
+    </div>
+
+    <div class="container">
+        {#        <div class="position-relative mb-4 text-center">#}
+        {#            <a href="{% url 'update_dashboard' %}" class="btn btn-primary position-absolute top-0 start-0">Update</a>#}
+        {#            <h1 class="mb-2">Dashboard</h1>#}
+        {##}
+        {#        </div>#}
+        <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+            <!-- Heading on the Left -->
+            <h2 class="me-auto">My Crypto Stats</h2>
+            <div class="d-flex justify-content-center">
+                <!-- Button to show/hide history table -->
+                {#                <button class="btn btn-danger d-flex align-items-center justify-content-center " style="font-size: 0.9rem; padding: 0.15rem 0.5rem;" type="button" data-bs-toggle="collapse" data-bs-target="#historyTable" aria-expanded="false" aria-controls="historyTable">#}
+                {#                    <i class="bi bi-clock-history me-1"></i> History#}
+                {#                </button>#}
+                <!-- Button to toggle showing/hiding the total -->
+                <button id="toggleTotalBtn" class="btn btn-danger d-flex align-items-center justify-content-center mx-4" style="font-size: 0.9rem; padding: 0.15rem 0.5rem;" type="button">
+                    <i class="bi bi-eye me-1"></i> Show
+                </button>
             </div>
 
-            <!-- General Plan Card -->
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <div class="card-header bg-info text-white">
-                        <h3>Personal Plan</h3>$1.00 Per User p/m
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">If you more serious</h4>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">✔ All features</li>
-                            <li class="list-group-item">✔ 12 months historical data</li>
-                            <li class="list-group-item">✔ 8x5 General support</li>
-                            <li class="list-group-item">✔ Email support</li>
-                            <li class="list-group-item">✔ IM support</li>
-                            <li class="list-group-item">✔ Community portal</li>
-                            <li class="list-group-item">✔ Community App</li>
-                            <li class="list-group-item">✔ Limited API access</li>
-                            <li class="list-group-item">✔ 12 month term discounts</li>
-                            <li class="list-group-item">✔</li>
-                            <li class="list-group-item">✔</li>
-                            <li class="list-group-item">✔</li>
-                            <li class="list-group-item">✔</li>
-                            <li class="list-group-item">✔</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <!-- Total Value, Arrow, and Value Change Section on the Right -->
+            <div class="d-flex flex-column align-items-end">
+                <div class="d-flex align-items-center">
+                    <h2 id="totalValue" class="float-end text-success" style="min-width: 100px; display: none;">R {{ grand_total_zar|floatformat:2|intcomma }}</h2>
+                    <h1 id="hiddenTotal" class="float-end text-success" style="min-width: 100px;"> * * * * * * * </h1>
 
-            <!-- Premium Plan Card -->
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <div class="card-header bg-success text-white">
-                        <h3>Personal Plan Pro</h3>$2.00 Per User p/m
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">When your finances are key</h4>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">✔ All features</li>
-                            <li class="list-group-item">✔ 24 months of historical data</li>
-                            <li class="list-group-item">✔ 24x7 Priority support</li>
-                            <li class="list-group-item">✔ Email support</li>
-                            <li class="list-group-item">✔ IM support</li>
-                            <li class="list-group-item">✔ Phone support</li>
-                            <li class="list-group-item">✔ Community portal</li>
-                            <li class="list-group-item">✔ Community App</li>
-                            <li class="list-group-item">✔ Full API access</li>
-                            <li class="list-group-item">✔ Custom integrations</li>
-                            <li class="list-group-item">✔ Custom Appearance</li>
-                            <li class="list-group-item">✔ Reports</li>
-                            <li class="list-group-item">✔ Ask a friend</li>
-                            <li class="list-group-item">✔ 24 month term discounts</li>
-                        </ul>
-                    </div>
+                    {% if went_up is not None %}
+                        {% if went_up %}
+                            <!-- Green arrow for value increase -->
+                            <i class="ms-1 mb-1 bi bi-arrow-up" style="color: green; font-size: 1.5rem"></i>
+                            <p class="p-1 " style="color: green">R {{ value_change|floatformat:2|intcomma }}</p>
+                        {% else %}
+                            <!-- Red arrow for value decrease -->
+                            <i class="ms-1 mb-1  bi bi-arrow-down" style="color: red; font-size: 1.5rem"></i>
+                            <p class="p-1" style="color: red">R {{ value_change|floatformat:2|intcomma }}</p>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
         </div>
+
+        <!-- Table for Historical Data -->
+        <div class="collapse" id="historyTable">
+            <div class="card p-3 ">
+                <table class="table table-bordered mb-2">
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for record in grand_total_history %}
+                        <tr>
+                            <td class="py-1 ">{{ record.timestamp|date:"Y-m-d H:i:s" }}</td>
+                            <td class="py-1 ">R {{ record.total_value|floatformat:2|intcomma }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="2" class="text-center">No history available</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- Luno Balances -->
+        <h4 class="mt-4  text-primary">My Luno Balances: <span class="small float-end text-success ">
+            <b class="card-text fw-normal">R {{ total_converted_zar|floatformat:2|intcomma }}</b></span>
+        </h4>
+
+        <div class="row">
+            {% for item in balance %}
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.asset_name }} ({{ item.asset }}) <span
+                                    class="float-end text-sm small ">{{ item.balance }}</span></h5>
+                            <p class="fw-normal">R {{ item.converted_zar|floatformat:2|intcomma }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <hr>
+
+        <!-- Binance Balances -->
+        <h4 class="mt-3  text-primary">My Binance Balances: <span class="small fw-normal float-end text-success">
+            <b class="card-text fw-normal">R {{ binance_total_converted_zar|floatformat:2|intcomma }}</b></span>
+        </h4>
+
+        <div class="row">
+            {% for balance in binance_balances %}
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ balance.asset }} ({{ balance.asset }}) <span
+                                    class="float-end text-sm small fw-normal">{{ balance.free }}</span></h5>
+                            <p>R {{ balance.converted_zar|floatformat:2|intcomma }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
+
+    <!-- JavaScript for Toggling Total Value Visibility -->
+    <script>
+        const toggleTotalBtn = document.getElementById('toggleTotalBtn');
+        const totalValue = document.getElementById('totalValue');
+        const hiddenTotal = document.getElementById('hiddenTotal');
+
+        // Initially hide the total value
+        totalValue.style.display = 'none';
+        hiddenTotal.style.display = 'block';
+
+        toggleTotalBtn.addEventListener('click', () => {
+            if (totalValue.style.display === 'none') {
+                totalValue.style.display = 'block';
+                hiddenTotal.style.display = 'none';
+                toggleTotalBtn.innerHTML = '<i class="bi bi-eye-slash me-1 "> </i> Hide ';
+            } else {
+                totalValue.style.display = 'none';
+                hiddenTotal.style.display = 'block';
+                toggleTotalBtn.innerHTML = '<i class="bi bi-eye me-1"></i>Show';
+            }
+        });
+    </script>
 {% endblock %}
 

@@ -7,34 +7,57 @@
 
 {% block content %}
     <div class="container mt-3">
-        <div class="position-relative mb-4 text-center">
-            <a href="{% url 'todo_create' %}" class="btn btn-primary position-absolute top-0 start-0">New</a>
+        <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="mb-0">To Do's</h1>
+        </div>
+
+        <div class="mb-3 text-center">
+            <a href="{% url 'todo_create' %}" class="btn btn-primary btn-sm mx-1">New</a>
+            <a href="{% url 'todo_list' %}?filter=all" class="btn {% if filter == 'all' %}btn-secondary{% else %}btn-outline-secondary{% endif %} btn-sm mx-1">All</a>
+            <a href="{% url 'todo_list' %}?filter=incomplete" class="btn {% if filter == 'incomplete' %}btn-danger{% else %}btn-outline-danger{% endif %} btn-sm mx-1">Incomplete</a>
+            <a href="{% url 'todo_list' %}?filter=completed" class="btn {% if filter == 'completed' %}btn-success{% else %}btn-outline-success{% endif %} btn-sm mx-1">Completed</a>
         </div>
 
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover mt-3">
                 <thead class="table-dark">
                 <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Created At</th>
-                    <th scope="col">Actions</th>
-
+                    <th>Name</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for todo in to_do %}
-                    <tr>
-                        <td>{{ todo.name }}</td>
-                        <td>{{ todo.created_at|date:"Y-m-d H:i:s" }}</td>
-                        <td>
-                            <a href="{% url 'todo_update' todo.id %}">Edit</a> -
-                            <a href="{% url 'todo_delete' todo.id %}">Done</a>
-                        </td>
-                    </tr>
+                    {% if not todo.completed %}
+                        <tr>
+                            <td>{{ todo.name }}</td>
+                            <td>{{ todo.created_at|date:"Y-m-d H:i:s" }}</td>
+                            <td>
+                                <a href="{% url 'todo_update' todo.id %}">Edit</a> -
+                                <a href="{% url 'todo_toggle_complete' todo.id %}">Done</a> -
+                                <a href="{% url 'todo_delete' todo.id %}">Delete</a>
+                            </td>
+                        </tr>
+                        {% if filter == 'all' and forloop.counter == incomplete_count %}
+                            <tr>
+                                <td colspan="3" style="height: 40px; opacity: 0"></td>
+                            </tr>
+                        {% endif %}
+                    {% else %}
+                        <tr class="table-secondary opacity-50">
+                            <td><span class="text-decoration-line-through text-danger">{{ todo.name }}</span></td>
+                            <td class="text-decoration-line-through text-danger">{{ todo.created_at|date:"Y-m-d H:i:s" }}</td>
+                            <td class="text-decoration-line-through text-danger">
+                                <a class="text-decoration-line-through text-danger" href="{% url 'todo_update' todo.id %}">Edit</a> -
+                                <a class="text-decoration-line-through text-danger" href="{% url 'todo_toggle_complete' todo.id %}">Undo</a> -
+                                <a class="text-decoration-line-through text-danger" href="{% url 'todo_delete' todo.id %}">Delete</a>
+                            </td>
+                        </tr>
+                    {% endif %}
                 {% empty %}
                     <tr>
-                        <td colspan="8" class="text-center">No ToDo available</td>
+                        <td colspan="3" class="text-center">No ToDo available</td>
                     </tr>
                 {% endfor %}
                 </tbody>

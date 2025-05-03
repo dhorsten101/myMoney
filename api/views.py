@@ -30,7 +30,11 @@ def assets(request):
 	return render(request, "asset_list.html", {"balances": balances})
 
 
-@login_required
 def quote_list(request):
-	quotes = Quote.objects.all()
-	return render(request, "quote_list.html", {"quotes": quotes})
+	quotes = Quote.objects.all().order_by('-created_at')
+	latest_quote = quotes.first()
+	
+	return render(request, 'quote_list.html', {
+		'quotes': quotes,
+		'quote': latest_quote,
+	})

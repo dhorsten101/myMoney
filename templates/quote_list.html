@@ -14,13 +14,15 @@
         {% if quote %}
             <div class="alert alert-info text-center mb-4">
                 <blockquote class="blockquote">
-                    <p class="mb-0">“{{ quote.text }}”</p>
-                    <footer class="blockquote-footer mt-2 text-white">{{ quote.author }}</footer>
+                    <p class="mb-1">“{{ quote.text }}”</p>
+                    <footer class="blockquote-footer mt-1 text-white">{{ quote.author }}</footer>
                 </blockquote>
             </div>
         {% else %}
             <p class="text-center text-danger">Latest quote not available.</p>
         {% endif %}
+
+        <hr>
 
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover mt-3">

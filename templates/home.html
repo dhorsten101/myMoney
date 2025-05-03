@@ -9,9 +9,9 @@
     <div class="container">
 
         <div class="text-center mb-3">
-            <h1 class="display-5 mb-2"> Welcome <b class=" text-warning"> {{ user.username }} </b> to MyMoney App</h1>
+            <h1 class="display-5 mb-4"> Welcome <b class=" text-warning"> {{ user.username }} </b> to MyMoney App</h1>
             {% if user.is_authenticated %}
-                <a href="{% url 'dashboard' %}" class="btn btn-primary mx-3 btn-lg mb-1">Go to Dashboard</a>
+                <a href="{% url 'dashboard' %}" class="btn btn-primary mx-3 btn-lg mb-3">Go to Dashboard</a>
             {% else %}
                 <h5>Please <a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Register</a>.</h5>
             {% endif %}
@@ -54,7 +54,6 @@
                             <li class="list-group-item">✔</li>
                             <li class="list-group-item">✔</li>
                             <li class="list-group-item">✔</li>
-                            <li class="list-group-item">✔</li>
                         </ul>
                     </div>
                 </div>
@@ -78,7 +77,6 @@
                             <li class="list-group-item">✔ Community App</li>
                             <li class="list-group-item">✔ Limited API access</li>
                             <li class="list-group-item">✔ 12 month term discounts</li>
-                            <li class="list-group-item">✔</li>
                             <li class="list-group-item">✔</li>
                             <li class="list-group-item">✔</li>
                             <li class="list-group-item">✔</li>
@@ -112,7 +110,6 @@
                             <li class="list-group-item">✔ Reports</li>
                             <li class="list-group-item">✔ Ask a friend</li>
                             <li class="list-group-item">✔ 24 month term discounts</li>
-                            <li class="list-group-item">✔</li>
                         </ul>
                     </div>
                 </div>

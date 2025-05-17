@@ -22,7 +22,7 @@
             {% csrf_token %}
             <div class="mb-3">
                 {{ form.name.label_tag }}
-                {{ form.name|add_class:"form-control" }}
+                {{ form.name|add_class:"form-control"|attr:"id:ideaInput" }}
             </div>
             <div class="mb-3">
                 {{ form.description.label_tag }}
@@ -34,4 +34,14 @@
             <a href="{% url 'idea_list' %}" class="btn btn-secondary ms-2">Cancel</a>
         </form>
     </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const ideaInput = document.getElementById('ideaInput');
+            if (ideaInput) {
+                ideaInput.focus();
+            }
+        });
+    </script>
+
 {% endblock %}

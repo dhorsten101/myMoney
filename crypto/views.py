@@ -40,10 +40,14 @@ def crypto_list(request):
 	labels = [crypto.timestamp.strftime("%Y-%m-%d %H:%M") for crypto in cryptos]
 	values = [float(crypto.total_value) if crypto.total_value else 0 for crypto in cryptos]
 	
+	latest_crypto = cryptos.first()
+	
 	context = {
 		"cryptos": cryptos,
 		"labels": labels,
 		"values": values,
+		"crypto": latest_crypto,  # ✅ this is what your template already expects
+		"current_period": period,  # optional but needed for highlighting the active filter
 	}
 	
 	return render(request, "crypto_list.html", context)

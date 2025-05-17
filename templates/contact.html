@@ -18,8 +18,8 @@
                     {% csrf_token %}
 
                     <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" name="name" class="form-control" required>
+                        <label for="expenseInput" class="form-label">Name</label>
+                        <input type="text" name="name" id="contactInput" class="form-control" required>
                     </div>
 
                     <div class="mb-3">
@@ -44,4 +44,14 @@
             </div>
         </div>
     </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const contactInput = document.getElementById('contactInput');
+            if (contactInput) {
+                contactInput.focus();
+            }
+        });
+    </script>
+
 {% endblock %}

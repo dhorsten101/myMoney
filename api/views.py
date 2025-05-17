@@ -15,13 +15,13 @@ def home(request):
 
 @login_required
 def dashboard(request):
-	return render(request, "dashboard.html")
+	return render(request, "dashboards/dashboard.html")
 
 
 @login_required
 def update_dashboard(request):
 	context = process_dashboard_data()  # Get processed data from the utility function
-	return render(request, "dashboard.html", context)
+	return render(request, "dashboards/dashboard.html", context)
 
 
 @login_required

@@ -24,12 +24,14 @@
 
             <div class="mb-3">
                 {{ form.name.label_tag }}
-                {{ form.name|add_class:"form-control" }}
+                {{ form.name|add_class:"form-control" |attr:"id:incomeInput" }}
             </div>
+
             <div class="mb-3">
                 {{ form.description.label_tag }}
                 {{ form.description|add_class:"form-control" }}
             </div>
+
             <div class="mb-3">
                 {{ form.balance.label_tag }}
                 {{ form.balance|add_class:"form-control" }}
@@ -47,4 +49,14 @@
             </div>
         </form>
     </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const incomeInput = document.getElementById('incomeInput');
+            if (incomeInput) {
+                incomeInput.focus();
+            }
+        });
+    </script>
+
 {% endblock %}

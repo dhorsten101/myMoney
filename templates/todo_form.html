@@ -24,7 +24,7 @@
 
             <div class="mb-3">
                 {{ form.name.label_tag }}
-                {{ form.name|add_class:"form-control" }}
+                {{ form.name|add_class:"form-control"|attr:"id:todoInput" }}
             </div>
 
             <div class="mt-4">
@@ -39,4 +39,13 @@
             </div>
         </form>
     </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const todoInput = document.getElementById('todoInput');
+            if (todoInput) {
+                todoInput.focus();
+            }
+        });
+    </script>
 {% endblock %}

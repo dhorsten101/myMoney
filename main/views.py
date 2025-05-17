@@ -24,10 +24,6 @@ def pricing(request):
 	return render(request, 'pricing.html')
 
 
-# def contact(request):
-# 	return render(request, 'contact.html')
-#
-
 def contact_view(request):
 	success = False
 	if request.method == "POST":

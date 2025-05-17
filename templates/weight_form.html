@@ -24,7 +24,7 @@
 
             <div class="mb-3">
                 {{ form.weight.label_tag }}
-                {{ form.weight|add_class:"form-control" }}
+                {{ form.weight|add_class:"form-control"|attr:"id:weightInput" }}
             </div>
 
             <div class="mt-4">
@@ -39,4 +39,14 @@
             </div>
         </form>
     </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const weightInput = document.getElementById('weightInput');
+            if (weightInput) {
+                weightInput.focus();
+            }
+        });
+    </script>
+
 {% endblock %}

@@ -24,18 +24,8 @@
 
             <div class="mb-3">
                 {{ form.name.label_tag }}
-                {{ form.name|add_class:"form-control" }}
+                {{ form.name|add_class:"form-control"|attr:"id:assetInput" }}
             </div>
-
-            {#            <div class="mb-3">#}
-            {#                {{ form.description.label_tag }}#}
-            {#                {{ form.description|add_class:"form-control" }}#}
-            {#            </div>#}
-
-            {#            <div class="mb-3">#}
-            {#                {{ form.exchange.label_tag }}#}
-            {#                {{ form.exchange|add_class:"form-control" }}#}
-            {#            </div>#}
 
             <div class="mb-3">
                 {{ form.balance.label_tag }}
@@ -46,17 +36,6 @@
                 {{ form.converted_zar.label_tag }}
                 {{ form.converted_zar|add_class:"form-control" }}
             </div>
-
-            {#            <div class="mb-3">#}
-            {#                {{ form.converted_usd.label_tag }}#}
-            {#                {{ form.converted_usd|add_class:"form-control" }}#}
-            {#            </div>#}
-            {##}
-            {#            <div class="mb-3">#}
-            {#                {{ form.price.label_tag }}#}
-            {#                {{ form.price|add_class:"form-control" }}#}
-            {#            </div>#}
-
 
             <div class="mt-4">
                 <button type="submit" class="btn btn-primary">
@@ -70,4 +49,13 @@
             </div>
         </form>
     </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const assetInput = document.getElementById('assetInput');
+            if (assetInput) {
+                assetInput.focus();
+            }
+        });
+    </script>
 {% endblock %}

@@ -9,7 +9,7 @@ class WorthForm(forms.ModelForm):
 		model = Worth
 		fields = [
 			"name",
-			"notes",
+			# "notes",
 			"quick_value",
 			"real_value",
 			"category",

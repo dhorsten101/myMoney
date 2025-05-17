@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils import timezone
 
-from crypto.models import Crypto
+from crypto.models import CryptoStats
 
 
 @login_required
@@ -33,19 +33,19 @@ def crypto_list(request):
 		since = None
 	
 	if since:
-		cryptos = Crypto.objects.filter(timestamp__gte=since).order_by("-timestamp")
+		cryptos = CryptoStats.objects.filter(timestamp__gte=since).order_by("-timestamp")
 	else:
-		cryptos = Crypto.objects.order_by("-timestamp")
+		cryptos = CryptoStats.objects.order_by("-timestamp")
 	
 	labels = [crypto.timestamp.strftime("%Y-%m-%d %H:%M") for crypto in cryptos]
-	# values = [float(crypto.total_value) if crypto.total_value else 0 for crypto in cryptos]
+	values = [float(crypto.total_value) if crypto.total_value else 0 for crypto in cryptos]
 	
 	latest_crypto = cryptos.first()
 	
 	context = {
 		"cryptos": cryptos,
 		"labels": labels,
-		# "values": values,
+		"values": values,
 		"crypto": latest_crypto,  # ✅ this is what your template already expects
 		"current_period": period,  # optional but needed for highlighting the active filter
 	}

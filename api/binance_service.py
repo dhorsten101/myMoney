@@ -2,6 +2,8 @@ from binance.client import Client
 from django.conf import settings
 from django.utils import timezone
 
+from assets.models import Asset
+
 
 class BinanceService:
 	def __init__(self):
@@ -10,7 +12,7 @@ class BinanceService:
 	def get_balances(self):
 		account_info = self.client.get_account()
 		
-		# Filter out cryptos with a balance greater than 0
+		# Filter out assets with a balance greater than 0
 		balances = [
 			balance
 			for balance in account_info["balances"]
@@ -33,7 +35,7 @@ class BinanceService:
 		total_converted_usd = 0
 		total_converted_zar = 0
 		
-		# Fetching exchange rates for the cryptos you're interested in
+		# Fetching exchange rates for the assets you're interested in
 		exchange_rates = {
 			"BTCUSDT": self.get_exchange_rates("BTCUSDT"),
 			"ETHUSDT": self.get_exchange_rates("ETHUSDT"),
@@ -42,17 +44,17 @@ class BinanceService:
 		}
 		
 		for balance in balances:
-			crypto = balance["crypto"]
+			asset = balance["asset"]
 			free_balance = float(balance["free"])
 			
 			# Convert to USD and then to ZAR using exchange rates
-			if crypto == "BTC" and exchange_rates["BTCUSDT"]:
+			if asset == "BTC" and exchange_rates["BTCUSDT"]:
 				balance_in_usd = free_balance * exchange_rates["BTCUSDT"]
 				balance_in_zar = balance_in_usd * zar_to_usd_rate
-			elif crypto == "ETH" and exchange_rates["ETHUSDT"]:
+			elif asset == "ETH" and exchange_rates["ETHUSDT"]:
 				balance_in_usd = free_balance * exchange_rates["ETHUSDT"]
 				balance_in_zar = balance_in_usd * zar_to_usd_rate
-			elif crypto == "BNB" and exchange_rates["BNBUSDT"]:
+			elif asset == "BNB" and exchange_rates["BNBUSDT"]:
 				balance_in_usd = free_balance * exchange_rates["BNBUSDT"]
 				balance_in_zar = balance_in_usd * zar_to_usd_rate
 			else:
@@ -71,7 +73,7 @@ class BinanceService:
 	def save_balances_to_model(self, balance_data, zar_to_usd_rate):
 		"""Save converted balances to the database."""
 		for bal in balance_data:  # Iterate over the list of balances
-			crypto = bal["crypto"]
+			asset = bal["asset"]
 			balance = float(bal["free"])
 			
 			# Use the converted values (USD and ZAR)
@@ -79,9 +81,9 @@ class BinanceService:
 			zar_value = bal.get("converted_zar", 0)
 			
 			# Save or update the balance in the database
-			crypto.objects.update_or_create(
+			Asset.objects.update_or_create(
 				exchange="Binance",  # Specify the exchange name
-				name=crypto,
+				name=asset,
 				defaults={  # Fields that should be updated if the record exists
 					"account_id": None,
 					"balance": balance,

@@ -25,9 +25,9 @@ def update_dashboard(request):
 
 
 @login_required
-def crypto(request):
+def assets(request):
 	balances = CryptoBalance.objects.all()
-	return render(request, "crypto_list.html", {"balances": balances})
+	return render(request, "asset_list.html", {"balances": balances})
 
 
 def quote_list(request):

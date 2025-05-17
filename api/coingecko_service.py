@@ -1,7 +1,7 @@
 import requests
 
 
-def fetch_crypto_names():
+def fetch_asset_names():
 	response = requests.get("https://api.coingecko.com/api/v3/coins/list")
 	if response.status_code == 200:
 		# Normalize symbols to uppercase for matching

@@ -31,6 +31,45 @@
         <br>
         <hr>
         <br>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover mt-3">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Exchange</th>
+                    <th scope="col">Account ID</th>
+                    <th scope="col">Currency Balance</th>
+                    <th scope="col">ZAR</th>
+                    <th scope="col">Timestamp</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for crypto in cryptos %}
+                    <tr>
+                        <td>{{ crypto.name }}</td>
+                        <td>{{ crypto.exchange }}</td>
+                        <td>{{ crypto.account_id }}</td>
+                        <td>{{ crypto.balance|floatformat:4 }}</td>
+                        <td>R {{ crypto.converted_zar|floatformat:2|intcomma }}</td>
+                        <td>{{ crypto.timestamp|date:"Y-m-d H:i:s" }}</td>
+
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">No Crypto available</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot class="table-light fw-bold">
+                <tr>
+                    <td colspan="4" class="text-end fw-bold">Totals:</td>
+                    <td>R {{ total_converted_zar|floatformat:2|intcomma }}</td>
+                    <td colspan="2"></td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
         <!-- Add a scrollable container with fixed height -->
         <div class="table-responsive" style="max-height: 320px; overflow-y: scroll;">
             <table class="table table- table-striped table-hover">

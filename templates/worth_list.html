@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}
+    Worth Items
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <div class="position-relative mb-4 text-center">
+            <a href="{% url 'worth_create' %}" class="btn btn-primary position-absolute top-0 start-0">New</a>
+            <h1 class="mb-0">Worth Items</h1>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover mt-3 ">
+                <tbody>
+                <tfoot class=" fw-bold">
+                <tr>
+                    <td colspan="1" class="text-danger text-end " style="font-size: large">Grand Totals:</td>
+                    <td class=" text-danger" style="font-size: large">R {{ total_real_value|floatformat:2|intcomma }}</td>
+                    <td class=" text-danger" style="font-size: large">R {{ total_quick_value|floatformat:2|intcomma }}</td>
+                    <td colspan="4"></td>
+                </tr>
+                </tfoot>
+
+                {% for category, data in category_totals.items %}
+                    <!-- Category title row -->
+                    <tr style=" border: none;" class="text-center text-uppercase fs-5">
+                        <th colspan="8" class="border-0 text-info  ">{{ category }}</th>
+                    </tr>
+
+                    <!-- Column headings for this category -->
+                    <tr class="table-success opacity-75" style="border: none;">
+                        <th class="border-0  ">Name</th>
+                        {#                        <th class="border-0">Category</th>#}
+                        <th class="border-0">Real Value</th>
+                        <th class="border-0">Quick Value</th>
+                        {#                        <th class="border-0">Notes</th>#}
+                        <th class="border-0">Created At</th>
+                        <th class="border-0">Updated At</th>
+                        <th class="border-0">Actions</th>
+                    </tr>
+
+                    {% for item in data.items %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            {#                            <td>{{ item.category }}</td>#}
+                            <td>R {{ item.real_value|floatformat:2 }}</td>
+                            <td>R {{ item.quick_value|floatformat:2 }}</td>
+                            {#                            <td>{{ item.notes }}</td>#}
+                            <td>{{ item.created_at|date:"Y-m-d H:i" }}</td>
+                            <td>{{ item.updated_at|date:"Y-m-d H:i" }}</td>
+                            <td>
+                                <a href="{% url 'worth_update' item.id %}">Edit</a>
+                                <a href="{% url 'worth_delete' item.id %}">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    <!-- Subtotals -->
+                    <tr class=" fw-bold">
+                        <td colspan="1" class="text-end text-primary">Subtotal:</td>
+                        <td class=" text-primary">R {{ data.total_real|floatformat:2|intcomma }}</td>
+                        <td class=" text-primary">R {{ data.total_quick|floatformat:2|intcomma }}</td>
+                        <td colspan="4"></td>
+                    </tr>
+                    <tr>
+                        <td class="opacity-0 border-0" colspan="8" style="height: 40px; border: none;"></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

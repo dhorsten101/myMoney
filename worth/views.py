@@ -1,22 +1,49 @@
+from collections import defaultdict
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import render
 
 from worth.forms import WorthForm
-from worth.models import Worth
+from .models import Worth
 
 
 @login_required
 def worth_list(request):
-	worth = Worth.objects.all()
-	total_real_value = (
-			worth.aggregate(Sum("real_value"))["real_value__sum"] or 0
-	)  # Sum up all the balances
+	worth_qs = Worth.objects.all().order_by("category")
+	
+	# Grand totals
+	totals = worth_qs.aggregate(
+		total_real_value=Sum("real_value"),
+		total_quick_value=Sum("quick_value")
+	)
+	
+	# Grouped by category
+	grouped_worth = defaultdict(list)
+	category_totals = {}
+	
+	for item in worth_qs:
+		grouped_worth[item.category].append(item)
+	
+	# Calculate per-category totals
+	for category, items in grouped_worth.items():
+		total_real = sum(i.real_value or 0 for i in items)
+		total_quick = sum(i.quick_value or 0 for i in items)
+		category_totals[category] = {
+			"items": items,
+			"total_real": total_real,
+			"total_quick": total_quick
+		}
 	
 	return render(
 		request,
 		"worth_list.html",
-		{"worth": worth, "total_real_value": total_real_value},
+		{
+			"category_totals": category_totals,
+			"total_real_value": totals["total_real_value"] or 0,
+			"total_quick_value": totals["total_quick_value"] or 0,
+		},
 	)
 
 

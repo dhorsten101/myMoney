@@ -18,8 +18,8 @@
                 <tfoot class=" fw-bold">
                 <tr>
                     <td colspan="1" class="text-danger text-end " style="font-size: large">Grand Totals:</td>
-                    <td class=" text-danger" style="font-size: large">R {{ total_real_value|floatformat:2 }}</td>
-                    <td class=" text-danger" style="font-size: large">R {{ total_quick_value|floatformat:2 }}</td>
+                    <td class=" text-danger" style="font-size: large">R {{ total_real_value|floatformat:0|intcomma }}</td>
+                    <td class=" text-danger" style="font-size: large">R {{ total_quick_value|floatformat:0|intcomma }}</td>
                     <td colspan="4"></td>
                 </tr>
                 </tfoot>
@@ -43,8 +43,8 @@
                     {% for item in data.items %}
                         <tr>
                             <td>{{ item.name }}</td>
-                            <td>R {{ item.real_value|floatformat:2 }}</td>
-                            <td>R {{ item.quick_value|floatformat:2 }}</td>
+                            <td>R {{ item.real_value|floatformat:0|intcomma }}</td>
+                            <td>R {{ item.quick_value|floatformat:0|intcomma }}</td>
                             <td>{{ item.created_at|date:"Y-m-d H" }}</td>
                             <td>{{ item.updated_at|date:"Y-m-d H" }}</td>
                             <td>
@@ -66,8 +66,8 @@
                     <!-- Subtotals -->
                     <tr class=" fw-bold">
                         <td colspan="1" class="text-end text-primary">Subtotal:</td>
-                        <td class=" text-primary">R {{ data.total_real|floatformat:2 }}</td>
-                        <td class=" text-primary">R {{ data.total_quick|floatformat:2 }}</td>
+                        <td class=" text-primary">R {{ data.total_real|floatformat:0|intcomma }}</td>
+                        <td class=" text-primary">R {{ data.total_quick|floatformat:0|intcomma }}</td>
                         <td colspan="4"></td>
                     </tr>
                     <tr>

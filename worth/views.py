@@ -9,31 +9,29 @@ from worth.forms import WorthForm
 from .models import Worth
 
 
-@login_required
 def worth_list(request):
 	worth_qs = Worth.objects.all().order_by("category")
 	
-	# Grand totals
-	totals = worth_qs.aggregate(
+	total_values = worth_qs.aggregate(
 		total_real_value=Sum("real_value"),
 		total_quick_value=Sum("quick_value")
 	)
 	
-	# Grouped by category
-	grouped_worth = defaultdict(list)
+	grouped = defaultdict(list)
 	category_totals = {}
 	
 	for item in worth_qs:
-		grouped_worth[item.category].append(item)
+		grouped[item.category].append(item)
 	
-	# Calculate per-category totals
-	for category, items in grouped_worth.items():
-		total_real = sum(i.real_value or 0 for i in items)
-		total_quick = sum(i.quick_value or 0 for i in items)
-		category_totals[category] = {
+	for category_key, items in grouped.items():
+		display_name = dict(Worth.CATEGORY_CHOICES).get(
+			category_key,
+			category_key.replace('_', ' ').title()
+		)
+		category_totals[display_name] = {
 			"items": items,
-			"total_real": total_real,
-			"total_quick": total_quick
+			"total_real": sum(i.real_value or 0 for i in items),
+			"total_quick": sum(i.quick_value or 0 for i in items),
 		}
 	
 	return render(
@@ -41,8 +39,8 @@ def worth_list(request):
 		"worth_list.html",
 		{
 			"category_totals": category_totals,
-			"total_real_value": totals["total_real_value"] or 0,
-			"total_quick_value": totals["total_quick_value"] or 0,
+			"total_real_value": total_values["total_real_value"] or 0,
+			"total_quick_value": total_values["total_quick_value"] or 0,
 		},
 	)
 

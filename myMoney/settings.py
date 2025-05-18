@@ -35,7 +35,6 @@ INSTALLED_APPS = [
 	"to_do",
 	"weight",
 	"ideas",
-	"crypto",
 	"worth",
 ]
 

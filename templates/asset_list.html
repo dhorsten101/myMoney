@@ -2,69 +2,15 @@
 {% load humanize %}
 
 {% block title %}
-    Assets
+    Crypto
 {% endblock %}
 
 {% block content %}
     <div class="container mt-3">
         <div class="position-relative mb-4 text-center">
-            <a href="{% url 'asset_create' %}" class="btn btn-primary position-absolute top-0 start-0">New</a>
-            <h1 class="mb-0">Assets</h1>
+            {#            <a href="{% url 'asset_create' %}" class="btn btn-primary position-absolute top-0 start-0">New</a>#}
+            <h1 class="mb-0">Crypto</h1>
         </div>
-
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover mt-3">
-                <thead class="table-dark">
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Exchange</th>
-                    <th scope="col">Account ID</th>
-                    <th scope="col">Currency Balance</th>
-                    <th scope="col">ZAR</th>
-                    <th scope="col">Timestamp</th>
-                    <th scope="col">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for asset in assets %}
-                    <tr>
-                        <td>{{ asset.name }}</td>
-                        <td>{{ asset.exchange }}</td>
-                        <td>{{ asset.account_id }}</td>
-                        <td>{{ asset.balance|floatformat:4 }}</td>
-                        <td>R {{ asset.converted_zar|floatformat:2|intcomma }}</td>
-                        <td>{{ asset.timestamp|date:"Y-m-d H:i:s" }}</td>
-                        <td>
-                            <button onclick="window.location.href='{% url 'asset_update' asset.id %}'"
-                                    class="btn btn-link p-0 me-2 text-primary text-decoration-none"
-                                    title="Edit">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-                            <button onclick="window.location.href='{% url 'asset_delete' asset.id %}'"
-                                    class="btn btn-link p-0 text-danger text-decoration-none me-2"
-                                    title="Delete">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="8" class="text-center">No assets available</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-                <tfoot class="table-light fw-bold">
-                <tr>
-                    <td colspan="4" class="text-end fw-bold">Totals:</td>
-                    <td>R {{ total_converted_zar|floatformat:2|intcomma }}</td>
-                    <td colspan="2"></td>
-                </tr>
-                </tfoot>
-            </table>
-        </div>
-
-
-        <h1 class="text-center mb-3">Crypto Stats</h1>
 
         <div class="position-relative mb-4 text-center">
             <form method="get" class="mb-4">
@@ -82,35 +28,74 @@
                 </div>
             </form>
         </div>
+
         <h3 class="text-center text-success mb-3">Latest Value: R {{ crypto.total_value|floatformat:2|intcomma }}</h3>
 
         <canvas id="cryptoChart" width="400" height="180"></canvas>
+
+        {#        <div class="table-responsive" style="max-height: 320px; overflow-y: scroll;">#}
+        {#            <table class="table table- table-striped table-hover">#}
+        {#                <thead class="table-dark">#}
+        {#                <tr>#}
+        {#                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Date</th>#}
+        {#                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Value</th>#}
+        {#                </tr>#}
+        {#                </thead>#}
+        {#                <tbody>#}
+        {#                {% for crypto in cryptos %}#}
+        {#                    <tr>#}
+        {#                        <td>{{ crypto.timestamp|date:"Y-m-d H:i:s" }}</td>#}
+        {#                        <td>{{ crypto.total_value|floatformat:2 }}</td>#}
+        {#                    </tr>#}
+        {#                {% empty %}#}
+        {#                    <tr>#}
+        {#                        <td colspan="3" class="text-center">No records available</td>#}
+        {#                    </tr>#}
+        {#                {% endfor %}#}
+        {#                </tbody>#}
+        {#            </table>#}
+        {#        </div>#}
+
         <br>
         <hr>
-        <br>
 
-        <div class="table-responsive" style="max-height: 320px; overflow-y: scroll;">
-            <table class="table table- table-striped table-hover">
-                <thead class="table-dark">
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover mt-3">
+            <thead class="table-dark">
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Exchange</th>
+                <th scope="col">Account ID</th>
+                <th scope="col">Currency</th>
+                <th scope="col">ZAR</th>
+                <th scope="col">Timestamp</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for asset in assets %}
                 <tr>
-                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Date</th>
-                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Value</th>
+                    <td>{{ asset.name }}</td>
+                    <td>{{ asset.exchange }}</td>
+                    <td>{{ asset.account_id }}</td>
+                    <td>{{ asset.balance|floatformat:4 }}</td>
+                    <td>R {{ asset.converted_zar|floatformat:2|intcomma }}</td>
+                    <td>{{ asset.timestamp|date:"Y-m-d H:i:s" }}</td>
                 </tr>
-                </thead>
-                <tbody>
-                {% for crypto in cryptos %}
-                    <tr>
-                        <td>{{ crypto.timestamp|date:"Y-m-d H:i:s" }}</td>
-                        <td>{{ crypto.total_value|floatformat:2 }}</td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="3" class="text-center">No records available</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+            {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">No assets available</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot class=" fw-bold">
+            <tr>
+                <td colspan="4" class="text-end fw-bold text-danger">Totals:</td>
+                <td class="text-danger">R {{ total_converted_zar|floatformat:2|intcomma }}</td>
+                <td colspan="2"></td>
+            </tr>
+            </tfoot>
+        </table>
     </div>
 
     <script>

@@ -29,8 +29,16 @@
                         <td>{{ idea.name }}</td>
                         <td>{{ idea.description }}</td>
                         <td>
-                            <a href="{% url 'idea_update' idea.id %}">Edit</a> -
-                            <a href="{% url 'idea_delete' idea.id %}">Delete</a>
+                            <button onclick="window.location.href='{% url 'idea_update' idea.id %}'"
+                                    class="btn btn-link p-0 me-2 text-primary text-decoration-none"
+                                    title="Edit">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                            <button onclick="window.location.href='{% url 'idea_delete' idea.id %}'"
+                                    class="btn btn-link p-0 text-danger text-decoration-none me-2"
+                                    title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </td>
                     </tr>
                 {% empty %}

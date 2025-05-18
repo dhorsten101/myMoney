@@ -34,9 +34,21 @@
                             <td>{{ todo.name }}</td>
                             <td>{{ todo.created_at|date:"Y-m-d H:i:s" }}</td>
                             <td>
-                                <a href="{% url 'todo_update' todo.id %}">Edit</a> -
-                                <a href="{% url 'todo_toggle_complete' todo.id %}">Done</a> -
-                                <a href="{% url 'todo_delete' todo.id %}">Delete</a>
+                                <button onclick="window.location.href='{% url 'todo_update' todo.id %}'"
+                                        class="btn btn-link p-0 me-2 text-primary text-decoration-none"
+                                        title="Edit">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button onclick="window.location.href='{% url 'todo_toggle_complete' todo.id %}'"
+                                        class="btn btn-link p-0 text-success text-decoration-none me-2"
+                                        title="Delete">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                                <button onclick="window.location.href='{% url 'todo_delete' todo.id %}'"
+                                        class="btn btn-link p-0 text-danger text-decoration-none me-2"
+                                        title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                             </td>
                         </tr>
                         {% if filter == 'all' and forloop.counter == incomplete_count %}
@@ -45,13 +57,15 @@
                             </tr>
                         {% endif %}
                     {% else %}
-                        <tr class="table-secondary opacity-50">
+                        <tr class="table-secondary opacity-75">
                             <td><span class="text-decoration-line-through text-danger">{{ todo.name }}</span></td>
                             <td class="text-decoration-line-through text-danger">{{ todo.created_at|date:"Y-m-d H:i:s" }}</td>
-                            <td class="text-decoration-line-through text-danger">
-                                <a class="text-decoration-line-through text-danger" href="{% url 'todo_update' todo.id %}">Edit</a> -
-                                <a class="text-decoration-line-through text-danger" href="{% url 'todo_toggle_complete' todo.id %}">Undo</a> -
-                                <a class="text-decoration-line-through text-danger" href="{% url 'todo_delete' todo.id %}">Delete</a>
+                            <td>
+                                <button onclick="window.location.href='{% url 'todo_delete' todo.id %}'"
+                                        class="btn btn-link p-0 text-danger text-decoration-none me-2"
+                                        title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                             </td>
                         </tr>
                     {% endif %}

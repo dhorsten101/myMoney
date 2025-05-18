@@ -33,11 +33,18 @@
                         <td>{{ asset.account_id }}</td>
                         <td>{{ asset.balance|floatformat:4 }}</td>
                         <td>R {{ asset.converted_zar|floatformat:2|intcomma }}</td>
-                        {#                        <td>$ {{ asset.converted_usd|floatformat:2|intcomma }}</td>#}
                         <td>{{ asset.timestamp|date:"Y-m-d H:i:s" }}</td>
                         <td>
-                            <a href="{% url 'asset_update' asset.id %}">Edit</a>
-                            <a href="{% url 'asset_delete' asset.id %}">Delete</a>
+                            <button onclick="window.location.href='{% url 'asset_update' asset.id %}'"
+                                    class="btn btn-link p-0 me-2 text-primary text-decoration-none"
+                                    title="Edit">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                            <button onclick="window.location.href='{% url 'asset_delete' asset.id %}'"
+                                    class="btn btn-link p-0 text-danger text-decoration-none me-2"
+                                    title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </td>
                     </tr>
                 {% empty %}
@@ -55,61 +62,92 @@
                 </tfoot>
             </table>
         </div>
+
+
+        <h1 class="text-center mb-3">Crypto Stats</h1>
+
+        <div class="position-relative mb-4 text-center">
+            <form method="get" class="mb-4">
+                <div class="row g-2 align-items-center">
+                    <div class="btn-group mb-2" role="group">
+                        <a href="?period=1day" class="btn btn-outline-primary {% if current_period == '1day' %}active{% endif %}">1 Day</a>
+                        <a href="?period=2day" class="btn btn-outline-primary {% if current_period == '2day' %}active{% endif %}">2 Day</a>
+                        <a href="?period=1week" class="btn btn-outline-primary {% if current_period == '1week' %}active{% endif %}">1 Week</a>
+                        <a href="?period=1month" class="btn btn-outline-primary {% if current_period == '1month' %}active{% endif %}">1 Month</a>
+                        <a href="?period=3month" class="btn btn-outline-primary {% if current_period == '3month' %}active{% endif %}">3 Month</a>
+                        <a href="?period=6month" class="btn btn-outline-primary {% if current_period == '6month' %}active{% endif %}">6 Month</a>
+                        <a href="?period=1year" class="btn btn-outline-primary {% if current_period == '1year' %}active{% endif %}">1 Year</a>
+                        <a href="?period=all" class="btn btn-outline-primary {% if current_period == 'all' %}active{% endif %}">All</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <h3 class="text-center text-success mb-3">Latest Value: R {{ crypto.total_value|floatformat:2|intcomma }}</h3>
+
+        <canvas id="cryptoChart" width="400" height="180"></canvas>
+        <br>
+        <hr>
+        <br>
+
+        <div class="table-responsive" style="max-height: 320px; overflow-y: scroll;">
+            <table class="table table- table-striped table-hover">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Date</th>
+                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for crypto in cryptos %}
+                    <tr>
+                        <td>{{ crypto.timestamp|date:"Y-m-d H:i:s" }}</td>
+                        <td>{{ crypto.total_value|floatformat:2 }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center">No records available</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-    {#    <script>#}
-    {#        const ctx = document.getElementById('assetChart').getContext('2d');#}
-    {#        const assetChart = new Chart(ctx, {#}
-    {#            type: 'line',#}
-    {#            data: {#}
-    {#                labels: {{ labels|safe }},  // Reverse the labels#}
-    {#                datasets: [{#}
-    {#                    label: 'Total Assets Over Time',#}
-    {#                    data: {{ values|safe }},  // Reverse the data#}
-    {#                    backgroundColor: 'rgba(75, 192, 192, 0.03)',#}
-    {#                    borderColor: 'rgba(75, 192, 192, 1)',#}
-    {#                    borderWidth: 1,#}
-    {#                    fill: true,#}
-    {#                }]#}
-    {#            },#}
-    {#            options: {#}
-    {#                responsive: true,#}
-    {#                plugins: {#}
-    {#                    legend: {#}
-    {#                        display: true#}
-    {#                    },#}
-    {##}
-    {#                },#}
-    {#                scales: {#}
-    {#                    x: {#}
-    {#                        title: {#}
-    {#                            display: false,#}
-    {#                            text: 'Date',#}
-    {#                            color: '#fff',#}
-    {#                            padding: 5,#}
-    {#                            font: {#}
-    {#                                size: 14,#}
-    {#                                weight: 'bold'#}
-    {#                            }#}
-    {#                        }#}
-    {#                    },#}
-    {#                    y: {#}
-    {#                        beginAtZero: true,#}
-    {#                        title: {#}
-    {#                            display: false,#}
-    {#                            text: 'Weight (Kg)',#}
-    {#                            color: '#fff',#}
-    {#                            padding: 5,#}
-    {#                            font: {#}
-    {#                                size: 14,#}
-    {#                                weight: 'bold'#}
-    {#                            }#}
-    {#                        },#}
-    {#                        ticks: {#}
-    {#                            stepSize: 1  // optional: show tick marks in steps of 1 kg#}
-    {#                        }#}
-    {#                    }#}
-    {#                }#}
-    {#            }#}
-    {#        });#}
-    {#    </script>#}
+
+    <script>
+        const moneyInvested = 100000;
+
+        const ctx = document.getElementById('cryptoChart').getContext('2d');
+        const cryptoChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ crypto_labels|safe }}.reverse(),  // Use the correct context variable
+                datasets: [
+                    {
+                        label: 'Total Value Over Time',
+                        data: {{ crypto_values|safe }}.reverse(),  // Correct variable name
+                        backgroundColor: 'rgba(75, 192, 192, 0.03)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        fill: true,
+                    },
+                    {
+                        label: 'Money Invested',
+                        data: Array({{ crypto_labels|length }}).fill(moneyInvested),
+                        borderColor: 'rgba(255, 99, 132, 0.8)',
+                        borderDash: [5, 5],
+                        pointRadius: 0,
+                        fill: false,
+                        tension: 0
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+    </script>
 {% endblock %}

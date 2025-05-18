@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from crypto.models import CryptoStats
+from assets.models import CryptoStats
 from history_records.models import HistoryRecord
 from .binance_service import BinanceService
 from .luno_service import LunoService

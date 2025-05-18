@@ -32,7 +32,6 @@
                 {% for weight in weight %}
                     <tr>
                         <td>{{ weight.weight }}</td>
-                        {#                        <td>{{ weight.created_at|date:"Y-m-d H:i:s" }}</td>#}
                         <td>{{ weight.created_at|localtime|date:"Y-m-d H:i:s" }}</td>
                         <td>
                             <button onclick="window.location.href='{% url 'weight_update' weight.id %}'"
@@ -47,7 +46,6 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
-
                     </tr>
                 {% empty %}
                     <tr>

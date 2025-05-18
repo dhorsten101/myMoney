@@ -7,9 +7,22 @@
 
 {% block content %}
     <div class="container mt-3">
-        <div class="position-relative mb-4 text-center">
-            <a href="{% url 'worth_create' %}" class="btn btn-primary position-absolute top-0 start-0">New</a>
-            <h1 class="mb-0">Worth Items</h1>
+        <div class="row mb-4 align-items-center text-center">
+            <!-- Left: New button -->
+            <div class="col-3 text-start">
+                <a href="{% url 'worth_create' %}" class="btn btn-primary">New</a>
+            </div>
+
+            <!-- Center: Heading -->
+            <div class="col-6">
+                <h1 class="mb-0">Worth Items</h1>
+            </div>
+
+            <!-- Right: Totals -->
+            <div class="col-3 text-end">
+                <div class="text-danger" style="font-size: large;">Total Real Value: R {{ total_real_value|floatformat:0|intcomma }}</div>
+                <div class="text-danger" style="font-size: large;">Total Quick Sale: R {{ total_quick_value|floatformat:0|intcomma }}</div>
+            </div>
         </div>
 
         <div class="table-responsive">

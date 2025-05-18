@@ -3,8 +3,7 @@ from django.db import models
 
 class Worth(models.Model):
 	CATEGORY_CHOICES = [
-		("property", "Property"),
-		("houses", "Houses"),
+		("real_estate", "Real Estate"),
 		("cash", "Cash"),
 		("investments", "Investments"),
 		("shares", "Shares"),

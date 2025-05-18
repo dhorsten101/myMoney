@@ -34,11 +34,20 @@
                         <td>{{ weight.weight }}</td>
                         {#                        <td>{{ weight.created_at|date:"Y-m-d H:i:s" }}</td>#}
                         <td>{{ weight.created_at|localtime|date:"Y-m-d H:i:s" }}</td>
-
                         <td>
-                            <a href="{% url 'weight_update' weight.id %}">Edit</a> -
-                            <a href="{% url 'weight_delete' weight.id %}">Delete</a>
+                            <button onclick="window.location.href='{% url 'weight_update' weight.id %}'"
+                                    class="btn btn-link p-0 me-2 text-primary text-decoration-none"
+                                    title="Edit">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+
+                            <button onclick="window.location.href='{% url 'weight_delete' weight.id %}'"
+                                    class="btn btn-link p-0 text-danger text-decoration-none"
+                                    title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </td>
+
                     </tr>
                 {% empty %}
                     <tr>

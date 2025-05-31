@@ -1,13 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from .models import CryptoBalance, Quote
+from .models import Quote
 from .utils import process_dashboard_data
 
 
 def home(request):
 	latest_quote = Quote.objects.order_by('-created_at').first()
-	
 	return render(request, 'home.html', {
 		'quote': latest_quote,
 	})
@@ -22,12 +21,6 @@ def dashboard(request):
 def update_dashboard(request):
 	context = process_dashboard_data()  # Get processed data from the utility function
 	return render(request, "dashboards/dashboard.html", context)
-
-
-@login_required
-def assets(request):
-	balances = CryptoBalance.objects.all()
-	return render(request, "asset_list.html", {"balances": balances})
 
 
 def quote_list(request):

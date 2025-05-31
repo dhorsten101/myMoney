@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.utils import timezone
 from luno_python.client import Client
-from luno_python.error import APIError
 
 from assets.models import Asset
 from .coingecko_service import fetch_asset_names, get_zar_to_usd_rate
@@ -76,114 +75,6 @@ class LunoService:
 			total_converted_usd,
 		)
 	
-	def get_money_in(self):
-		total_money_in = 0
-		balances = self.get_balance()
-		
-		try:
-			for balance in balances["balance"]:
-				account_id = balance["account_id"]  # Use account_id
-				print(f"Fetching transactions for account {account_id}")
-				
-				# Fetch transactions for each account
-				transactions = self.client.list_transactions(
-					id=account_id, max_row=100, min_row=0
-				)
-				
-				if (
-						transactions is None
-						or "transactions" not in transactions
-						or transactions["transactions"] is None
-				):
-					print(
-						f"No transactions found or transactions is None for account {account_id}"
-					)
-					continue
-				
-				for transaction in transactions["transactions"]:
-					if transaction["type"] == "DEPOSIT":
-						total_money_in += float(transaction["amount"])
-					
-					# Handle api received transactions (convert to ZAR if needed)
-					if transaction["type"] == "RECEIVED":
-						amount_zar = float(transaction["amount"]) * float(
-							transaction.get("price", 1)
-						)
-						total_money_in += amount_zar
-		
-		except APIError as e:
-			print(f"Error fetching money in: {e}")
-		
-		return total_money_in
-	
-	def get_money_out(self):
-		total_money_out = 0
-		balances = self.get_balance()
-		
-		try:
-			for balance in balances["balance"]:
-				account_id = balance["account_id"]  # Use account_id
-				transactions = self.client.list_transactions(
-					id=account_id, max_row=100, min_row=0
-				)
-				
-				if (
-						transactions is None
-						or "transactions" not in transactions
-						or transactions["transactions"] is None
-				):
-					print(
-						f"No transactions found or transactions is None for account {account_id}"
-					)
-					continue
-				
-				for transaction in transactions["transactions"]:
-					if transaction["type"] == "WITHDRAWAL":
-						total_money_out -= float(transaction["amount"])
-					
-					# Handle api sent transactions (convert to ZAR if needed)
-					if transaction["type"] == "SENT":
-						amount_zar = float(transaction["amount"]) * float(
-							transaction.get("price", 1)
-						)
-						total_money_out -= amount_zar
-		
-		except APIError as e:
-			print(f"Error fetching money out: {e}")
-		
-		return total_money_out
-	
-	def calculate_profit_loss(self):
-		"""
-		Calculate the profit/loss using transactions and orders.
-		"""
-		money_in = self.get_money_in()
-		money_out = self.get_money_out()
-		orders = self.get_orders()  # Get completed buy/sell orders
-		
-		# Ensure 'orders' is a list and not None
-		if orders is None:
-			orders = []
-		
-		# Process each order to calculate additional profit/loss
-		for order in orders:
-			if order["type"] == "BUY":
-				# Calculate money spent on buying (added to money_in)
-				money_in += float(order["counter"])  # Assuming counter currency is ZAR
-			elif order["type"] == "SELL":
-				# Calculate money earned from selling (added to money_out)
-				money_out += float(order["counter"])  # Assuming counter currency is ZAR
-		
-		combined_balance = self.get_current_combined_balance()
-		profit_loss = combined_balance - (money_in + money_out)
-		
-		return {
-			"profit_loss": profit_loss,
-			"money_in": money_in,
-			"money_out": money_out,
-			"combined_balance": combined_balance,
-		}
-	
 	def get_current_combined_balance(self):
 		zar_balance = 0
 		balances = self.get_balance()
@@ -213,18 +104,6 @@ class LunoService:
 				crypto_in_zar += float(balance["balance"]) * exchange_rates[asset]
 		
 		return crypto_in_zar
-	
-	def get_orders(self, state="COMPLETE"):
-		try:
-			orders = self.client.list_orders(state=state)
-			if orders and "orders" in orders:
-				return orders["orders"]  # Return the list of orders
-			else:
-				print("No orders found.")
-				return []
-		except APIError as e:
-			print(f"Error fetching orders: {e}")
-			return []
 	
 	def save_balances_to_model(self, balance_data):
 		for bal in balance_data:

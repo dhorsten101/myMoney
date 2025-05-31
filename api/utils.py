@@ -21,8 +21,6 @@ def process_dashboard_data():
 	) = luno_service.convert_balances_to_currencies(balance)
 	
 	luno_service.save_balances_to_model(converted_balances)
-	profit_loss_data = luno_service.calculate_profit_loss()
-	orders = luno_service.get_orders()
 	
 	# Fetch and process Binance balances
 	binance_balances, binance_total_converted_usd, binance_total_converted_zar = (
@@ -45,7 +43,12 @@ def process_dashboard_data():
 		went_up = None  # No previous record
 	
 	HistoryRecord.objects.create(total_value=grand_total_zar, category="crypto")
-	CryptoStats.objects.create(total_value=grand_total_zar)
+	
+	CryptoStats.objects.create(
+		total_value=grand_total_zar,
+		total_converted_zar=total_converted_zar,
+		binance_total_converted_zar=binance_total_converted_zar
+	)
 	
 	grand_total_history = HistoryRecord.objects.filter(category="crypto").order_by("-timestamp")[:15]
 	
@@ -62,12 +65,7 @@ def process_dashboard_data():
 		"zar_to_usd_rate": zar_to_usd_rate,
 		"total_converted_zar": total_converted_zar,
 		"total_converted_usd": total_converted_usd,
-		"profit_loss": profit_loss_data["profit_loss"],
-		"money_in": profit_loss_data["money_in"],
-		"money_out": profit_loss_data["money_out"],
-		"combined_balance": profit_loss_data["combined_balance"],
 		"exchange_rates_zar": exchange_rates_zar,
-		"orders": orders,
 		# Binance data
 		"binance_balances": binance_balances,
 		"binance_total_converted_usd": binance_total_converted_usd,

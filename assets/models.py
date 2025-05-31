@@ -47,4 +47,7 @@ class Asset(models.Model):
 
 class CryptoStats(models.Model):
 	total_value = models.DecimalField(max_digits=20, decimal_places=2)
+	binance_total_converted_zar = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+	total_converted_zar = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)  # luno
+	
 	timestamp = models.DateTimeField(auto_now_add=True)

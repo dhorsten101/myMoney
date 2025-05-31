@@ -16,7 +16,7 @@ def process_dashboard_data():
 		converted_balances,
 		exchange_rates_zar,
 		zar_to_usd_rate,
-		total_converted_zar,
+		luno_total_converted_zar,
 		total_converted_usd,
 	) = luno_service.convert_balances_to_currencies(balance)
 	
@@ -29,12 +29,12 @@ def process_dashboard_data():
 	binance_service.save_balances_to_model(binance_balances, zar_to_usd_rate)
 	
 	# Calculate grand total in ZAR
-	grand_total_zar = Decimal(str(total_converted_zar)) + Decimal(
+	grand_total_zar = Decimal(str(luno_total_converted_zar)) + Decimal(
 		str(binance_total_converted_zar)
 	)
 	
 	# Save grand total to history
-	previous_record = HistoryRecord.objects.filter(category="crypto").order_by("-timestamp").first()
+	previous_record = CryptoStats.objects.order_by("-timestamp").first()
 	if previous_record:
 		value_change = grand_total_zar - previous_record.total_value
 		went_up = value_change > 0
@@ -46,7 +46,7 @@ def process_dashboard_data():
 	
 	CryptoStats.objects.create(
 		total_value=grand_total_zar,
-		total_converted_zar=total_converted_zar,
+		luno_total_converted_zar=luno_total_converted_zar,
 		binance_total_converted_zar=binance_total_converted_zar
 	)
 	
@@ -63,7 +63,7 @@ def process_dashboard_data():
 		"trx_to_zar": exchange_rates_zar["TRX"],
 		"xrp_to_zar": exchange_rates_zar["XRP"],
 		"zar_to_usd_rate": zar_to_usd_rate,
-		"total_converted_zar": total_converted_zar,
+		"luno_total_converted_zar": luno_total_converted_zar,
 		"total_converted_usd": total_converted_usd,
 		"exchange_rates_zar": exchange_rates_zar,
 		# Binance data

@@ -44,7 +44,7 @@ class LunoService:
 		}
 		
 		zar_to_usd_rate = get_zar_to_usd_rate()
-		total_converted_zar = 0
+		luno_total_converted_zar = 0
 		total_converted_usd = 0
 		
 		for bal in balance["balance"]:
@@ -56,13 +56,13 @@ class LunoService:
 			if asset == "ZAR":
 				bal["converted_zar"] = float(bal["balance"])
 				bal["converted_usd"] = float(bal["balance"]) / zar_to_usd_rate
-				total_converted_zar += bal["converted_zar"]
+				luno_total_converted_zar += bal["converted_zar"]
 				total_converted_usd += bal["converted_usd"]
 			
 			elif asset in exchange_rates_zar:
 				bal["converted_zar"] = float(bal["balance"]) * exchange_rates_zar[asset]
 				bal["converted_usd"] = bal["converted_zar"] / zar_to_usd_rate
-				total_converted_zar += bal["converted_zar"]
+				luno_total_converted_zar += bal["converted_zar"]
 				total_converted_usd += bal["converted_usd"]
 			
 			bal["asset_name"] = asset_name
@@ -71,7 +71,7 @@ class LunoService:
 			balance["balance"],
 			exchange_rates_zar,
 			zar_to_usd_rate,
-			total_converted_zar,
+			luno_total_converted_zar,
 			total_converted_usd,
 		)
 	

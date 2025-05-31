@@ -17,9 +17,7 @@ class AssetForm(forms.ModelForm):
 		model = Asset
 		fields = [
 			"name",
-			"description",
 			"balance",
 			"exchange",
 			"converted_zar",
-			"price",
 		]

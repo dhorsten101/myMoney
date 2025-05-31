@@ -1,6 +1,7 @@
 # views.py
 
 from datetime import timedelta
+from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
@@ -69,8 +70,17 @@ def asset_list(request):
 	crypto_labels = [c.timestamp.strftime("%Y-%m-%d %H:%M") for c in cryptos]
 	crypto_values = [float(c.total_value or 0) for c in cryptos]  # combined
 	binance_values = [float(c.binance_total_converted_zar or 0) for c in cryptos]
-	luno_values = [float(c.total_converted_zar or 0) for c in cryptos]
+	luno_values = [float(c.luno_total_converted_zar or 0) for c in cryptos]
+	
 	latest_crypto = cryptos.first()
+	
+	previous_crypto = cryptos[1] if cryptos.count() > 1 else None
+	if previous_crypto:
+		value_change = latest_crypto.total_value - previous_crypto.total_value
+		went_up = value_change > 0
+	else:
+		value_change = Decimal(0)
+		went_up = None
 	
 	all_assets = (luno_assets | binance_assets).order_by("-timestamp")
 	
@@ -94,6 +104,9 @@ def asset_list(request):
 		"crypto_values": crypto_values,
 		"crypto": latest_crypto,
 		"current_period": period,
+		
+		"value_change": value_change,
+		"went_up": went_up,
 	}
 	
 	return render(request, "asset_list.html", context)

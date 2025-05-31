@@ -43,12 +43,35 @@
         </div>
     </div>
 
+    <!-- JavaScript for Toggling Total Value Visibility -->
+    <script>
+        const toggleTotalBtn = document.getElementById('toggleTotalBtn');
+        const totalValue = document.getElementById('totalValue');
+        const hiddenTotal = document.getElementById('hiddenTotal');
+
+        // Initially hide the total value
+        totalValue.style.display = 'none';
+        hiddenTotal.style.display = 'block';
+
+        toggleTotalBtn.addEventListener('click', () => {
+            if (totalValue.style.display === 'none') {
+                totalValue.style.display = 'block';
+                hiddenTotal.style.display = 'none';
+                toggleTotalBtn.innerHTML = '<i class="bi bi-eye-slash me-1 "> </i> Hide ';
+            } else {
+                totalValue.style.display = 'none';
+                hiddenTotal.style.display = 'block';
+                toggleTotalBtn.innerHTML = '<i class="bi bi-eye me-1"></i>Show';
+            }
+        });
+    </script>
+
     <!-- stats cards -->
     <div class="container p-0">
 
         <!-- Luno Balances -->
         <h4 class="mt-4 ">My Luno Balances: <span class="small float-end text-success ">
-            <b class="card-text fw-normal">R {{ crypto.total_converted_zar|floatformat:2|intcomma }}</b></span>
+            <b class="card-text fw-normal">R {{ crypto.luno_total_converted_zar|floatformat:2|intcomma }}</b></span>
         </h4>
 
         <div class="row">
@@ -88,29 +111,6 @@
     <hr>
     <br>
 
-    <!-- JavaScript for Toggling Total Value Visibility -->
-    <script>
-        const toggleTotalBtn = document.getElementById('toggleTotalBtn');
-        const totalValue = document.getElementById('totalValue');
-        const hiddenTotal = document.getElementById('hiddenTotal');
-
-        // Initially hide the total value
-        totalValue.style.display = 'none';
-        hiddenTotal.style.display = 'block';
-
-        toggleTotalBtn.addEventListener('click', () => {
-            if (totalValue.style.display === 'none') {
-                totalValue.style.display = 'block';
-                hiddenTotal.style.display = 'none';
-                toggleTotalBtn.innerHTML = '<i class="bi bi-eye-slash me-1 "> </i> Hide ';
-            } else {
-                totalValue.style.display = 'none';
-                hiddenTotal.style.display = 'block';
-                toggleTotalBtn.innerHTML = '<i class="bi bi-eye me-1"></i>Show';
-            }
-        });
-    </script>
-
 
     <div class="position-relative mb-4 text-center">
         <form method="get" class="mb-4">
@@ -130,70 +130,6 @@
     </div>
 
     <canvas id="cryptoChart" width="400" height="180"></canvas>
-    {#    <br>#}
-    <!-- Table for Historical Data -->
-    {#    <div class="collapse" id="historyTable">#}
-    {#        <div class="card p-3 ">#}
-    {#            <table class="table table-bordered mb-2">#}
-    {#                <thead>#}
-    {#                <tr>#}
-    {#                    <th>Date</th>#}
-    {#                    <th>Total</th>#}
-    {#                </tr>#}
-    {#                </thead>#}
-    {#                <tbody>#}
-    {#                {% for record in grand_total_history %}#}
-    {#                    <tr>#}
-    {#                        <td class="py-1 ">{{ record.timestamp|date:"Y-m-d H:i:s" }}</td>#}
-    {#                        <td class="py-1 ">R {{ record.total_value|floatformat:2|intcomma }}</td>#}
-    {#                    </tr>#}
-    {#                {% empty %}#}
-    {#                    <tr>#}
-    {#                        <td colspan="2" class="text-center">No history available</td>#}
-    {#                    </tr>#}
-    {#                {% endfor %}#}
-    {#                </tbody>#}
-    {#            </table>#}
-    {#        </div>#}
-    {#    </div>#}
-
-    {#    <div class="table-responsive">#}
-    {#        <table class="table table-sm table-bordered table-striped table-hover mt-3">#}
-    {#            <thead class="table-dark">#}
-    {#            <tr>#}
-    {#                <th scope="col">Name</th>#}
-    {#                <th scope="col">Exchange</th>#}
-    {#                <th scope="col">Account ID</th>#}
-    {#                <th scope="col">Currency</th>#}
-    {#                <th scope="col">ZAR</th>#}
-    {#                <th scope="col">Timestamp</th>#}
-    {#            </tr>#}
-    {#            </thead>#}
-    {#            <tbody>#}
-    {#            {% for all_asset in all_assets %}#}
-    {#                <tr>#}
-    {#                    <td>{{ all_asset.name }}</td>#}
-    {#                    <td>{{ all_asset.exchange }}</td>#}
-    {#                    <td>{{ all_asset.account_id }}</td>#}
-    {#                    <td>{{ all_asset.balance|floatformat:4 }}</td>#}
-    {#                    <td>R {{ all_asset.converted_zar|floatformat:2|intcomma }}</td>#}
-    {#                    <td>{{ all_asset.timestamp|date:"Y-m-d H:i:s" }}</td>#}
-    {#                </tr>#}
-    {#            {% empty %}#}
-    {#                <tr>#}
-    {#                    <td colspan="8" class="text-center">No assets available</td>#}
-    {#                </tr>#}
-    {#            {% endfor %}#}
-    {#            </tbody>#}
-    {#            <tfoot class=" fw-bold">#}
-    {#            <tr>#}
-    {#                <td colspan="4" class="text-end fw-bold text-danger">Totals:</td>#}
-    {#                <td class="text-danger">R {{ total_converted_zar|floatformat:2|intcomma }}</td>#}
-    {#                <td colspan="2"></td>#}
-    {#            </tr>#}
-    {#            </tfoot>#}
-    {#        </table>#}
-    {#    </div>#}
 
     <script>
         const moneyInvested = 100000;
@@ -252,3 +188,70 @@
         });
     </script>
 {% endblock %}
+
+
+
+{#    <br>#}
+<!-- Table for Historical Data -->
+{#    <div class="collapse" id="historyTable">#}
+{#        <div class="card p-3 ">#}
+{#            <table class="table table-bordered mb-2">#}
+{#                <thead>#}
+{#                <tr>#}
+{#                    <th>Date</th>#}
+{#                    <th>Total</th>#}
+{#                </tr>#}
+{#                </thead>#}
+{#                <tbody>#}
+{#                {% for record in grand_total_history %}#}
+{#                    <tr>#}
+{#                        <td class="py-1 ">{{ record.timestamp|date:"Y-m-d H:i:s" }}</td>#}
+{#                        <td class="py-1 ">R {{ record.total_value|floatformat:2|intcomma }}</td>#}
+{#                    </tr>#}
+{#                {% empty %}#}
+{#                    <tr>#}
+{#                        <td colspan="2" class="text-center">No history available</td>#}
+{#                    </tr>#}
+{#                {% endfor %}#}
+{#                </tbody>#}
+{#            </table>#}
+{#        </div>#}
+{#    </div>#}
+
+{#    <div class="table-responsive">#}
+{#        <table class="table table-sm table-bordered table-striped table-hover mt-3">#}
+{#            <thead class="table-dark">#}
+{#            <tr>#}
+{#                <th scope="col">Name</th>#}
+{#                <th scope="col">Exchange</th>#}
+{#                <th scope="col">Account ID</th>#}
+{#                <th scope="col">Currency</th>#}
+{#                <th scope="col">ZAR</th>#}
+{#                <th scope="col">Timestamp</th>#}
+{#            </tr>#}
+{#            </thead>#}
+{#            <tbody>#}
+{#            {% for all_asset in all_assets %}#}
+{#                <tr>#}
+{#                    <td>{{ all_asset.name }}</td>#}
+{#                    <td>{{ all_asset.exchange }}</td>#}
+{#                    <td>{{ all_asset.account_id }}</td>#}
+{#                    <td>{{ all_asset.balance|floatformat:4 }}</td>#}
+{#                    <td>R {{ all_asset.converted_zar|floatformat:2|intcomma }}</td>#}
+{#                    <td>{{ all_asset.timestamp|date:"Y-m-d H:i:s" }}</td>#}
+{#                </tr>#}
+{#            {% empty %}#}
+{#                <tr>#}
+{#                    <td colspan="8" class="text-center">No assets available</td>#}
+{#                </tr>#}
+{#            {% endfor %}#}
+{#            </tbody>#}
+{#            <tfoot class=" fw-bold">#}
+{#            <tr>#}
+{#                <td colspan="4" class="text-end fw-bold text-danger">Totals:</td>#}
+{#                <td class="text-danger">R {{ total_converted_zar|floatformat:2|intcomma }}</td>#}
+{#                <td colspan="2"></td>#}
+{#            </tr>#}
+{#            </tfoot>#}
+{#        </table>#}
+{#    </div>#}

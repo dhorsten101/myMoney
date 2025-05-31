@@ -10,7 +10,7 @@
         <div class="row align-items-center mb-4 text-center">
             <div class="col-4 text-start p-0">
                 <div class="position-relative mb-3 text-center">
-                    <a href="{% url 'update_dashboard' %}" class="btn btn-primary position-absolute top-0 start-0 ">Update</a>
+                    <a href="{% url 'update_dashboard' %}" class="btn btn-sm btn-primary position-absolute top-0 start-0 ">Update</a>
                 </div>
             </div>
 
@@ -74,7 +74,7 @@
     <div class="container p-0">
 
         <!-- Luno Balances -->
-        <h4 class="mt-4 ">My Luno Balances: <span class="small float-end text-success ">
+        <h4 class="mt-2 ">My Luno Balances: <span class="small float-end text-success ">
             <b class="card-text fw-normal">R {{ crypto.luno_total_converted_zar|floatformat:2|intcomma }}</b></span>
         </h4>
 
@@ -92,13 +92,13 @@
         </div>
 
         <!-- Binance Balances -->
-        <h4 class="mt-3 ">My Binance Balances: <span class="small fw-normal float-end text-success">
+        <h4 class="mt-2 ">My Binance Balances: <span class="small fw-normal float-end text-success">
             <b class="card-text fw-normal">R {{ crypto.binance_total_converted_zar|floatformat:2|intcomma }}</b></span>
         </h4>
 
         <div class="row">
             {% for asset in binance_assets %}
-                <div class="col-md-3 mb-3">
+                <div class="col-md-3 mb-2">
                     <div class="card">
                         <div class="card-body d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0">{{ asset.full_name }} ({{ asset.name }})</h5>
@@ -111,12 +111,11 @@
     </div>
 
     <hr>
-    <br>
 
-    <div class="position-relative mb-4 text-center p-1">
-        <form method="get" class="mb-4">
+    <div class="position-relative mb-2 mt-4 text-center p-1">
+        <form method="get" class="mb-2">
             <div class="row g-2 align-items-center">
-                <div class="btn-group mb-2" role="group">
+                <div class="btn-group mb-2 btn-group-sm" role="group">
                     <a href="?period=1day" class="btn btn-outline-primary {% if current_period == '1day' %}active{% endif %}">1 Day</a>
                     <a href="?period=2day" class="btn btn-outline-primary {% if current_period == '2day' %}active{% endif %}">2 Day</a>
                     <a href="?period=1week" class="btn btn-outline-primary {% if current_period == '1week' %}active{% endif %}">1 Week</a>
@@ -184,8 +183,19 @@
                     y: {
                         beginAtZero: false
                     }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 30,  // ← increases space between items and chart
+                            font: {
+                                size: 16
+                            }
+                        }
+                    }
                 }
-            }
+            },
         });
     </script>
 {% endblock %}

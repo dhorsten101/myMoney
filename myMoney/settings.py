@@ -113,7 +113,6 @@ LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = 'Africa/Johannesburg'
 USE_TZ = True
-
 USE_I18N = True
 
 STATIC_ROOT = BASE_DIR / "staticfiles"

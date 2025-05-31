@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from .models import Quote
-from .utils import process_dashboard_data
+from .utils import process_crypto_data
 
 
 def home(request):
@@ -19,7 +19,7 @@ def dashboard(request):
 
 @login_required
 def update_dashboard(request):
-	context = process_dashboard_data()  # Get processed data from the utility function
+	context = process_crypto_data()  # Get processed data from the utility function
 	return render(request, "dashboards/dashboard.html", context)
 
 

@@ -1,9 +1,9 @@
 from decimal import Decimal
 
+from api.binance_service import BinanceService
+from api.luno_service import LunoService
 from assets.models import CryptoStats
 from history_records.models import HistoryRecord
-from .binance_service import BinanceService
-from .luno_service import LunoService
 
 
 def process_crypto_data():

@@ -1,12 +1,12 @@
 from django.core.management.base import BaseCommand
 
-from api.utils import process_dashboard_data
+from api.utils import process_crypto_data
 
 
 class Command(BaseCommand):
-	help = "Process dashboard data"
+	help = "Process crypto data"
 	
 	def handle(self, *args, **kwargs):
-		self.stdout.write("Starting to process dashboard data...")
-		process_dashboard_data()
-		self.stdout.write("Dashboard data processed successfully!")
+		self.stdout.write("Starting to process crypto data...")
+		process_crypto_data()
+		self.stdout.write("Crypto data processed successfully!")

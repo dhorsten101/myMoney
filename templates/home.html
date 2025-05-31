@@ -29,5 +29,59 @@
         {% endif %}
         <hr>
     </div>
+
+    <div class="col-4 text-end">
+        <div class="d-flex flex-column align-items-end">
+            <div class="d-flex align-items-center">
+                <h1 class="mb-0">Crypto</h1>
+
+                <button id="toggleTotalBtn" class="btn btn-danger d-flex align-items-center justify-content-center mx-4" style="font-size: 0.9rem; padding: 0.15rem 0.5rem;" type="button">
+                    <i class="bi bi-eye me-1"></i> Show
+                </button>
+                <h2 id="totalValue" class="float-end text-success" style="min-width: 100px; display: none;">R {{ crypto.total_value|floatformat:2|intcomma }}</h2>
+                <h1 id="hiddenTotal" class="float-end text-success" style="min-width: 100px;"> * * * * * * * </h1>
+            </div>
+            {#            <div class="col-3 text-end">#}
+            {#                <div class="text-danger" style="font-size: large;">Total Real Value: R {{ worth.total_real_value|floatformat:0|intcomma }}</div>#}
+            {#                <div class="text-danger" style="font-size: large;">Total Quick Sale: R {{ worth.total_quick_value|floatformat:0|intcomma }}</div>#}
+            {#            </div>#}
+        </div>
+    </div>
+
+
+    <!-- JavaScript for Toggling Total Value Visibility -->
+    <script>
+        const toggleTotalBtn = document.getElementById('toggleTotalBtn');
+        const totalValue = document.getElementById('totalValue');
+        const hiddenTotal = document.getElementById('hiddenTotal');
+
+        // Initially hide the total value
+        totalValue.style.display = 'none';
+        hiddenTotal.style.display = 'block';
+
+        toggleTotalBtn.addEventListener('click', () => {
+            if (totalValue.style.display === 'none') {
+                totalValue.style.display = 'block';
+                hiddenTotal.style.display = 'none';
+                toggleTotalBtn.innerHTML = '<i class="bi bi-eye-slash me-1 "> </i> Hide ';
+            } else {
+                totalValue.style.display = 'none';
+                hiddenTotal.style.display = 'block';
+                toggleTotalBtn.innerHTML = '<i class="bi bi-eye me-1"></i>Show';
+            }
+        });
+    </script>
+
+    <!-- This will load the table as soon as the page loads -->
+    <div
+            id="asset_list-container"
+            hx-get="{% url 'asset_list' %}"
+            hx-trigger="load"
+            hx-swap="innerHTML">
+    </div>
+
+    <!-- Target container -->
+    <div id="asset_list-container"></div>
+
 {% endblock %}
 

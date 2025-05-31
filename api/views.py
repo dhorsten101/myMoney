@@ -3,13 +3,20 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from cryptos.crypto import process_crypto_data
+from cryptos.models import CryptoStats  # Import your model
+from worth.models import Worth
 from .models import Quote
 
 
 def home(request):
 	latest_quote = Quote.objects.order_by('-created_at').first()
+	latest_crypto = CryptoStats.objects.order_by('-timestamp').first()  # Get most recent
+	worth = Worth.objects.order_by('-created_at').first()
+	
 	return render(request, 'home.html', {
 		'quote': latest_quote,
+		'crypto': latest_crypto,
+		'worth': worth,
 	})
 
 

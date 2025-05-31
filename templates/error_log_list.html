@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}
+    Error Logs
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="mb-4 text-danger">⚠️ Error Logs</h2>
+
+        {% if logs %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Method</th>
+                        <th>Path</th>
+                        <th>Status</th>
+                        <th>Error Message</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for log in logs %}
+                        <tr>
+                            <td>{{ log.timestamp|naturaltime }}</td>
+                            <td>{{ log.method }}</td>
+                            <td>{{ log.path }}</td>
+                            <td>{{ log.status_code }}</td>
+                            <td>
+                                <pre style="white-space: pre-wrap;">{{ log.message|truncatechars:300 }}</pre>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No error logs found.</p>
+        {% endif %}
+    </div>
+{% endblock %}
+
+

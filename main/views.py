@@ -1,8 +1,16 @@
+import logging
+
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.core.mail import send_mail
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
+
+from main.models import ErrorLog, AuditLog
+
+logger = logging.getLogger('django')  # uses the 'django' logger from settings
 
 
 # Register view
@@ -43,3 +51,23 @@ def contact_view(request):
 		success = True
 	
 	return render(request, "contact.html", {"success": success})
+
+
+@login_required
+def error_log_list(request):
+	logs = ErrorLog.objects.order_by("-timestamp")[:100]
+	return render(request, "error_log_list.html", {"logs": logs})
+
+
+@login_required
+def audit_log_list(request):
+	audits = AuditLog.objects.order_by("-timestamp")[:100]
+	return render(request, "audit_log_list.html", {"audits": audits})
+
+
+def test_error_logging(request):
+	try:
+		1 / 0  # Deliberate error
+	except Exception as e:
+		logger.error("Test exception for logging", exc_info=True)
+	return HttpResponse("Error triggered and logged.")

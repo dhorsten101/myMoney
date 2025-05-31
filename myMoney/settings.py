@@ -46,6 +46,7 @@ MIDDLEWARE = [
 	"django.contrib.auth.middleware.AuthenticationMiddleware",
 	"django.contrib.messages.middleware.MessageMiddleware",
 	"django.middleware.clickjacking.XFrameOptionsMiddleware",
+	# 'myMoney.middleware.ErrorLoggingMiddleware',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
@@ -139,3 +140,22 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # Use SMTP in 
 #
 # DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # CONTACT_EMAIL = 'support@yourdomain.com'  # wherever you want to receive emails
+
+LOGGING = {
+	'version': 1,
+	'disable_existing_loggers': False,
+	
+	'handlers': {
+		'db': {
+			'level': 'ERROR',
+			'class': 'main.handlers.DBLogHandler',
+		},
+	},
+	'loggers': {
+		'django': {
+			'handlers': ['db'],
+			'level': 'ERROR',
+			'propagate': True,
+		},
+	},
+}

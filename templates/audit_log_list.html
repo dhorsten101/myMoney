@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}
+    Audit Logs
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="mb-4 text-danger">⚠️ Audit Logs</h2>
+
+        {% if audits %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Method</th>
+                        <th>Path</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for audit in audits %}
+                        <tr>
+                            <td>{{ audit.timestamp|naturaltime }}</td>
+                            <td>{{ audit.model_name }}</td>
+                            <td>{{ audit.object_id }}</td>
+                            <td>{{ audit.action }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No Audit logs found.</p>
+        {% endif %}
+    </div>
+{% endblock %}
+
+

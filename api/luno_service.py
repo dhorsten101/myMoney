@@ -2,7 +2,7 @@ from django.conf import settings
 from django.utils import timezone
 from luno_python.client import Client
 
-from assets.models import Asset
+from cryptos.models import Asset
 from .coingecko_service import fetch_asset_names, get_zar_to_usd_rate
 
 

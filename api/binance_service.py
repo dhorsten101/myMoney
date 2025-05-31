@@ -2,7 +2,7 @@ from binance.client import Client
 from django.conf import settings
 from django.utils import timezone
 
-from assets.models import Asset
+from cryptos.models import Asset
 
 
 class BinanceService:
@@ -12,7 +12,7 @@ class BinanceService:
 	def get_balances(self):
 		account_info = self.client.get_account()
 		
-		# Filter out assets with a balance greater than 0
+		# Filter out cryptos with a balance greater than 0
 		balances = [
 			balance
 			for balance in account_info["balances"]
@@ -35,7 +35,7 @@ class BinanceService:
 		total_converted_usd = 0
 		total_converted_zar = 0
 		
-		# Fetching exchange rates for the assets you're interested in
+		# Fetching exchange rates for the cryptos you're interested in
 		exchange_rates = {
 			"BTCUSDT": self.get_exchange_rates("BTCUSDT"),
 			"ETHUSDT": self.get_exchange_rates("ETHUSDT"),

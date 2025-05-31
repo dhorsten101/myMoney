@@ -8,8 +8,12 @@
 {% block content %}
     <div class="container mt-2">
         <div class="row align-items-center mb-4 text-center">
-            <div class="col-4 text-start">
+            <div class="col-4 text-start p-0">
+                <div class="position-relative mb-3 text-center">
+                    <a href="{% url 'update_dashboard' %}" class="btn btn-primary position-absolute top-0 start-0 ">Update</a>
+                </div>
             </div>
+
 
             <div class="col-4">
                 <h1 class="mb-0">Crypto</h1>
@@ -108,7 +112,6 @@
 
     <hr>
     <br>
-
 
     <div class="position-relative mb-4 text-center p-1">
         <form method="get" class="mb-4">
@@ -240,7 +243,7 @@
 {#                </tr>#}
 {#            {% empty %}#}
 {#                <tr>#}
-{#                    <td colspan="8" class="text-center">No assets available</td>#}
+{#                    <td colspan="8" class="text-center">No cryptos available</td>#}
 {#                </tr>#}
 {#            {% endfor %}#}
 {#            </tbody>#}

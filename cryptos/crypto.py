@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from api.binance_service import BinanceService
 from api.luno_service import LunoService
-from assets.models import CryptoStats
+from cryptos.models import CryptoStats
 from history_records.models import HistoryRecord
 
 
@@ -49,31 +49,31 @@ def process_crypto_data():
 		luno_total_converted_zar=luno_total_converted_zar,
 		binance_total_converted_zar=binance_total_converted_zar
 	)
-	
-	grand_total_history = HistoryRecord.objects.filter(category="crypto").order_by("-timestamp")[:15]
-	
-	# Return data for rendering (optional)
-	return {
-		# Luno data
-		"balance": converted_balances,
-		"btc_to_zar": exchange_rates_zar["XBT"],
-		"eth_to_zar": exchange_rates_zar["ETH"],
-		"sol_to_zar": exchange_rates_zar["SOL"],
-		"grt_to_zar": exchange_rates_zar["GRT"],
-		"trx_to_zar": exchange_rates_zar["TRX"],
-		"xrp_to_zar": exchange_rates_zar["XRP"],
-		"zar_to_usd_rate": zar_to_usd_rate,
-		"luno_total_converted_zar": luno_total_converted_zar,
-		"total_converted_usd": total_converted_usd,
-		"exchange_rates_zar": exchange_rates_zar,
-		# Binance data
-		"binance_balances": binance_balances,
-		"binance_total_converted_usd": binance_total_converted_usd,
-		"binance_total_converted_zar": binance_total_converted_zar,
-		# Total data
-		"grand_total_zar": grand_total_zar,
-		"grand_total_history": grand_total_history,
-		# up or down data
-		"value_change": value_change,
-		"went_up": went_up,
-	}
+
+# grand_total_history = HistoryRecord.objects.filter(category="crypto").order_by("-timestamp")[:15]
+
+# Return data for rendering (optional)
+# return {
+# 	# Luno data
+# 	"balance": converted_balances,
+# 	"btc_to_zar": exchange_rates_zar["XBT"],
+# 	"eth_to_zar": exchange_rates_zar["ETH"],
+# 	"sol_to_zar": exchange_rates_zar["SOL"],
+# 	"grt_to_zar": exchange_rates_zar["GRT"],
+# 	"trx_to_zar": exchange_rates_zar["TRX"],
+# 	"xrp_to_zar": exchange_rates_zar["XRP"],
+# 	"zar_to_usd_rate": zar_to_usd_rate,
+# 	"luno_total_converted_zar": luno_total_converted_zar,
+# 	"total_converted_usd": total_converted_usd,
+# 	"exchange_rates_zar": exchange_rates_zar,
+# 	# Binance data
+# 	"binance_balances": binance_balances,
+# 	"binance_total_converted_usd": binance_total_converted_usd,
+# 	"binance_total_converted_zar": binance_total_converted_zar,
+# 	# Total data
+# 	"grand_total_zar": grand_total_zar,
+# 	"grand_total_history": grand_total_history,
+# 	# up or down data
+# 	"value_change": value_change,
+# 	"went_up": went_up,
+# }

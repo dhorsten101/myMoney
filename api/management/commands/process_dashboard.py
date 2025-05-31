@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from api.utils import process_crypto_data
+from cryptos.crypto import process_crypto_data
 
 
 class Command(BaseCommand):

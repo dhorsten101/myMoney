@@ -67,7 +67,7 @@ def asset_list(request):
 	else:
 		cryptos = CryptoStats.objects.all().order_by("-timestamp")
 	
-	crypto_labels = [c.timestamp.strftime("%Y-%m-%d %H:%M") for c in cryptos]
+	crypto_labels = [c.timestamp.strftime("%m-%d %H:%M") for c in cryptos]
 	crypto_values = [float(c.total_value or 0) for c in cryptos]  # combined
 	binance_values = [float(c.binance_total_converted_zar or 0) for c in cryptos]
 	luno_values = [float(c.luno_total_converted_zar or 0) for c in cryptos]

@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 
+from cryptos.crypto import process_crypto_data
 from .models import Quote
-from .utils import process_crypto_data
 
 
 def home(request):
@@ -19,8 +20,8 @@ def dashboard(request):
 
 @login_required
 def update_dashboard(request):
-	context = process_crypto_data()  # Get processed data from the utility function
-	return render(request, "dashboards/dashboard.html", context)
+	process_crypto_data()
+	return redirect(reverse("asset_list"))
 
 
 def quote_list(request):

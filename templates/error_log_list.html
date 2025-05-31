@@ -15,9 +15,9 @@
                     <thead class="table-dark">
                     <tr>
                         <th>Timestamp</th>
-                        <th>Method</th>
-                        <th>Path</th>
-                        <th>Status</th>
+                        <th>Module</th>
+                        <th>Level</th>
+                        <th>Exception</th>
                         <th>Error Message</th>
                     </tr>
                     </thead>
@@ -25,12 +25,10 @@
                     {% for log in logs %}
                         <tr>
                             <td>{{ log.timestamp|naturaltime }}</td>
-                            <td>{{ log.method }}</td>
-                            <td>{{ log.path }}</td>
-                            <td>{{ log.status_code }}</td>
-                            <td>
-                                <pre style="white-space: pre-wrap;">{{ log.message|truncatechars:300 }}</pre>
-                            </td>
+                            <td>{{ log.module }}</td>
+                            <td>{{ log.level }}</td>
+                            <td>{{ log.exception }}</td>
+                            <td>{{ log.message }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

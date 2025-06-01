@@ -9,10 +9,21 @@
 {% block content %}
 
     <div class="container mt-3">
-        <div class="position-relative mb-4 text-center">
-            <a href="{% url 'weight_create' %}" class="btn btn-primary position-absolute top-0 start-0">New</a>
-            <h1 class="mb-0">Weight</h1>
+        <div class="row mb-4 align-items-center text-center">
+            <div class="col-md-4 text-start">
+                <a href="{% url 'weight_create' %}" class="btn btn-primary btn-sm">New</a>
+            </div>
+            <div class="col-md-4">
+                <h1 class="mb-0">Weight</h1>
+            </div>
+            <div class="col-md-4 text-end">
+                {% if latest_weight %}
+                    <h4 class="mb-0 text-success">Latest Weight: {{ latest_weight.weight }} kg</h4>
+                {% endif %}
+            </div>
         </div>
+
+
         <canvas id="weightChart" width="400" height="180"></canvas>
 
         <br>

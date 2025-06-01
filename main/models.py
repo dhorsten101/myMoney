@@ -17,6 +17,13 @@ class ErrorLog(models.Model):
 	func_name = models.CharField(max_length=255, null=True, blank=True)
 	module = models.CharField(max_length=100, blank=True, null=True)
 	exception = models.TextField(blank=True, null=True)
+	object_id = models.CharField(max_length=128, blank=True, null=True)
+	exception_type = models.CharField(max_length=255, blank=True, null=True)
+	exception_value = models.TextField(blank=True, null=True)
+	traceback = models.TextField(blank=True, null=True)
+	user = models.CharField(max_length=255, blank=True, null=True)
+	ip_address = models.GenericIPAddressField(blank=True, null=True)
+	user_agent = models.TextField(blank=True, null=True)
 	
 	timestamp = models.DateTimeField(default=now)
 	created_at = models.DateTimeField(default=now)

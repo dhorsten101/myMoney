@@ -19,6 +19,10 @@
                         <th>Level</th>
                         <th>Exception</th>
                         <th>Error Message</th>
+                        <th>Object</th>
+                        <th>User</th>
+
+
                     </tr>
                     </thead>
                     <tbody>
@@ -29,6 +33,9 @@
                             <td>{{ log.level }}</td>
                             <td>{{ log.exception }}</td>
                             <td>{{ log.message }}</td>
+                            <td>{{ log.object_id }}</td>
+                            <td>{{ log.user_id }}</td>
+
                         </tr>
                     {% endfor %}
                     </tbody>

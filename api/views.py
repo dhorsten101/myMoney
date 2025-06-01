@@ -69,7 +69,7 @@ def system_metrics_view(request):
 	else:
 		start_date = None
 	
-	metrics = SystemMetric.objects.filter(timestamp__gte=start_date).order_by("timestamp") if start_date else SystemMetric.objects.order_by("timestamp")
+	metrics = SystemMetric.objects.filter(timestamp__gte=start_date).order_by("-timestamp") if start_date else SystemMetric.objects.order_by("-timestamp")
 	
 	labels = [m.timestamp.strftime('%Y-%m-%d %H:%M') for m in metrics]
 	cpu = [m.cpu for m in metrics]

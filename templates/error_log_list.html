@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{#{% extends "base.html" %}#}
 {% load humanize %}
 
-{% block title %}
-    Error Logs
-{% endblock %}
+{#{% block title %}#}
+{#    Error Logs#}
+{#{% endblock %}#}
 
 {% block content %}
     <div class="container mt-4">
@@ -19,10 +19,7 @@
                         <th>Level</th>
                         <th>Exception</th>
                         <th>Error Message</th>
-                        <th>Object</th>
                         <th>User</th>
-
-
                     </tr>
                     </thead>
                     <tbody>
@@ -31,11 +28,50 @@
                             <td>{{ log.timestamp|naturaltime }}</td>
                             <td>{{ log.module }}</td>
                             <td>{{ log.level }}</td>
-                            <td>{{ log.exception }}</td>
-                            <td>{{ log.message }}</td>
-                            <td>{{ log.object_id }}</td>
-                            <td>{{ log.user_id }}</td>
+                            <td style="max-width: 480px;">
+                                <div id="short-exc-{{ log.id }}">
+                                    <span class="text-truncate d-inline-block" style="max-width: 460px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                      {{ log.exception }}
+                                    </span>
+                                    {% if log.exception|length > 80 %}
+                                        <a href="#" class="ms-2" onclick="toggleException('{{ log.id }}'); return false;">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
 
+                                {% if log.exception|length > 80 %}
+                                    <div class="d-none" id="full-exc-{{ log.id }}">
+                                        <span style="white-space: pre-wrap;">{{ log.exception }}</span>
+                                        <a href="#" class="ms-2" onclick="toggleException('{{ log.id }}'); return false;">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </td>
+
+                            <td style="max-width: 480px;">
+                                <div id="short-msg-{{ log.id }}">
+                                    <span class="text-truncate d-inline-block" style="max-width: 460px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                        {{ log.message }}
+                                    </span>
+                                    {% if log.message|length > 80 %}
+                                        <a href="#" class="ms-2" onclick="toggleMessage('{{ log.id }}'); return false;">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+
+                                {% if log.message|length > 80 %}
+                                    <div class="d-none" id="full-msg-{{ log.id }}">
+                                        <span style="white-space: pre-wrap;">{{ log.message }}</span>
+                                        <a href="#" class="ms-2" onclick="toggleMessage('{{ log.id }}'); return false;">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>{{ log.user_id }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -45,6 +81,8 @@
             <p class="text-muted">No error logs found.</p>
         {% endif %}
     </div>
+
+
 {% endblock %}
 
 

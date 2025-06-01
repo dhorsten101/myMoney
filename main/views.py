@@ -54,9 +54,14 @@ def contact_view(request):
 
 
 @login_required
+def logs(request):
+	return render(request, 'logs.html')
+
+
+@login_required
 def error_log_list(request):
-	logs = ErrorLog.objects.order_by("-timestamp")[:100]
-	return render(request, "error_log_list.html", {"logs": logs})
+	errors = ErrorLog.objects.order_by("-timestamp")[:100]
+	return render(request, "error_log_list.html", {"logs": errors})
 
 
 @login_required

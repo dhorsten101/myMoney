@@ -2,267 +2,33 @@
 {% load humanize %}
 
 {% block title %}
-    Crypto
+    Logs
 {% endblock %}
 
 {% block content %}
     <div class="container mt-2">
         <div class="row align-items-center mb-4 text-center">
-            <div class="col-4 text-start p-0">
-                <div class="position-relative mb-3 text-center">
-                    <a href="{% url 'update_dashboard' %}" class="btn btn-sm btn-primary position-absolute top-0 start-0 ">Update</a>
-                </div>
-            </div>
-
-
-            <div class="col-4">
-                <h1 class="mb-0">Crypto</h1>
-            </div>
-
-            <div class="col-4 text-end">
-
-                <div class="d-flex flex-column align-items-end">
-
-                    <div class="d-flex align-items-center">
-                        <button id="toggleTotalBtn" class="btn btn-danger d-flex align-items-center justify-content-center mx-4" style="font-size: 0.9rem; padding: 0.15rem 0.5rem;" type="button">
-                            <i class="bi bi-eye me-1"></i> Show
-                        </button>
-                        <h2 id="totalValue" class="float-end text-success" style="min-width: 100px; display: none;">R {{ crypto.total_value|floatformat:2|intcomma }}</h2>
-                        <h1 id="hiddenTotal" class="float-end text-success" style="min-width: 100px;"> * * * * * * * </h1>
-
-                        {% if went_up is not None %}
-                            {% if went_up %}
-                                <!-- Green arrow for value increase -->
-                                <i class="ms-1 mb-1 bi bi-arrow-up" style="color: green; font-size: 1.5rem"></i>
-                                <p class="p-1 " style="color: green">R {{ value_change|floatformat:2|intcomma }}</p>
-                            {% else %}
-                                <!-- Red arrow for value decrease -->
-                                <i class="ms-1 mb-1 bi bi-arrow-down" style="color: red; font-size: 1.5rem"></i>
-                                <p class="p-1" style="color: red">R {{ value_change|floatformat:2|intcomma }}</p>
-                            {% endif %}
-                        {% endif %}
-                    </div>
-                </div>
+            <div>
+                <h1 class="mb-0">Logs</h1>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript for Toggling Total Value Visibility -->
-    <script>
-        const toggleTotalBtn = document.getElementById('toggleTotalBtn');
-        const totalValue = document.getElementById('totalValue');
-        const hiddenTotal = document.getElementById('hiddenTotal');
+    <!-- Buttons -->
+    <div class="text-center mb-4">
+        <button class="btn btn-outline-danger me-2"
+                onclick="toggleLogs('error_log_list-container', '{% url 'error_log_list' %}')">
+            Toggle Error Logs
+        </button>
 
-        // Initially hide the total value
-        totalValue.style.display = 'none';
-        hiddenTotal.style.display = 'block';
-
-        toggleTotalBtn.addEventListener('click', () => {
-            if (totalValue.style.display === 'none') {
-                totalValue.style.display = 'block';
-                hiddenTotal.style.display = 'none';
-                toggleTotalBtn.innerHTML = '<i class="bi bi-eye-slash me-1 "> </i> Hide ';
-            } else {
-                totalValue.style.display = 'none';
-                hiddenTotal.style.display = 'block';
-                toggleTotalBtn.innerHTML = '<i class="bi bi-eye me-1"></i>Show';
-            }
-        });
-    </script>
-
-    <!-- stats cards -->
-    <div class="container p-0">
-
-        <!-- Luno Balances -->
-        <h4 class="mt-2 ">My Luno Balances: <span class="small float-end text-success ">
-            <b class="card-text fw-normal">R {{ crypto.luno_total_converted_zar|floatformat:2|intcomma }}</b></span>
-        </h4>
-
-        <div class="row">
-            {% for asset in luno_assets %}
-                <div class="col-md-3 mb-3">
-                    <div class="card">
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">{{ asset.full_name }} ({{ asset.name }})</h5>
-                            <p class="fw-normal mb-0">R {{ asset.converted_zar|floatformat:2|intcomma }}</p>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-
-        <!-- Binance Balances -->
-        <h4 class="mt-2 ">My Binance Balances: <span class="small fw-normal float-end text-success">
-            <b class="card-text fw-normal">R {{ crypto.binance_total_converted_zar|floatformat:2|intcomma }}</b></span>
-        </h4>
-
-        <div class="row">
-            {% for asset in binance_assets %}
-                <div class="col-md-3 mb-2">
-                    <div class="card">
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">{{ asset.full_name }} ({{ asset.name }})</h5>
-                            <p class="fw-normal mb-0">R {{ asset.converted_zar|floatformat:2|intcomma }}</p>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
+        <button class="btn btn-outline-primary"
+                onclick="toggleLogs('audit_log_list-container', '{% url 'audit_log_list' %}')">
+            Toggle Audit Logs
+        </button>
     </div>
 
-    <hr>
+    <!-- Containers -->
+    <div id="error_log_list-container" class="d-none"></div>
+    <div id="audit_log_list-container" class="d-none"></div>
 
-    <div class="position-relative mb-2 mt-4 text-center p-1">
-        <form method="get" class="mb-2">
-            <div class="row g-2 align-items-center">
-                <div class="btn-group mb-2 btn-group-sm" role="group">
-                    <a href="?period=1day" class="btn btn-outline-primary {% if current_period == '1day' %}active{% endif %}">1 Day</a>
-                    <a href="?period=2day" class="btn btn-outline-primary {% if current_period == '2day' %}active{% endif %}">2 Day</a>
-                    <a href="?period=1week" class="btn btn-outline-primary {% if current_period == '1week' %}active{% endif %}">1 Week</a>
-                    <a href="?period=1month" class="btn btn-outline-primary {% if current_period == '1month' %}active{% endif %}">1 Month</a>
-                    <a href="?period=3month" class="btn btn-outline-primary {% if current_period == '3month' %}active{% endif %}">3 Month</a>
-                    <a href="?period=6month" class="btn btn-outline-primary {% if current_period == '6month' %}active{% endif %}">6 Month</a>
-                    <a href="?period=1year" class="btn btn-outline-primary {% if current_period == '1year' %}active{% endif %}">1 Year</a>
-                    <a href="?period=all" class="btn btn-outline-primary {% if current_period == 'all' %}active{% endif %}">All</a>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <canvas id="cryptoChart" width="400" height="200"></canvas>
-
-    <script>
-        const moneyInvested = 100000;
-
-        const ctx = document.getElementById('cryptoChart').getContext('2d');
-        const cryptoChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{ crypto_labels|safe }}.reverse(),
-                datasets: [
-                    {
-                        label: 'Total Portfolio Value',
-                        data: {{ crypto_values|safe }}.reverse(),
-                        backgroundColor: 'rgba(75, 192, 192, 0.05)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.3
-                    },
-                    {
-                        label: 'Luno Total',
-                        data: {{ luno_values|safe }}.reverse(),
-                        backgroundColor: 'rgba(255, 206, 86, 0.05)',
-                        borderColor: 'rgba(255, 206, 86, 1)',
-                        borderWidth: 1.5,
-                        fill: false,
-                        tension: 0.2
-                    },
-                    {
-                        label: 'Binance Total',
-                        data: {{ binance_values|safe }}.reverse(),
-                        backgroundColor: 'rgba(153, 102, 255, 0.05)',
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        borderWidth: 1.5,
-                        fill: false,
-                        tension: 0.2
-                    },
-                    {
-                        label: 'Money Invested',
-                        data: Array({{ crypto_labels|length }}).fill(moneyInvested),
-                        borderColor: 'rgba(255, 99, 132, 0.8)',
-                        borderDash: [5, 5],
-                        pointRadius: 0,
-                        fill: false,
-                        tension: 0
-                    }
-                ]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: false
-                    }
-                },
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 30,  // ← increases space between items and chart
-                            font: {
-                                size: 16
-                            }
-                        }
-                    }
-                }
-            },
-        });
-    </script>
 {% endblock %}
-
-
-
-{#    <br>#}
-<!-- Table for Historical Data -->
-{#    <div class="collapse" id="historyTable">#}
-{#        <div class="card p-3 ">#}
-{#            <table class="table table-bordered mb-2">#}
-{#                <thead>#}
-{#                <tr>#}
-{#                    <th>Date</th>#}
-{#                    <th>Total</th>#}
-{#                </tr>#}
-{#                </thead>#}
-{#                <tbody>#}
-{#                {% for record in grand_total_history %}#}
-{#                    <tr>#}
-{#                        <td class="py-1 ">{{ record.timestamp|date:"Y-m-d H:i:s" }}</td>#}
-{#                        <td class="py-1 ">R {{ record.total_value|floatformat:2|intcomma }}</td>#}
-{#                    </tr>#}
-{#                {% empty %}#}
-{#                    <tr>#}
-{#                        <td colspan="2" class="text-center">No history available</td>#}
-{#                    </tr>#}
-{#                {% endfor %}#}
-{#                </tbody>#}
-{#            </table>#}
-{#        </div>#}
-{#    </div>#}
-
-{#    <div class="table-responsive">#}
-{#        <table class="table table-sm table-bordered table-striped table-hover mt-3">#}
-{#            <thead class="table-dark">#}
-{#            <tr>#}
-{#                <th scope="col">Name</th>#}
-{#                <th scope="col">Exchange</th>#}
-{#                <th scope="col">Account ID</th>#}
-{#                <th scope="col">Currency</th>#}
-{#                <th scope="col">ZAR</th>#}
-{#                <th scope="col">Timestamp</th>#}
-{#            </tr>#}
-{#            </thead>#}
-{#            <tbody>#}
-{#            {% for all_asset in all_assets %}#}
-{#                <tr>#}
-{#                    <td>{{ all_asset.name }}</td>#}
-{#                    <td>{{ all_asset.exchange }}</td>#}
-{#                    <td>{{ all_asset.account_id }}</td>#}
-{#                    <td>{{ all_asset.balance|floatformat:4 }}</td>#}
-{#                    <td>R {{ all_asset.converted_zar|floatformat:2|intcomma }}</td>#}
-{#                    <td>{{ all_asset.timestamp|date:"Y-m-d H:i:s" }}</td>#}
-{#                </tr>#}
-{#            {% empty %}#}
-{#                <tr>#}
-{#                    <td colspan="8" class="text-center">No cryptos available</td>#}
-{#                </tr>#}
-{#            {% endfor %}#}
-{#            </tbody>#}
-{#            <tfoot class=" fw-bold">#}
-{#            <tr>#}
-{#                <td colspan="4" class="text-end fw-bold text-danger">Totals:</td>#}
-{#                <td class="text-danger">R {{ total_converted_zar|floatformat:2|intcomma }}</td>#}
-{#                <td colspan="2"></td>#}
-{#            </tr>#}
-{#            </tfoot>#}
-{#        </table>#}
-{#    </div>#}

@@ -1,11 +1,16 @@
+import json
+from datetime import timedelta
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.utils import timezone
 
 from cryptos.crypto import process_crypto_data
 from cryptos.models import CryptoStats  # Import your model
 from worth.models import Worth
 from .models import Quote
+from .models import SystemMetric
 
 
 def home(request):
@@ -39,3 +44,44 @@ def quote_list(request):
 		'quotes': quotes,
 		'quote': latest_quote,
 	})
+
+
+def system_metrics_view(request):
+	period = request.GET.get("period", "1month")
+	now = timezone.now()
+	
+	if period == "1hour":
+		start_date = now - timedelta(hours=1)
+	elif period == "1day":
+		start_date = now - timedelta(days=1)
+	elif period == "2day":
+		start_date = now - timedelta(days=2)
+	elif period == "1week":
+		start_date = now - timedelta(weeks=1)
+	elif period == "1month":
+		start_date = now - timedelta(days=30)
+	elif period == "3month":
+		start_date = now - timedelta(days=90)
+	elif period == "6month":
+		start_date = now - timedelta(days=180)
+	elif period == "1year":
+		start_date = now - timedelta(days=365)
+	else:
+		start_date = None
+	
+	metrics = SystemMetric.objects.filter(timestamp__gte=start_date).order_by("timestamp") if start_date else SystemMetric.objects.order_by("timestamp")
+	
+	labels = [m.timestamp.strftime('%Y-%m-%d %H:%M') for m in metrics]
+	cpu = [m.cpu for m in metrics]
+	memory = [m.memory for m in metrics]
+	disk = [m.disk for m in metrics]
+	
+	context = {
+		'metrics': metrics,
+		'crypto_labels': json.dumps(labels),
+		'cpu': json.dumps(cpu),
+		'memory': json.dumps(memory),
+		'disk': json.dumps(disk),
+		'current_period': period
+	}
+	return render(request, 'metrics/system_metrics.html', context)

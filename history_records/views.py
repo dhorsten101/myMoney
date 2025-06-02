@@ -7,7 +7,7 @@ from .models import HistoryRecord  # adjust if needed
 
 
 def history_record_list(request):
-	period = request.GET.get("period", "all")
+	period = request.GET.get("period", "1month")
 	now = timezone.now()
 	
 	if period == "1hour":

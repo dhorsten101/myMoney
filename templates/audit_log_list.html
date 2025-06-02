@@ -1,9 +1,5 @@
 {% load humanize %}
 
-{#{% block title %}#}
-{#    Audit Logs#}
-{#{% endblock %}#}
-
 {% block content %}
     <div class="container mt-4">
         <h2 class="mb-4 text-danger">⚠️ Audit Logs</h2>
@@ -17,6 +13,7 @@
                         <th>Model</th>
                         <th>Object</th>
                         <th>Action</th>
+                        <th>User</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -26,6 +23,7 @@
                             <td>{{ audit.model_name }}</td>
                             <td>{{ audit.object_id }}</td>
                             <td>{{ audit.action }}</td>
+                            <td>{{ audit.user }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

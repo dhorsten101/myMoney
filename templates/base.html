@@ -102,20 +102,11 @@
             fullDiv.classList.toggle('d-none');
         }
     }
-</script>
 
-<script>
-    function toggleLogs(containerId, url) {
+    function toggleLogs(containerId) {
         const container = document.getElementById(containerId);
-        if (container.classList.contains("d-none")) {
-            if (!container.innerHTML.trim()) {
-                fetch(url)
-                    .then(res => res.text())
-                    .then(html => container.innerHTML = html);
-            }
-            container.classList.remove("d-none");
-        } else {
-            container.classList.add("d-none");
+        if (container) {
+            container.classList.toggle("d-none");
         }
     }
 </script>

@@ -2,6 +2,7 @@ import requests
 from django.core.management.base import BaseCommand
 
 from api.models import Quote
+from api.utils import log_error_to_db
 
 
 class Command(BaseCommand):
@@ -23,4 +24,5 @@ class Command(BaseCommand):
 			else:
 				self.stdout.write(self.style.WARNING("No data returned from API"))
 		except Exception as e:
-			self.stderr.write(f"Failed to fetch quote: {str(e)}")
+			log_error_to_db(e, source="cron.fetch_daily_quote")  # ✅ Save to DB
+			self.stderr.write(self.style.ERROR(f"Failed to fetch quote: {e}"))

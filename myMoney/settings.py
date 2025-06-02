@@ -145,17 +145,35 @@ LOGGING = {
 	'version': 1,
 	'disable_existing_loggers': False,
 	
+	'formatters': {
+		'verbose': {
+			'format': '[{levelname}] {asctime} {name}: {message}',
+			'style': '{',
+		},
+	},
+	
 	'handlers': {
 		'db': {
 			'level': 'ERROR',
 			'class': 'main.handlers.DBLogHandler',
 		},
 	},
+	
 	'loggers': {
 		'django': {
 			'handlers': ['db'],
 			'level': 'ERROR',
 			'propagate': True,
 		},
+		'myMoney': {
+			'handlers': ['db'],
+			'level': 'DEBUG',
+			'propagate': False,
+		},
+	},
+	
+	'root': {
+		'handlers': ['db'],
+		'level': 'WARNING',
 	},
 }

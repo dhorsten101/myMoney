@@ -24,6 +24,9 @@ class ErrorLog(models.Model):
 	user = models.CharField(max_length=255, blank=True, null=True)
 	ip_address = models.GenericIPAddressField(blank=True, null=True)
 	user_agent = models.TextField(blank=True, null=True)
+	view_name = models.CharField(max_length=255, blank=True, null=True)
+	request_body = models.TextField(blank=True, null=True)
+	headers = models.TextField(blank=True, null=True)
 	
 	timestamp = models.DateTimeField(default=now)
 	created_at = models.DateTimeField(default=now)

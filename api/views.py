@@ -82,6 +82,10 @@ def system_metrics_view(request):
 		'cpu': json.dumps(cpu),
 		'memory': json.dumps(memory),
 		'disk': json.dumps(disk),
+		"disk_read": [round(m.disk_read / (1024 ** 3), 2) if m.disk_read else 0 for m in metrics],
+		"disk_write": [round(m.disk_write / (1024 ** 3), 2) if m.disk_write else 0 for m in metrics],
+		"bytes_sent": [round(m.bytes_sent / (1024 ** 3), 2) if m.bytes_sent else 0 for m in metrics],
+		"bytes_recv": [round(m.bytes_recv / (1024 ** 3), 2) if m.bytes_recv else 0 for m in metrics],
 		'current_period': period
 	}
 	return render(request, 'metrics/system_metrics.html', context)

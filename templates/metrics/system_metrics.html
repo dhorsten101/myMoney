@@ -38,15 +38,37 @@
                 <th style="position: sticky; top: 0; z-index: 1;">CPU (%)</th>
                 <th style="position: sticky; top: 0; z-index: 1;">Memory (%)</th>
                 <th style="position: sticky; top: 0; z-index: 1;">Disk (%)</th>
+                <th style="position: sticky; top: 0; z-index: 1;">DB Latency (ms)</th>
+                <th style="position: sticky; top: 0; z-index: 1;">Uptime</th>
+                <th style="position: sticky; top: 0; z-index: 1;">Bytes Sent (MB)</th>
+                <th style="position: sticky; top: 0; z-index: 1;">Bytes Received (MB)</th>
+                <th style="position: sticky; top: 0; z-index: 1;">Disk Read</th>
+                <th style="position: sticky; top: 0; z-index: 1;">Disk Write</th>
             </tr>
             </thead>
             <tbody>
             {% for m in metrics %}
                 <tr>
-                    <td>{{ m.timestamp|date:"Y-m-d H:i:s" }}</td>
+                    <td>{{ m.timestamp|date:"Y-m-d H:i" }}</td>
                     <td>{{ m.cpu }}</td>
                     <td>{{ m.memory }}</td>
                     <td>{{ m.disk }}</td>
+                    <td>{{ m.db_latency_ms|floatformat:2 }}</td>
+                    <td>
+                        {% with uptime=m.uptime_seconds %}
+                            {% if uptime %}
+                                {% widthratio uptime 3600 1 as hours %}
+                                {% widthratio uptime 60 1 as minutes %}
+                                {{ hours|intcomma }}h {{ minutes|divisibleby:60|yesno:"0,1" }}m
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td data-bytes="{{ m.bytes_sent }}"></td>
+                    <td data-bytes="{{ m.bytes_recv }}"></td>
+                    <td>{{ m.disk_read|intcomma }}</td>
+                    <td>{{ m.disk_write|intcomma }}</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -67,7 +89,7 @@
                         backgroundColor: 'rgba(75, 192, 192, 0.05)',
                         borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 2,
-                        fill: true,
+                        fill: false,
                         tension: 0.3
                     },
                     {
@@ -88,6 +110,42 @@
                         fill: false,
                         tension: 0.2
                     },
+                    {#{#}
+                    {#    label: 'Disk Read (MB)',#}
+                    {#    data: {{ disk_read|safe }}.reverse(),#}
+                    {#    backgroundColor: 'rgba(255, 99, 132, 0.05)',#}
+                    {#    borderColor: 'rgba(255, 99, 132, 1)',#}
+                    {#    borderWidth: 1.5,#}
+                    {#    fill: false,#}
+                    {#    tension: 0.2#}
+                    {#}, #}
+                    {#{#}
+                    {#    label: 'Disk Write (MB)',#}
+                    {#    data: {{ disk_write|safe }}.reverse(),#}
+                    {#    backgroundColor: 'rgba(255, 159, 64, 0.05)',#}
+                    {#    borderColor: 'rgba(255, 159, 64, 1)',#}
+                    {#    borderWidth: 1.5,#}
+                    {#    fill: false,#}
+                    {#    tension: 0.2#}
+                    {#}, #}
+                    {#{#}
+                    {#    label: 'Network Sent (MB)',#}
+                    {#    data: {{ bytes_sent|safe }}.reverse(),#}
+                    {#    backgroundColor: 'rgba(54, 162, 235, 0.05)',#}
+                    {#    borderColor: 'rgba(54, 162, 235, 1)',#}
+                    {#    borderWidth: 1.5,#}
+                    {#    fill: false,#}
+                    {#    tension: 0.2#}
+                    {#}, #}
+                    {#{#}
+                    {#    label: 'Network Received (MB)',#}
+                    {#    data: {{ bytes_recv|safe }}.reverse(),#}
+                    {#    backgroundColor: 'rgba(75, 192, 75, 0.05)',#}
+                    {#    borderColor: 'rgba(75, 192, 75, 1)',#}
+                    {#    borderWidth: 1.5,#}
+                    {#    fill: false,#}
+                    {#    tension: 0.2#}
+                    {#}, #}
                 ]
             },
             options: {
@@ -108,6 +166,18 @@
                     }
                 }
             },
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const byteCells = document.querySelectorAll("td[data-bytes]");
+
+            byteCells.forEach(cell => {
+                const bytes = parseInt(cell.dataset.bytes || 0);
+                const mb = (bytes / 1024 / 1024).toFixed(2);
+                cell.textContent = `${mb} MB`;
+            });
         });
     </script>
 {% endblock %}

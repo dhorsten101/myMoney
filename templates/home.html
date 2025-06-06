@@ -72,16 +72,16 @@
         });
     </script>
 
-    <!-- This will load the table as soon as the page loads -->
-    <div
-            id="asset_list-container"
-            hx-get="{% url 'asset_list' %}"
-            hx-trigger="load"
-            hx-swap="innerHTML">
-    </div>
-
-    <!-- Target container -->
-    <div id="asset_list-container"></div>
+    {#    <!-- This will load the table as soon as the page loads -->#}
+    {#    <div#}
+    {#            id="asset_list-container"#}
+    {#            hx-get="{% url 'asset_list' %}"#}
+    {#            hx-trigger="load"#}
+    {#            hx-swap="innerHTML">#}
+    {#    </div>#}
+    {##}
+    {#    <!-- Target container -->#}
+    {#    <div id="asset_list-container"></div>#}
 
 {% endblock %}
 

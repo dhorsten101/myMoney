@@ -4,11 +4,12 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.core.mail import send_mail
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 
-from main.models import ErrorLog, AuditLog
+from main.models import ErrorLog, AuditLog, ExternalServiceLog
 
 logger = logging.getLogger('django')  # uses the 'django' logger from settings
 
@@ -68,6 +69,17 @@ def error_log_list(request):
 def audit_log_list(request):
 	audits = AuditLog.objects.order_by("-timestamp")[:100]
 	return render(request, "audit_log_list.html", {"audits": audits})
+
+
+@login_required
+def service_log_list(request):
+	service_logs = ExternalServiceLog.objects.order_by("-timestamp")
+	paginator = Paginator(service_logs, 5)  # Show 20 logs per page
+	
+	page_number = request.GET.get("page")
+	page_obj = paginator.get_page(page_number)
+	
+	return render(request, "service_log_list.html", {"page_obj": page_obj})
 
 
 def test_error_logging(request):

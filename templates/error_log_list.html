@@ -1,13 +1,13 @@
 {% load humanize %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h2 class="mb-4 text-danger">⚠️ Error Logs</h2>
+    <div class="container mt-3">
+        <h2 class="mb-3 text-danger text-center">❗ Error Logs</h2>
 
         {% if logs %}
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover table-sm">
-                    <thead class="table-dark">
+            <div style="max-height: 260px; overflow-y: auto;">
+                <table class="table table-striped table-hover table-sm mb-0">
+                    <thead class="table-dark" style="position: sticky; top: 0; z-index: 1;">
                     <tr>
                         <th>Timestamp</th>
                         <th>Module</th>

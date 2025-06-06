@@ -52,6 +52,12 @@ def system_metrics_view(request):
 	
 	if period == "1hour":
 		start_date = now - timedelta(hours=1)
+	elif period == "2hour":
+		start_date = now - timedelta(hours=2)
+	elif period == "6hour":
+		start_date = now - timedelta(hours=6)
+	elif period == "12hour":
+		start_date = now - timedelta(hours=12)
 	elif period == "1day":
 		start_date = now - timedelta(days=1)
 	elif period == "2day":
@@ -62,10 +68,6 @@ def system_metrics_view(request):
 		start_date = now - timedelta(days=30)
 	elif period == "3month":
 		start_date = now - timedelta(days=90)
-	elif period == "6month":
-		start_date = now - timedelta(days=180)
-	elif period == "1year":
-		start_date = now - timedelta(days=365)
 	else:
 		start_date = None
 	

@@ -35,6 +35,21 @@ class ErrorLog(models.Model):
 		return f"{self.level}: {self.message[:50]}"
 
 
+class ExternalServiceLog(models.Model):
+	name = models.CharField(max_length=100, help_text="Service name (e.g. ZenQuotes)")
+	url = models.URLField(max_length=500)
+	method = models.CharField(max_length=10, default='GET')
+	status_code = models.IntegerField(null=True, blank=True)
+	response_time_ms = models.FloatField(null=True, blank=True)
+	execution_time_ms = models.FloatField(null=True, blank=True)
+	response_success = models.BooleanField(default=False)
+	error_message = models.TextField(blank=True, null=True)
+	timestamp = models.DateTimeField(default=now)
+	
+	def __str__(self):
+		return f"{self.name} - {self.status_code} - {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"
+
+
 class AuditLog(models.Model):
 	user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 	action = models.CharField(max_length=100)  # e.g., "created asset"

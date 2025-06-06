@@ -111,5 +111,27 @@
     }
 </script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("click", function (e) {
+            if (e.target.matches(".ajax-page")) {
+                e.preventDefault();
+                const url = e.target.getAttribute("href");
+                const targetSelector = e.target.getAttribute("data-target");
+
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        const target = document.querySelector(targetSelector);
+                        if (target) {
+                            target.innerHTML = html;
+                        }
+                    })
+                    .catch(error => console.error("Pagination error:", error));
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

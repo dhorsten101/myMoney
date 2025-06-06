@@ -11,13 +11,14 @@
             <div class="row g-2 align-items-center">
                 <div class="btn-group mb-2 btn-group-sm" role="group">
                     <a href="?period=1hour" class="btn btn-outline-primary {% if current_period == '1hour' %}active{% endif %}">1 Hour</a>
+                    <a href="?period=2hour" class="btn btn-outline-primary {% if current_period == '2hour' %}active{% endif %}">2 Hour</a>
+                    <a href="?period=6hour" class="btn btn-outline-primary {% if current_period == '6hour' %}active{% endif %}">6 Hour</a>
+                    <a href="?period=12hour" class="btn btn-outline-primary {% if current_period == '12hour' %}active{% endif %}">12 Hour</a>
                     <a href="?period=1day" class="btn btn-outline-primary {% if current_period == '1day' %}active{% endif %}">1 Day</a>
                     <a href="?period=2day" class="btn btn-outline-primary {% if current_period == '2day' %}active{% endif %}">2 Day</a>
                     <a href="?period=1week" class="btn btn-outline-primary {% if current_period == '1week' %}active{% endif %}">1 Week</a>
                     <a href="?period=1month" class="btn btn-outline-primary {% if current_period == '1month' %}active{% endif %}">1 Month</a>
                     <a href="?period=3month" class="btn btn-outline-primary {% if current_period == '3month' %}active{% endif %}">3 Month</a>
-                    <a href="?period=6month" class="btn btn-outline-primary {% if current_period == '6month' %}active{% endif %}">6 Month</a>
-                    <a href="?period=1year" class="btn btn-outline-primary {% if current_period == '1year' %}active{% endif %}">1 Year</a>
                     <a href="?period=all" class="btn btn-outline-primary {% if current_period == 'all' %}active{% endif %}">All</a>
                 </div>
             </div>
@@ -110,42 +111,6 @@
                         fill: false,
                         tension: 0.2
                     },
-                    {#{#}
-                    {#    label: 'Disk Read (MB)',#}
-                    {#    data: {{ disk_read|safe }}.reverse(),#}
-                    {#    backgroundColor: 'rgba(255, 99, 132, 0.05)',#}
-                    {#    borderColor: 'rgba(255, 99, 132, 1)',#}
-                    {#    borderWidth: 1.5,#}
-                    {#    fill: false,#}
-                    {#    tension: 0.2#}
-                    {#}, #}
-                    {#{#}
-                    {#    label: 'Disk Write (MB)',#}
-                    {#    data: {{ disk_write|safe }}.reverse(),#}
-                    {#    backgroundColor: 'rgba(255, 159, 64, 0.05)',#}
-                    {#    borderColor: 'rgba(255, 159, 64, 1)',#}
-                    {#    borderWidth: 1.5,#}
-                    {#    fill: false,#}
-                    {#    tension: 0.2#}
-                    {#}, #}
-                    {#{#}
-                    {#    label: 'Network Sent (MB)',#}
-                    {#    data: {{ bytes_sent|safe }}.reverse(),#}
-                    {#    backgroundColor: 'rgba(54, 162, 235, 0.05)',#}
-                    {#    borderColor: 'rgba(54, 162, 235, 1)',#}
-                    {#    borderWidth: 1.5,#}
-                    {#    fill: false,#}
-                    {#    tension: 0.2#}
-                    {#}, #}
-                    {#{#}
-                    {#    label: 'Network Received (MB)',#}
-                    {#    data: {{ bytes_recv|safe }}.reverse(),#}
-                    {#    backgroundColor: 'rgba(75, 192, 75, 0.05)',#}
-                    {#    borderColor: 'rgba(75, 192, 75, 1)',#}
-                    {#    borderWidth: 1.5,#}
-                    {#    fill: false,#}
-                    {#    tension: 0.2#}
-                    {#}, #}
                 ]
             },
             options: {

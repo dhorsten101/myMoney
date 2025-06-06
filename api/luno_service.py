@@ -4,6 +4,7 @@ from luno_python.client import Client
 
 from cryptos.models import Asset
 from .coingecko_service import fetch_asset_names, get_zar_to_usd_rate
+from .utils import external_service_logger
 
 
 class LunoService:
@@ -23,12 +24,14 @@ class LunoService:
 		self.asset_names = fetch_asset_names()
 		self.zar_to_usd_rate = get_zar_to_usd_rate()
 	
+	@external_service_logger("Luno - Get Balances", "https://api.luno.com/api/1/balance", method="GET")
 	def get_balance(self):
 		balances = self.client.get_balances()
 		for balance in balances["balance"]:
 			print(f"Account ID: {balance['account_id']} for Asset: {balance['asset']}")
 		return balances
 	
+	@external_service_logger("Luno - Get Exchange Rate", "https://api.luno.com/api/1/ticker", method="GET")
 	def get_exchange_rate(self, pair):
 		ticker = self.client.get_ticker(pair=pair)
 		return float(ticker["last_trade"])

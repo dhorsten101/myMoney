@@ -9,7 +9,7 @@
     <div class="container mt-2">
         <div class="row align-items-center mb-4 text-center">
             <div>
-                <h1 class="mb-0">Logs</h1>
+                <h1 class="mb-0">⚠️ Logs</h1>
             </div>
         </div>
     </div>
@@ -21,7 +21,12 @@
             Toggle Error Logs
         </button>
 
-        <button class="btn btn-outline-primary"
+        <button class="btn btn-outline-info me-2"
+                onclick="toggleLogs('service_log_list-container')">
+            Toggle Service Logs
+        </button>
+
+        <button class="btn btn-outline-primary me-2"
                 onclick="toggleLogs('audit_log_list-container')">
             Toggle Audit Logs
         </button>
@@ -30,6 +35,7 @@
 
     <!-- Containers with logs shown by default -->
     <div id="error_log_list-container" hx-get="{% url 'error_log_list' %}" hx-trigger="load" hx-swap="innerHTML"></div>
+    <div id="service_log_list-container" hx-get="{% url 'service_log_list' %}" hx-trigger="load" hx-swap="innerHTML"></div>
     <div id="audit_log_list-container" hx-get="{% url 'audit_log_list' %}" hx-trigger="load" hx-swap="innerHTML"></div>
 
 {% endblock %}

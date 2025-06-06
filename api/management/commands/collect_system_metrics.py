@@ -53,5 +53,5 @@ class Command(BaseCommand):
 				level="ERROR",
 				exception=e,
 				module=__name__,
-				severity="ERROR"
+				severity="ERROR",
 			)

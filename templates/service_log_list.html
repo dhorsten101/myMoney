@@ -1,0 +1,104 @@
+{% load humanize %}
+
+{% block content %}
+    <div class="container mt-3">
+    
+        <h2 class="mb-3 text-danger text-center">📶 Service Logs</h2>
+
+        {% if page_obj %}
+            <nav aria-label="Pagination">
+                <ul class="pagination justify-content-center">
+
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               hx-get="{% url 'service_log_list' %}?page={{ page_obj.previous_page_number }}"
+                               hx-target="#service_log_list-container"
+                               hx-swap="innerHTML"
+                               hx-push-url="true">
+                                Previous
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                            <a class="page-link"
+                               hx-get="{% url 'service_log_list' %}?page={{ num }}"
+                               hx-target="#service_log_list-container"
+                               hx-swap="innerHTML"
+                               hx-push-url="true">
+                                {{ num }}
+                            </a>
+                        </li>
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               hx-get="{% url 'service_log_list' %}?page={{ page_obj.next_page_number }}"
+                               hx-target="#service_log_list-container"
+                               hx-swap="innerHTML"
+                               hx-push-url="true">
+                                Next
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <div style="max-height: 260px; overflow-y: auto;">
+                <div id="service_log_list-container" class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover table-sm mb-0">
+                        <thead class="table-dark" style="position: sticky; top: 0; z-index: 1;">
+                        <tr>
+                            <th>Time</th>
+                            <th>Name</th>
+                            <th>URL</th>
+                            <th>Method</th>
+                            <th>Code</th>
+                            <th>Response MS</th>
+                            <th>Execution MS</th>
+                            <th>Success</th>
+                            <th style="width: 250px;">Error</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for service_log in page_obj %}
+                            <tr>
+                                <td>{{ service_log.timestamp|naturaltime }}</td>
+                                <td>{{ service_log.name }}</td>
+                                <td>
+                                    <div class="text-truncate" style="max-width: 240px;" title="{{ service_log.url }}">
+                                        {{ service_log.url }}
+                                    </div>
+                                </td>
+                                <td>{{ service_log.method }}</td>
+                                <td>{{ service_log.status_code }}</td>
+                                <td>{{ service_log.response_time_ms|floatformat:2|intcomma }}</td>
+                                <td>{{ service_log.execution_time_ms|floatformat:2|intcomma }}</td>
+                                <td>
+                                    {% if service_log.response_success %}
+                                        <span class="badge bg-success">Yes</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">No</span>
+                                    {% endif %}
+                                </td>
+                                <td style="width: 250px;">
+                                    <div class="text-truncate" style="max-width: 240px;" title="{{ service_log.error_message }}">
+                                        {{ service_log.error_message|default:"-" }}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+        {% else %}
+            <p class="text-muted">No service logs found.</p>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -2,10 +2,12 @@ from decimal import Decimal
 
 from api.binance_service import BinanceService
 from api.luno_service import LunoService
+from api.utils import external_service_logger
 from cryptos.models import CryptoStats
 from history_records.models import HistoryRecord
 
 
+@external_service_logger("Crypto Aggregator", "internal:process_crypto_data")
 def process_crypto_data():
 	luno_service = LunoService()
 	binance_service = BinanceService()

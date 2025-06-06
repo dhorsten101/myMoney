@@ -2,6 +2,7 @@ from binance.client import Client
 from django.conf import settings
 from django.utils import timezone
 
+from api.utils import external_service_logger
 from cryptos.models import Asset
 
 
@@ -9,6 +10,7 @@ class BinanceService:
 	def __init__(self):
 		self.client = Client(settings.BINANCE_API_KEY, settings.BINANCE_SECRET_KEY)
 	
+	@external_service_logger("Binance - Get Balances", "https://api.binance.com/api/v3/account", method="GET")
 	def get_balances(self):
 		account_info = self.client.get_account()
 		
@@ -20,6 +22,7 @@ class BinanceService:
 		]
 		return balances
 	
+	@external_service_logger("Binance - Get Exchange Rate", "https://api.binance.com/api/v3/ticker/price", method="GET")
 	def get_exchange_rates(self, pair):
 		"""Fetch exchange rates for specific trading pairs from Binance."""
 		try:

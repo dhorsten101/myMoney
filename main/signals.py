@@ -18,6 +18,7 @@ def connect_signals():
 
 
 def log_save(sender, instance, created, **kwargs):
+	AuditLog.objects.all().delete()
 	user = get_current_user()
 	
 	# Only log if a real user is present (human interaction)

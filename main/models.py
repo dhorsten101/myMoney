@@ -56,3 +56,6 @@ class AuditLog(models.Model):
 	model_name = models.CharField(max_length=100)
 	object_id = models.PositiveIntegerField()
 	timestamp = models.DateTimeField(auto_now_add=True)
+	
+	def __str__(self):
+		return f"{self.model_name}: {self.user}"

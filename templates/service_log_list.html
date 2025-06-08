@@ -1,51 +1,52 @@
 {% load humanize %}
 
 {% block content %}
-    <div class="container mt-3">
-    
-        <h2 class="mb-3 text-danger text-center">📶 Service Logs</h2>
+    <div class="container mt-5">
 
         {% if page_obj %}
-            <nav aria-label="Pagination">
-                <ul class="pagination justify-content-center">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="text-danger mb-0">📶 Service Logs</h2>
 
-                    {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link"
-                               hx-get="{% url 'service_log_list' %}?page={{ page_obj.previous_page_number }}"
-                               hx-target="#service_log_list-container"
-                               hx-swap="innerHTML"
-                               hx-push-url="true">
-                                Previous
-                            </a>
-                        </li>
-                    {% endif %}
+                <nav aria-label="Pagination">
+                    <ul class="pagination mb-0">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   hx-get="{% url 'service_log_list' %}?page={{ page_obj.previous_page_number }}"
+                                   hx-target="#service_log_list-container"
+                                   hx-swap="innerHTML"
+                                   hx-push-url="true">
+                                    Previous
+                                </a>
+                            </li>
+                        {% endif %}
 
-                    {% for num in page_obj.paginator.page_range %}
-                        <li class="page-item {% if num == page_obj.number %}active{% endif %}">
-                            <a class="page-link"
-                               hx-get="{% url 'service_log_list' %}?page={{ num }}"
-                               hx-target="#service_log_list-container"
-                               hx-swap="innerHTML"
-                               hx-push-url="true">
-                                {{ num }}
-                            </a>
-                        </li>
-                    {% endfor %}
+                        {% for num in page_obj.paginator.page_range %}
+                            <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                                <a class="page-link"
+                                   hx-get="{% url 'service_log_list' %}?page={{ num }}"
+                                   hx-target="#service_log_list-container"
+                                   hx-swap="innerHTML"
+                                   hx-push-url="true">
+                                    {{ num }}
+                                </a>
+                            </li>
+                        {% endfor %}
 
-                    {% if page_obj.has_next %}
-                        <li class="page-item">
-                            <a class="page-link"
-                               hx-get="{% url 'service_log_list' %}?page={{ page_obj.next_page_number }}"
-                               hx-target="#service_log_list-container"
-                               hx-swap="innerHTML"
-                               hx-push-url="true">
-                                Next
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   hx-get="{% url 'service_log_list' %}?page={{ page_obj.next_page_number }}"
+                                   hx-target="#service_log_list-container"
+                                   hx-swap="innerHTML"
+                                   hx-push-url="true">
+                                    Next
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
             <div style="max-height: 260px; overflow-y: auto;">
                 <div id="service_log_list-container" class="table-responsive">
                     <table class="table table-bordered table-striped table-hover table-sm mb-0">

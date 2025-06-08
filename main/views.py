@@ -61,20 +61,26 @@ def logs(request):
 
 @login_required
 def error_log_list(request):
-	errors = ErrorLog.objects.order_by("-timestamp")[:100]
-	return render(request, "error_log_list.html", {"logs": errors})
+	errors = ErrorLog.objects.order_by("-timestamp")
+	paginator = Paginator(errors, 25)  # 10 per page
+	page_number = request.GET.get("page")
+	page_obj = paginator.get_page(page_number)
+	return render(request, "error_log_list.html", {"page_obj": page_obj})
 
 
 @login_required
 def audit_log_list(request):
-	audits = AuditLog.objects.order_by("-timestamp")[:100]
-	return render(request, "audit_log_list.html", {"audits": audits})
+	audits = AuditLog.objects.order_by("-timestamp")
+	paginator = Paginator(audits, 25)
+	page_number = request.GET.get("page")
+	page_obj = paginator.get_page(page_number)
+	return render(request, "audit_log_list.html", {"page_obj": page_obj})
 
 
 @login_required
 def service_log_list(request):
 	service_logs = ExternalServiceLog.objects.order_by("-timestamp")
-	paginator = Paginator(service_logs, 5)  # Show 20 logs per page
+	paginator = Paginator(service_logs, 25)  # Show 10 logs per page
 	
 	page_number = request.GET.get("page")
 	page_obj = paginator.get_page(page_number)

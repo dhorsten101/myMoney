@@ -15,7 +15,7 @@ from .models import Asset, CryptoStats
 
 @login_required
 def asset_list(request):
-	period = request.GET.get("period", "1month")
+	period = request.GET.get("period", "1week")
 	now = timezone.now()
 	
 	# Time filter

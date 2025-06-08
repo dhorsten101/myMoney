@@ -47,7 +47,7 @@ def quote_list(request):
 
 
 def system_metrics_view(request):
-	period = request.GET.get("period", "1month")
+	period = request.GET.get("period", "2hour")
 	now = timezone.now()
 	
 	if period == "1hour":

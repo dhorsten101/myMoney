@@ -1,11 +1,53 @@
 {% load humanize %}
 
 {% block content %}
-    <div class="container mt-3">
-        <h2 class="mb-3 text-danger text-center">🧮 Audit Logs</h2>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0 text-danger">🧮 Audit Logs</h2>
 
-        {% if audits %}
-            <div style="max-height: 260px; overflow-y: auto;">
+            <nav aria-label="Pagination">
+                <ul class="pagination mb-0">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               hx-get="{% url 'audit_log_list' %}?page={{ page_obj.previous_page_number }}"
+                               hx-target="#audit_log_list-container"
+                               hx-swap="innerHTML"
+                               hx-push-url="true">
+                                Previous
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                            <a class="page-link"
+                               hx-get="{% url 'audit_log_list' %}?page={{ num }}"
+                               hx-target="#audit_log_list-container"
+                               hx-swap="innerHTML"
+                               hx-push-url="true">
+                                {{ num }}
+                            </a>
+                        </li>
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               hx-get="{% url 'audit_log_list' %}?page={{ page_obj.next_page_number }}"
+                               hx-target="#audit_log_list-container"
+                               hx-swap="innerHTML"
+                               hx-push-url="true">
+                                Next
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+
+        <div style="max-height: 260px; overflow-y: auto;">
+            <div id="audit_log_list-container" class="table-responsive">
                 <table class="table table-striped table-hover table-sm mb-0">
                     <thead class="table-dark" style="position: sticky; top: 0; z-index: 1;">
                     <tr>
@@ -17,7 +59,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for audit in audits %}
+                    {% for audit in page_obj %}
                         <tr>
                             <td>{{ audit.timestamp|naturaltime }}</td>
                             <td>{{ audit.model_name }}</td>
@@ -29,8 +71,6 @@
                     </tbody>
                 </table>
             </div>
-        {% else %}
-            <p class="text-muted">No Audit logs found.</p>
-        {% endif %}
+        </div>
     </div>
 {% endblock %}

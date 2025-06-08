@@ -46,14 +46,14 @@
                         <thead class="table-dark" style="position: sticky; top: 0; z-index: 1;">
                         <tr>
                             <th>Time</th>
-                            <th>Name</th>
+                            <th style="width: 100px;">Name</th>
                             <th>URL</th>
                             <th>Method</th>
                             <th>Code</th>
-                            <th>Response MS</th>
-                            <th>Execution MS</th>
+                            <th style="width: 70px;">Resp MS</th>
+                            <th style="width: 70px;">Exec MS</th>
                             <th>Success</th>
-                            <th style="width: 250px;">Error</th>
+                            <th style="width: 400px;">Error</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -77,8 +77,8 @@
                                         <span class="badge bg-danger">No</span>
                                     {% endif %}
                                 </td>
-                                <td style="width: 250px;">
-                                    <div class="text-truncate" style="max-width: 240px;" title="{{ service_log.error_message }}">
+                                <td style="width: 400px;">
+                                    <div class="text-truncate" style="max-width: 390px;" title="{{ service_log.error_message }}">
                                         {{ service_log.error_message|default:"-" }}
                                     </div>
                                 </td>

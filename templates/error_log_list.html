@@ -46,9 +46,9 @@
                     <tr>
                         <th>Timestamp</th>
                         <th>Module</th>
-                        {#                        <th>Level</th>#}
                         <th>Exception</th>
                         <th>Error Message</th>
+                        <th>User</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -56,10 +56,9 @@
                         <tr>
                             <td>{{ log.timestamp|naturaltime }}</td>
                             <td>{{ log.module }}</td>
-                            {#                            <td>{{ log.level }}</td>#}
-                            <td style="max-width: 480px;">
+                            <td style="max-width: 450px;">
                                 <div id="short-exc-{{ log.id }}">
-                                <span class="text-truncate d-inline-block" style="max-width: 450px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <span class="text-truncate d-inline-block" style="max-width: 410px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                   {{ log.exception }}
                                 </span>
                                     {% if log.exception|length > 80 %}
@@ -79,9 +78,9 @@
                                 {% endif %}
                             </td>
 
-                            <td style="max-width: 480px;">
+                            <td style="max-width: 450px;">
                                 <div id="short-msg-{{ log.id }}">
-                                <span class="text-truncate d-inline-block" style="max-width: 450px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <span class="text-truncate d-inline-block" style="max-width: 410px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                     {{ log.message }}
                                 </span>
                                     {% if log.message|length > 80 %}
@@ -100,6 +99,7 @@
                                     </div>
                                 {% endif %}
                             </td>
+                            <td>{{ log.user }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

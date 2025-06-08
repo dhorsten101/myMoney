@@ -47,7 +47,6 @@
                         <th>ID</th>
                         <th>Object</th>
                         <th>Method</th>
-                        <th>Remote IP</th>
                         <th>Agent</th>
                         <th>Model</th>
                         <th>Action</th>
@@ -61,20 +60,19 @@
                             <td>{{ audit.object_id }}</td>
                             <td>{{ audit.object_repr }}</td>
                             <td>{{ audit.request_method }}</td>
-                            <td>{{ audit.remote_ip }}</td>
-                            <td style="max-width: 480px;">
+                            <td style="max-width: 450px;">
                                 <div id="short-audit-{{ audit.id }}">
-                                <span class="text-truncate d-inline-block" style="max-width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <span class="text-truncate d-inline-block" style="max-width: 410px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                     {{ audit.user_agent }}
                                 </span>
-                                    {% if audit.user_agent|length > 90 %}
+                                    {% if audit.user_agent|length > 80 %}
                                         <a href="#" class="ms-2" onclick="toggleAudit('{{ audit.id }}'); return false;">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     {% endif %}
                                 </div>
 
-                                {% if audit.user_agent|length > 90 %}
+                                {% if audit.user_agent|length > 80 %}
                                     <div class="d-none" id="full-audit-{{ audit.id }}">
                                         <span style="white-space: pre-wrap;">{{ audit.user_agent }}</span>
                                         <a href="#" class="ms-2" onclick="toggleAudit('{{ audit.id }}'); return false;">

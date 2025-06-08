@@ -7,21 +7,55 @@ from django.utils.timezone import now
 from main.models import ErrorLog, ExternalServiceLog
 
 
-def log_error_to_db(exc, source="management", extra_info=None):
-	tb_str = ''.join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+# def log_error_to_db(exc, source="management", extra_info=None):
+# 	tb_str = ''.join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+#
+# 	ErrorLog.objects.create(
+# 		timestamp=now(),
+# 		level="ERROR",
+# 		message=str(exc),
+# 		exception_type=type(exc).__name__,
+# 		exception_value=str(exc),
+# 		traceback=tb_str,
+# 		module=source,
+# 		method=extra_info.get("method") if extra_info else None,
+# 		path=extra_info.get("path") if extra_info else None,
+# 		user=extra_info.get("user") if extra_info else None,
+# 		ip_address=extra_info.get("ip") if extra_info else None,
+# 	)
+
+
+def log_error_to_db(
+		exception,
+		source="unknown",
+		severity="ERROR",
+		extra_info=None
+):
+	tb_str = ''.join(traceback.format_exception(type(exception), exception, exception.__traceback__))
+	extra_info = extra_info or {}
 	
 	ErrorLog.objects.create(
 		timestamp=now(),
 		level="ERROR",
-		message=str(exc),
-		exception_type=type(exc).__name__,
-		exception_value=str(exc),
+		severity=severity,
+		message=str(exception),
+		exception_type=type(exception).__name__,
+		exception_value=str(exception),
 		traceback=tb_str,
 		module=source,
-		method=extra_info.get("method") if extra_info else None,
-		path=extra_info.get("path") if extra_info else None,
-		user=extra_info.get("user") if extra_info else None,
-		ip_address=extra_info.get("ip") if extra_info else None,
+		method=extra_info.get("method"),
+		status_code=extra_info.get("status_code"),
+		path=extra_info.get("path"),
+		pathname=extra_info.get("pathname"),
+		lineno=extra_info.get("lineno"),
+		func_name=extra_info.get("func_name"),
+		object_id=extra_info.get("object_id"),
+		user=extra_info.get("user"),
+		ip_address=extra_info.get("ip"),
+		user_agent=extra_info.get("user_agent"),
+		view_name=extra_info.get("view_name"),
+		request_body=extra_info.get("request_body"),
+		headers=extra_info.get("headers"),
 	)
 
 

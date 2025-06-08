@@ -49,9 +49,14 @@ class Command(BaseCommand):
 		except Exception as e:
 			from api.utils import log_error_to_db
 			log_error_to_db(
-				message="Failed to collect system metrics",
-				level="ERROR",
 				exception=e,
-				module=__name__,
-				severity="ERROR",
+				source=__name__,
+				severity="CRITICAL",
+				extra_info={
+					"method": "system_metrics",
+					"path": "n/a",
+					"user": "system",
+					"ip": "127.0.0.1",
+					"func_name": "handle",
+				}
 			)

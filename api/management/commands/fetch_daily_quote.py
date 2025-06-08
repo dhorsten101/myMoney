@@ -1,4 +1,5 @@
 import time
+import traceback
 
 import requests
 from django.core.management.base import BaseCommand
@@ -40,8 +41,23 @@ class Command(BaseCommand):
 			status_code = response.status_code
 		
 		except Exception as e:
+			tb = traceback.extract_tb(e.__traceback__)[-1]
+			log_error_to_db(
+				exception=e,
+				source="cron.fetch_daily_quote",
+				severity="ERROR",
+				extra_info={
+					"method": "GET",
+					"status_code": status_code,
+					"path": url,
+					"user": "system",
+					"ip": "127.0.0.1",
+					"func_name": tb.name,
+					"pathname": tb.filename,
+					"lineno": tb.lineno,
+				}
+			)
 			error_message = str(e)
-			log_error_to_db(e, source="cron.fetch_daily_quote")
 			self.stderr.write(self.style.ERROR(f"Failed to fetch quote: {e}"))
 		
 		finally:

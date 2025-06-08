@@ -56,6 +56,15 @@ class AuditLog(models.Model):
 	model_name = models.CharField(max_length=100)
 	object_id = models.PositiveIntegerField()
 	timestamp = models.DateTimeField(auto_now_add=True)
+	object_repr = models.TextField(blank=True, null=True)
+	changes = models.JSONField(null=True, blank=True)
+	remote_ip = models.GenericIPAddressField(null=True, blank=True)
+	user_agent = models.TextField(null=True, blank=True)
+	view_name = models.CharField(max_length=255, blank=True, null=True)
+	request_method = models.CharField(max_length=10, null=True, blank=True)
+	referrer = models.URLField(null=True, blank=True)
+	session_key = models.CharField(max_length=100, blank=True, null=True)
+	is_manual_action = models.BooleanField(default=True)
 	
 	def __str__(self):
 		return f"{self.model_name}: {self.user}"

@@ -1,16 +1,15 @@
-from crum import get_current_user
+from crum import get_current_user, get_current_request
 from django.apps import apps
+from django.db import models
 from django.db.models.signals import post_save, post_delete
 
 from .models import AuditLog
 
 
-# Attach signal handlers to all models
 def connect_signals():
 	all_models = apps.get_models()
-	
 	for model in all_models:
-		if model.__name__ == "AuditLog":  # Prevent recursion
+		if model.__name__ == "AuditLog":  # Avoid recursion
 			continue
 		
 		post_save.connect(log_save, sender=model, dispatch_uid=f"{model.__name__}_save")
@@ -18,24 +17,60 @@ def connect_signals():
 
 
 def log_save(sender, instance, created, **kwargs):
-	# AuditLog.objects.all().delete()
 	user = get_current_user()
+	request = get_current_request()
 	
-	# Only log if a real user is present (human interaction)
 	if user is None or not user.is_authenticated:
 		return
 	
-	action = "created" if created else "updated"
+	object_repr = str(instance)
+	changes = {}
+	
+	if not created:
+		try:
+			old_instance = sender.objects.get(pk=instance.pk)
+			
+			for field in instance._meta.fields:
+				field_name = field.name
+				
+				# Skip fields like auto_now/auto_now_add if desired
+				if getattr(field, 'auto_now', False) or getattr(field, 'auto_now_add', False):
+					continue
+				
+				# ForeignKey handling
+				if isinstance(field, models.ForeignKey):
+					old_value = getattr(old_instance, f"{field_name}_id", None)
+					new_value = getattr(instance, f"{field_name}_id", None)
+				else:
+					old_value = getattr(old_instance, field_name, None)
+					new_value = getattr(instance, field_name, None)
+				
+				if old_value != new_value:
+					changes[field_name] = [str(old_value), str(new_value)]
+		
+		except sender.DoesNotExist:
+			pass  # Edge case: previous version not found
+	
 	AuditLog.objects.create(
 		user=user,
-		action=action,
+		action="created" if created else "updated",
 		model_name=sender.__name__,
-		object_id=instance.pk
+		object_id=instance.pk,
+		object_repr=object_repr,
+		changes=changes or None,
+		remote_ip=request.META.get("REMOTE_ADDR") if request else None,
+		user_agent=request.META.get("HTTP_USER_AGENT") if request else None,
+		view_name=request.resolver_match.view_name if request and request.resolver_match else None,
+		request_method=request.method if request else None,
+		referrer=request.META.get("HTTP_REFERER") if request else None,
+		session_key=request.session.session_key if request and hasattr(request, "session") else None,
+		is_manual_action=True
 	)
 
 
 def log_delete(sender, instance, **kwargs):
 	user = get_current_user()
+	request = get_current_request()
 	
 	if user is None or not user.is_authenticated:
 		return
@@ -44,5 +79,13 @@ def log_delete(sender, instance, **kwargs):
 		user=user,
 		action="deleted",
 		model_name=sender.__name__,
-		object_id=instance.pk
+		object_id=instance.pk,
+		object_repr=str(instance),
+		remote_ip=getattr(request, "META", {}).get("REMOTE_ADDR") if request else None,
+		user_agent=request.META.get("HTTP_USER_AGENT") if request else None,
+		view_name=request.resolver_match.view_name if request and request.resolver_match else None,
+		request_method=request.method if request else None,
+		referrer=request.META.get("HTTP_REFERER") if request else None,
+		session_key=request.session.session_key if request and hasattr(request, "session") else None,
+		is_manual_action=True
 	)

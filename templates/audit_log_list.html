@@ -44,8 +44,12 @@
                     <thead class="table-dark" style="position: sticky; top: 0; z-index: 1;">
                     <tr>
                         <th>Timestamp</th>
-                        <th>Model</th>
+                        <th>ID</th>
                         <th>Object</th>
+                        <th>Method</th>
+                        <th>Remote IP</th>
+                        <th>Agent</th>
+                        <th>Model</th>
                         <th>Action</th>
                         <th>User</th>
                     </tr>
@@ -54,8 +58,32 @@
                     {% for audit in page_obj %}
                         <tr>
                             <td>{{ audit.timestamp|naturaltime }}</td>
-                            <td>{{ audit.model_name }}</td>
                             <td>{{ audit.object_id }}</td>
+                            <td>{{ audit.object_repr }}</td>
+                            <td>{{ audit.request_method }}</td>
+                            <td>{{ audit.remote_ip }}</td>
+                            <td style="max-width: 480px;">
+                                <div id="short-audit-{{ audit.id }}">
+                                <span class="text-truncate d-inline-block" style="max-width: 480px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    {{ audit.user_agent }}
+                                </span>
+                                    {% if audit.user_agent|length > 90 %}
+                                        <a href="#" class="ms-2" onclick="toggleAudit('{{ audit.id }}'); return false;">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+
+                                {% if audit.user_agent|length > 90 %}
+                                    <div class="d-none" id="full-audit-{{ audit.id }}">
+                                        <span style="white-space: pre-wrap;">{{ audit.user_agent }}</span>
+                                        <a href="#" class="ms-2" onclick="toggleAudit('{{ audit.id }}'); return false;">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>{{ audit.model_name }}</td>
                             <td>{{ audit.action }}</td>
                             <td>{{ audit.user }}</td>
                         </tr>

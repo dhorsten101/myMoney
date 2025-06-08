@@ -85,6 +85,15 @@
 <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 
 <script>
+    function toggleAudit(id) {
+        const shortDiv = document.getElementById('short-audit-' + id);
+        const fullDiv = document.getElementById('full-audit-' + id);
+        if (shortDiv && fullDiv) {
+            shortDiv.classList.toggle('d-none');
+            fullDiv.classList.toggle('d-none');
+        }
+    }
+
     function toggleMessage(id) {
         const shortDiv = document.getElementById('short-msg-' + id);
         const fullDiv = document.getElementById('full-msg-' + id);

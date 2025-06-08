@@ -3,34 +3,26 @@
 {% block content %}
 
     <div class="container mt-1">
-        <div class="d-flex justify-content-between align-items-center mb-1">
+        <div class="d-flex justify-content-between align-items-center mb-2">
             <h2 class="mb-0 text-danger">❗ Error Logs</h2>
 
             <nav aria-label="Pagination">
-                <ul class="pagination mb-0">
-                    {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link"
-                               hx-get="{% url 'error_log_list' %}?page={{ page_obj.previous_page_number }}"
-                               hx-target="#error_log_list-container"
-                               hx-swap="innerHTML"
-                               hx-push-url="true">
-                                Previous
-                            </a>
-                        </li>
-                    {% endif %}
-
-                    {% for num in page_obj.paginator.page_range %}
-                        <li class="page-item {% if num == page_obj.number %}active{% endif %}">
-                            <a class="page-link"
-                               hx-get="{% url 'error_log_list' %}?page={{ num }}"
-                               hx-target="#error_log_list-container"
-                               hx-swap="innerHTML"
-                               hx-push-url="true">
-                                {{ num }}
-                            </a>
-                        </li>
-                    {% endfor %}
+                <ul class="pagination d-flex align-items-center mb-0">
+                    <li class="page-item disabled me-2">
+                            <span class="page-link text-muted border-0">
+                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                            </span>
+                    </li>                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link"
+                           hx-get="{% url 'error_log_list' %}?page={{ page_obj.previous_page_number }}"
+                           hx-target="#error_log_list-container"
+                           hx-swap="innerHTML"
+                           hx-push-url="true">
+                            Previous
+                        </a>
+                    </li>
+                {% endif %}
 
                     {% if page_obj.has_next %}
                         <li class="page-item">

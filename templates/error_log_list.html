@@ -1,8 +1,9 @@
 {% load humanize %}
 
 {% block content %}
+
     <div class="container mt-1">
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-1">
             <h2 class="mb-0 text-danger">❗ Error Logs</h2>
 
             <nav aria-label="Pagination">
@@ -53,7 +54,7 @@
                     <tr>
                         <th>Timestamp</th>
                         <th>Module</th>
-                        <th>Level</th>
+                        {#                        <th>Level</th>#}
                         <th>Exception</th>
                         <th>Error Message</th>
                     </tr>
@@ -63,7 +64,7 @@
                         <tr>
                             <td>{{ log.timestamp|naturaltime }}</td>
                             <td>{{ log.module }}</td>
-                            <td>{{ log.level }}</td>
+                            {#                            <td>{{ log.level }}</td>#}
                             <td style="max-width: 480px;">
                                 <div id="short-exc-{{ log.id }}">
                                 <span class="text-truncate d-inline-block" style="max-width: 450px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">

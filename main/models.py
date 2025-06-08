@@ -52,7 +52,7 @@ class ExternalServiceLog(models.Model):
 
 class AuditLog(models.Model):
 	user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-	action = models.CharField(max_length=100)  # e.g., "created asset"
+	action = models.CharField(max_length=100)
 	model_name = models.CharField(max_length=100)
 	object_id = models.PositiveIntegerField()
 	timestamp = models.DateTimeField(auto_now_add=True)

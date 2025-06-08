@@ -1,19 +1,8 @@
-from threading import local
-
+from crum import get_current_user
 from django.apps import apps
 from django.db.models.signals import post_save, post_delete
 
 from .models import AuditLog
-
-_user = local()
-
-
-def set_current_user(user):
-	_user.value = user
-
-
-def get_current_user():
-	return getattr(_user, "value", None)
 
 
 # Attach signal handlers to all models
@@ -30,6 +19,11 @@ def connect_signals():
 
 def log_save(sender, instance, created, **kwargs):
 	user = get_current_user()
+	
+	# Only log if a real user is present (human interaction)
+	if user is None or not user.is_authenticated:
+		return
+	
 	action = "created" if created else "updated"
 	AuditLog.objects.create(
 		user=user,
@@ -41,6 +35,10 @@ def log_save(sender, instance, created, **kwargs):
 
 def log_delete(sender, instance, **kwargs):
 	user = get_current_user()
+	
+	if user is None or not user.is_authenticated:
+		return
+	
 	AuditLog.objects.create(
 		user=user,
 		action="deleted",

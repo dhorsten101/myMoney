@@ -15,4 +15,6 @@ urlpatterns = [
 	path("", include("to_do.urls")),
 	path("", include("ideas.urls")),
 	path("", include("weight.urls")),
+	path("", include('documents.urls')),
+	path('ckeditor5/', include('django_ckeditor_5.urls')),
 ]

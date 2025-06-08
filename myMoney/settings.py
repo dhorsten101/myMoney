@@ -24,6 +24,8 @@ INSTALLED_APPS = [
 	"django.contrib.humanize",
 	"widget_tweaks",
 	"django_crontab",
+	# "ckeditor_uploader",
+	'django_ckeditor_5',
 	"api",
 	"cryptos",
 	"incomes",
@@ -36,7 +38,18 @@ INSTALLED_APPS = [
 	"weight",
 	"ideas",
 	"worth",
+	"documents",
 ]
+
+# CKEditor 5 config
+CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+
+CKEDITOR_5_CONFIGS = {
+	"default": {
+		"toolbar": ["heading", "|", "bold", "italic", "link", "bulletedList", "numberedList", "blockQuote", "imageUpload"],
+		"language": "en",
+	}
+}
 
 MIDDLEWARE = [
 	"django.middleware.security.SecurityMiddleware",
@@ -116,7 +129,7 @@ TIME_ZONE = 'Africa/Johannesburg'
 USE_TZ = True
 USE_I18N = True
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+# STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"

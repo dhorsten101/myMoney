@@ -46,6 +46,7 @@ def quote_list(request):
 	})
 
 
+@login_required
 def system_metrics_view(request):
 	period = request.GET.get("period", "2hour")
 	now = timezone.now()

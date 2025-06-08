@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2>{{ document.title }}</h2>
+        <div class="float-end btn-group ">
+            <a href="{% url 'document_list' %}" class="btn btn-secondary btn-sm">Back</a>
+            <a href="{% url 'document_update' document.id %}" class="btn btn-sm btn-success float-end ">Edit</a>
+            <a href="{% url 'document_delete' document.id %}" class="btn btn-sm btn-danger float-end">Delete</a>
+        </div>
+        <p class="text-muted">Created by {{ document.created_by }} on {{ document.created_at|date:"Y-m-d H:i" }}</p>
+
+        <hr>
+        <div>
+            <div>
+                {{ document.content|safe }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

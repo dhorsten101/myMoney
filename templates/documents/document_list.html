@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="position-relative mb-3 text-center">
+            <a href="{% url 'document_create' %}" class="btn btn-primary btn-sm position-absolute top-0 start-0">New</a>
+            <h1 class="mb-3">Documents</h1>
+        </div>
+
+        {% if documents %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm mt-3">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Created By</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for document in documents %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'document_view' document.id %}" class="text-decoration-none">
+                                    {{ document.title }}
+                                </a>
+                            </td>
+                            <td>{{ document.category }}</td>
+                            <td>{{ document.created_by }}</td>
+                            <td>{{ document.created_at|date:"Y-m-d H:i" }}</td>
+                            <td>{{ document.updated_at|date:"Y-m-d H:i" }}</td>
+                            <td>
+                                <button onclick="window.location.href='{% url 'document_update' document.id %}'"
+                                        class="btn btn-link p-0 me-2 text-primary text-decoration-none"
+                                        title="Edit">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button onclick="window.location.href='{% url 'document_delete' document.id %}'"
+                                        class="btn btn-link p-0 text-danger text-decoration-none me-2"
+                                        title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No documents found.</p>
+        {% endif %}
+    </div>
+{% endblock %}

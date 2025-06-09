@@ -2,9 +2,20 @@
 
 {% block content %}
     <div class="container mt-4">
-        <div class="position-relative mb-3 text-center">
-            <a href="{% url 'document_create' %}" class="btn btn-primary btn-sm position-absolute top-0 start-0">New</a>
-            <h1 class="mb-3">Documents</h1>
+        <div class="row align-items-center mb-3">
+            <div class="col text-start">
+                <a href="{% url 'document_create' %}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-circle"></i> New
+                </a>
+            </div>
+            <div class="col text-center">
+                <h1 class="mb-0">
+                    <i class="bi bi-file-earmark-text me-2"></i> Document Notes
+                </h1>
+            </div>
+            <div class="col text-end">
+                <!-- Optional: add another action or leave blank -->
+            </div>
         </div>
 
         {% if documents %}

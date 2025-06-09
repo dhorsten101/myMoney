@@ -1,28 +1,39 @@
 {% extends "base.html" %}
+{% load widget_tweaks %}
 
 {% block content %}
     <div class="container mt-4">
-        <h2>Create Document</h2>
-        <form method="post">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Create Note</h2>
+            <a href="{% url 'document_list' %}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+
+        <form method="post" class="card shadow-sm p-4">
             {% csrf_token %}
             {{ form.media }}
 
             <div class="mb-3">
-                {{ form.title.label_tag }}
-                {{ form.title }}
+                <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+                {{ form.title|add_class:"form-control" }}
             </div>
 
             <div class="mb-3">
-                {{ form.category.label_tag }}
-                {{ form.category }}
+                <label for="{{ form.category.id_for_label }}" class="form-label">{{ form.category.label }}</label>
+                {{ form.category|add_class:"form-select" }}
             </div>
 
             <div class="mb-3">
-                {{ form.content.label_tag }}
+                <label for="{{ form.content.id_for_label }}" class="form-label">{{ form.content.label }}</label>
                 {{ form.content }}
             </div>
 
-            <button type="submit" class="btn btn-primary">Save</button>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-save"></i> Save Document
+                </button>
+            </div>
         </form>
     </div>
 {% endblock %}

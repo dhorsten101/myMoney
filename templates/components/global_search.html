@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2>Search Results for "{{ query }}"</h2>
+
+        {% if results.documents %}
+            <h4 class="mt-4">Documents</h4>
+            <ul class="list-group mb-3">
+                {% for doc in results.documents %}
+                    <li class="list-group-item">
+                        <a href="{% url 'document_view' doc.id %}">{{ doc.title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if results.todos %}
+            <h4 class="mt-4">ToDos</h4>
+            <ul class="list-group mb-3">
+                {% for todo in results.todos %}
+                    <li class="list-group-item">
+                        {{ todo.name }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if results.worth %}
+            <h4 class="mt-4">Worth</h4>
+            <ul class="list-group mb-3">
+                {% for worth in results.worth %}
+                    <li class="list-group-item">
+                        {{ worth.name }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if results.credits %}
+            <h4 class="mt-4">Credits</h4>
+            <ul class="list-group mb-3">
+                {% for credit in results.credits %}
+                    <li class="list-group-item">
+                        {{ credit.name }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if results.expenses %}
+            <h4 class="mt-4">Expenses</h4>
+            <ul class="list-group mb-3">
+                {% for expense in results.expenses %}
+                    <li class="list-group-item">
+                        {{ expense.name }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if results.incomes %}
+            <h4 class="mt-4">Income</h4>
+            <ul class="list-group mb-3">
+                {% for income in results.incomes %}
+                    <li class="list-group-item">
+                        {{ income.name }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+
+        {% if results.sellables %}
+            <h4 class="mt-4">sellable</h4>
+            <ul class="list-group mb-3">
+                {% for sellable in results.sellables %}
+                    <li class="list-group-item">
+                        {{ sellable.name }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if results.weights %}
+            <h4 class="mt-4">weight</h4>
+            <ul class="list-group mb-3">
+                {% for weight in results.weights %}
+                    <li class="list-group-item">
+                        {{ weight.weight }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if results.assets %}
+            <h4 class="mt-4">asset</h4>
+            <ul class="list-group mb-3">
+                {% for asset in results.assets %}
+                    <li class="list-group-item">
+                        {{ asset.name }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if results.audits %}
+            <h4 class="mt-4">audit</h4>
+            <ul class="list-group mb-3">
+                {% for audit in results.audits %}
+                    <li class="list-group-item">
+                        {{ audit.model_name }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+
+        {% if results.external_errors %}
+            <h4 class="mt-4">external_error</h4>
+            <ul class="list-group mb-3">
+                {% for external_error in results.external_errors %}
+                    <li class="list-group-item">
+                        {{ external_error.name }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if results.errors %}
+            <h4 class="mt-4">errors</h4>
+            <ul class="list-group mb-3">
+                {% for error in results.errors %}
+                    <li class="list-group-item">
+                        {{ error.message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if results.quotes %}
+            <h4 class="mt-4">Quotes</h4>
+            <ul class="list-group mb-3">
+                {% for quote in results.quotes %}
+                    <li class="list-group-item">
+                        {{ quote.text }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if results %}
+            <p class="text-muted">No results found.</p>
+        {% endif %}
+    </div>
+{% endblock %}

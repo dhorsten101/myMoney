@@ -1,3 +1,10 @@
+# Create your models here.
+
 from django.db import models
 
-# Create your models here.
+
+class Feedback(models.Model):
+	question = models.TextField()
+	answer = models.TextField()
+	is_helpful = models.BooleanField()
+	created_at = models.DateTimeField(auto_now_add=True)

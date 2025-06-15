@@ -1,13 +1,19 @@
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
-from langchain_community.llms import Ollama
+import os
+
+import openai
+from langchain_community.llms.ollama import Ollama
+from langchain_community.vectorstores import FAISS
+from langchain_huggingface import HuggingFaceEmbeddings
+from openai import OpenAIError
 
 
-class DevAssistant:
+class Assistant:
 	def __init__(self):
 		embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-		self.vectorstore = FAISS.load_local("local_index", embedding)
-		self.llm = Ollama(model="llama3")
+		self.vectorstore = FAISS.load_local("local_index", embedding, allow_dangerous_deserialization=True)
+		self.local_llm = Ollama(model="llama3")
+		self.use_openai = True
+		openai.api_key = os.getenv("OPENAI_API_KEY")  # Or load from Django settings
 	
 	def ask(self, question):
 		docs = self.vectorstore.similarity_search(question, k=5)
@@ -24,4 +30,25 @@ Context:
 Question:
 {question}
 """
-		return self.llm.invoke(prompt).strip()
+		
+		# Try local Ollama first
+		try:
+			return self.local_llm.invoke(prompt).strip()
+		except Exception as e:
+			print(f"⚠️ Local LLM failed: {e}")
+			
+			# Fallback to OpenAI
+			if self.use_openai:
+				try:
+					response = openai.ChatCompletion.create(
+						model="gpt-3.5-turbo",  # or "gpt-4"
+						messages=[
+							{"role": "system", "content": "You are a Django developer assistant."},
+							{"role": "user", "content": prompt}
+						]
+					)
+					return response.choices[0].message.content.strip()
+				except OpenAIError as openai_error:
+					return f"Both local and OpenAI LLMs failed. Error: {openai_error}"
+		
+		return "LLM error: both local and remote failed."

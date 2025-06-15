@@ -39,6 +39,9 @@ INSTALLED_APPS = [
 	"ideas",
 	"worth",
 	"documents",
+	"metrics",
+	"logs",
+	"llm"
 ]
 
 # CKEditor 5 config

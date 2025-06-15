@@ -1,0 +1,13 @@
+<h2>🧠 Dev Assistant</h2>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="question" class="form-control" placeholder="Ask about your app..."/>
+    <button class="btn btn-primary mt-2">Ask</button>
+</form>
+
+{% if answer %}
+    <div class="mt-4">
+        <strong>Q:</strong> {{ question }}<br>
+        <strong>A:</strong> {{ answer }}
+    </div>
+{% endif %}

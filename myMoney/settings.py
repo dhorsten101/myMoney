@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -9,6 +10,8 @@ BINANCE_API_KEY = "8DYDIi3BXx8SANk7pCUX1VBA8VEvxTtxMg78dk04418ctILHetrjD7QVkwKfZ
 BINANCE_SECRET_KEY = "PiVTqEjitltvVXb1Zw6KSRQmBKe1LtZsz0MfqmPwv3gohoOLbGTBFfC3PFvhPN0N"
 
 SECRET_KEY = "django-insecure-$)^1s5m&dj6vf0b29a+^6wjli1i)o=wi$99yo0&j4vo!loz&dh"
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 DEBUG = True
 

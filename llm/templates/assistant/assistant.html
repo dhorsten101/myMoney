@@ -5,20 +5,40 @@
     Assistant
 {% endblock %}
 
-
 {% block content %}
     <div class="container mt-3">
-        <h2>🧠Assistant</h2>
-        <form method="post">
+        <h2 class="mb-4 text-center">🧠 Assistant
+            <a href="https://platform.openai.com/usage" target="_blank" class="btn btn-outline-info btn-sm float-end">OpenAI Usage</a>
+        </h2>
+
+        <form method="post" class="d-flex gap-2 align-items-start mb-3">
             {% csrf_token %}
-            <input type="text" name="question" class="form-control" placeholder="Ask about your app..."/>
-            <button class="btn btn-primary mt-2">Ask</button>
+            <button class="btn btn-primary mb-3" name="submit_question">Ask</button>
+            <input type="text" name="question" class="form-control" placeholder="Ask about your app..." value="{{ question|default_if_none:'' }}">
         </form>
 
         {% if answer %}
-            <div class="mt-4">
-                <strong>Q:</strong> {{ question }}<br>
-                <strong>A:</strong> {{ answer }}
+            <small class="text-muted mt-3">Answer source: <code>{{ source|default:"unknown" }}</code></small>
+            <div class="mt-3">
+                <strong class="text-danger mb-2">Question:</strong> {{ question }}
+                <br>
+                <hr>
+                <strong class="text-danger mt-3">Answer:</strong> {{ answer }}
+                <br>
+
+                {% if not feedback_given %}
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="question" value="{{ question }}">
+                        <input type="hidden" name="answer" value="{{ answer }}">
+                        <input type="hidden" name="source" value="{{ source }}">
+                        <input type="hidden" name="submit_feedback" value="1">
+                        <button type="submit" name="is_helpful" value="true" class="btn btn-success ">👍</button>
+                        <button type="submit" name="is_helpful" value="false" class="btn btn-danger  mx-2">👎</button>
+                    </form>
+                {% else %}
+                    <p class="text-muted mt-2">✅ Thanks for your feedback!</p>
+                {% endif %}
             </div>
         {% endif %}
     </div>

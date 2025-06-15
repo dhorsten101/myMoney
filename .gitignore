@@ -14,7 +14,7 @@ VENV/
 
 
 # Pipenv
-Pipfile.lock
+#Pipfile.lock
 
 # IDE Files
 .vscode/

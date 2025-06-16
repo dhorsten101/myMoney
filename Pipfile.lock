@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1c023af67d9f8cb43021adcc52d63ac367019bf8d71785297f532132fd23f3b8"
+            "sha256": "aa9650ffb461a358301685fd6e0369cc9c1d5b8f4513a400da3a42897b46fada"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -508,15 +508,6 @@
             "index": "pypi",
             "markers": "python_version >= '3.10'",
             "version": "==5.1.7"
-        },
-        "django-ckeditor": {
-            "hashes": [
-                "sha256:09771c9b8fb33b84bd2767dfc891a24b7fbdb0120910a7ec65b763a4ae6807bb",
-                "sha256:889fd80ee7d368e3c5b828c8dabf8907d56bcad6bf5881f3898416df4f2adfe7"
-            ],
-            "index": "pypi",
-            "markers": "python_version >= '3.8'",
-            "version": "==6.7.3"
         },
         "django-ckeditor-5": {
             "hashes": [

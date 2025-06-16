@@ -24,3 +24,7 @@ process
 
 process_dashboard.log
 fetch_quote.log
+
+local_index/
+local_index/index.faiss
+local_index/index.pkl

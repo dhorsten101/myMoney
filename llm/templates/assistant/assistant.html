@@ -7,9 +7,19 @@
 
 {% block content %}
     <div class="container mt-3">
-        <h2 class="mb-4 text-center">🧠 Assistant
-            <a href="https://platform.openai.com/usage" target="_blank" class="btn btn-outline-info btn-sm float-end">OpenAI Usage</a>
-        </h2>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0">🧠 Assistant</h2>
+            <div class="d-flex gap-2">
+                <form method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" name="rebuild_index" class="btn btn-danger btn-sm">Rebuild Index</button>
+                </form>
+                <a href="https://platform.openai.com/usage" target="_blank" class="btn btn-info btn-sm">OpenAI Usage</a>
+            </div>
+        </div>
+        {% if status_message %}
+            <div class="alert alert-info mt-2">{{ status_message }}</div>
+        {% endif %}
 
         <form method="post" class="d-flex gap-2 align-items-start mb-3">
             {% csrf_token %}

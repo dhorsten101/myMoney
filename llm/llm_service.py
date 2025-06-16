@@ -9,7 +9,7 @@ from openai import OpenAIError
 
 class Assistant:
 	def __init__(self):
-		embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+		embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-MiniLM-L3-v2")
 		self.vectorstore = FAISS.load_local("local_index", embedding, allow_dangerous_deserialization=True)
 		self.local_llm = Ollama(model="llama3")
 		self.use_openai = True

@@ -25,23 +25,33 @@ class Command(BaseCommand):
 		self.stdout.write("🧠 Indexing codebase files...")
 		project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
 		code_docs = []
-		for root, _, files in os.walk(project_root):
+		
+		for root, dirs, files in os.walk(project_root):
+			# 🔒 Skip heavy or irrelevant folders
+			dirs[:] = [d for d in dirs if d not in (
+				"venv", "env", ".git", "node_modules", "__pycache__", "media", "static", "migrations"
+			)]
+			
 			for f in files:
-				if f.endswith((".py", ".html", ".ts", ".js", ".scss")) and "migrations" not in root:
+				if f.endswith((".py", ".html")):
+					path = os.path.join(root, f)
 					try:
-						with open(os.path.join(root, f), "r", encoding="utf-8") as file:
-							code_docs.append(LangDoc(page_content=file.read(), metadata={"path": f}))
+						with open(path, "r", encoding="utf-8") as file:
+							content = file.read()
+							if content.strip():  # Skip empty files
+								code_docs.append(LangDoc(page_content=content, metadata={"path": path}))
 					except Exception as e:
-						print(f"Could not read {f}: {e}")
+						print(f"❌ Could not read {path}: {e}")
 		
 		# Step 3: Split code into chunks
-		splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+		splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 		split_docs = splitter.split_documents(code_docs)
 		texts.extend(split_docs)
 		
 		# Step 4: Build and save vector index
 		self.stdout.write(f"🧬 Indexing total {len(texts)} documents...")
-		embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+		embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-MiniLM-L3-v2")
 		vectorstore = FAISS.from_documents(texts, embedding)
 		vectorstore.save_local("local_index")
+		
 		self.stdout.write(self.style.SUCCESS("✅ Combined vector index saved to 'local_index'"))

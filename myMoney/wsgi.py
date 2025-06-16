@@ -9,6 +9,9 @@ https://docs.djangoproject.com/en/5.1/howto/deployment/wsgi/
 
 import os
 
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ["OMP_NUM_THREADS"] = "1"
+
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myMoney.settings')

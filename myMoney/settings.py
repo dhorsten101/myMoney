@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+from django.contrib import staticfiles
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 LUNO_API_KEY = "kc8yscuuw72cm"
@@ -142,6 +144,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 STATICFILES_DIRS = [
 	BASE_DIR / "static",
 ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

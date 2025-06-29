@@ -1,59 +1,50 @@
 import os
 
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-os.environ["OMP_NUM_THREADS"] = "1"
-
-import openai
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import OllamaLLM
-from openai import OpenAIError
+from openai import OpenAI
 
 
 class Assistant:
 	def __init__(self):
 		embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-MiniLM-L3-v2")
 		self.vectorstore = FAISS.load_local("local_index", embedding, allow_dangerous_deserialization=True)
-		# self.local_llm = Ollama(model="llama3")
 		self.local_llm = OllamaLLM(model="llama3")
-		self.use_openai = True
-		openai.api_key = os.getenv("OPENAI_API_KEY")
+		api_key = os.getenv("OPENAI_API_KEY")
+		self.client = OpenAI(api_key=api_key) if api_key else None
 	
-	def ask(self, question):
-		docs = self.vectorstore.similarity_search(question, k=3)
-		if not docs:
-			return "No relevant content found in your app or codebase."
-		
-		context = "\n\n".join(doc.page_content for doc in docs)
-		context = context[:3000]
-		prompt = f"""You are a helpful assistant trained on a Django app's models and codebase.
-Use the context below to answer the developer's question.
-
-Context:
-{context}
-
-Question:
-{question}
-"""
-		
-		# Try local Ollama first
+	def ask_local(self, question):
 		try:
-			return self.local_llm.invoke(prompt).strip()
-		except Exception as e:
-			print(f"⚠️ Local LLM failed: {e}")
+			docs = self.vectorstore.similarity_search(question, k=5)
+			context = "\n\n".join(doc.page_content for doc in docs)
 			
-			# Fallback to OpenAI
-			if self.use_openai:
-				try:
-					response = openai.ChatCompletion.create(
-						model="gpt-3.5-turbo",  # or "gpt-4"
-						messages=[
-							{"role": "system", "content": "You are a Django developer assistant."},
-							{"role": "user", "content": prompt}
-						]
-					)
-					return response.choices[0].message.content.strip()
-				except OpenAIError as openai_error:
-					return f"Both local and OpenAI LLMs failed. Error: {openai_error}"
-		
-		return "LLM error: both local and remote failed."
+			prompt = f"""You are a helpful assistant trained on a Django app's models and codebase.
+	Use the context below to answer the developer's question.
+	
+	Context:
+	{context}
+	
+	Question:
+	{question}
+	"""
+			response = self.local_llm.invoke(prompt).strip()
+			return response
+		except Exception as e:
+			return f"❌ Local LLM failed: {e}"
+	
+	def ask_openai(self, question):
+		if self.client:
+			try:
+				response = self.client.chat.completions.create(
+					model="gpt-3.5-turbo",
+					messages=[
+						{"role": "system", "content": "You are a Django developer assistant."},
+						{"role": "user", "content": question},
+					]
+				)
+				return response.choices[0].message.content.strip()
+			except Exception as e:
+				return f"❌ OpenAI failed: {e}"
+		else:
+			return "❌ OpenAI API key not configured."

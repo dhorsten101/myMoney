@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}
+    Weather
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <div class="position-relative mb-4 text-center">
+            <h1 class="mb-0">Weather</h1>
+        </div>
+        {% if weather_data %}
+            <div class="card shadow-sm mb-4 mt-3">
+                <div class="card-header bg-primary text-white">
+                    <strong>🌦️ Current Weather – Jeffreys Bay</strong>
+                </div>
+                <div class="card-body">
+                    {% if latest %}
+                        <div class="row row-cols-3 row-cols-md-4 g-2">
+                            <div><strong>Time:</strong> {{ latest.timestamp }}</div>
+                            <div><strong>Air Temp:</strong> {{ latest.air_temperature }} °C</div>
+                            <div><strong>Water Temp:</strong> {{ latest.water_temperature }} °C</div>
+                            <div><strong>Humidity:</strong> {{ latest.humidity }}%</div>
+                            <div><strong>Cloud Cover:</strong> {{ latest.cloud_cover }}%</div>
+                            <div><strong>Wind:</strong> {{ latest.wind_speed }} m/s @ {{ latest.wind_direction }}°</div>
+                            <div><strong>Wave Height:</strong> {{ latest.wave_height }} m</div>
+                            <div><strong>Precipitation:</strong> {{ latest.precipitation }} mm</div>
+                        </div>
+                    {% else %}
+                        <p>No data available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <p class="text-muted">No forecast data available.</p>
+        {% endif %}
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <canvas id="forecastChart" height="130"></canvas>
+            </div>
+        </div>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const ctx = document.getElementById('forecastChart').getContext('2d');
+            const forecastChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {{ chart_labels|safe }},
+                    datasets: [
+                        {
+                            label: '🌡 Air Temp (°C)',
+                            data: {{ chart_air_temps|safe }},
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.4
+                        },
+                        {
+                            label: '💨 Wind Speed (m/s)',
+                            data: {{ chart_wind_speeds|safe }},
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.4
+                        },
+                        {
+                            label: '🌊 Wave Height (m)',
+                            data: {{ chart_wave_heights|safe }},
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        title: {
+                            display: true,
+                            text: '📈 Forecast Overview'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time (Day Hour)'
+                            },
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: false,
+                            },
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+        </script>
+        <div class="card shadow-sm">
+
+            <div class="card-body table-responsive m-0 p-0" style="max-height: 360px; overflow-y: auto;">
+                <table class="table table-sm table-bordered text-center align-middle mb-0">
+                    <thead class="table-light sticky-top">
+                    <tr>
+                        <th>Time</th>
+                        <th>Air Temp (°C)</th>
+                        <th>Water Temp (°C)</th>
+                        <th>Humidity (%)</th>
+                        <th>Cloud Cover (%)</th>
+                        <th>Precip (mm)</th>
+                        <th>Wind (m/s)</th>
+                        <th>Wind Dir (°)</th>
+                        <th>Wave Height (m)</th>
+                        <th>Wave Period (s)</th>
+                        <th>Wave Dir (°)</th>
+                        <th>UV</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in weather_data %}
+                        <tr>
+                            <td>{{ item.timestamp|date:"D d M H:i" }}</td>
+                            <td>{{ item.air_temperature|default:"–" }}</td>
+                            <td>{{ item.water_temperature|default:"–" }}</td>
+                            <td>{{ item.humidity|default:"–" }}</td>
+                            <td>{{ item.cloud_cover|default:"–" }}</td>
+                            <td>{{ item.precipitation|default:"–" }}</td>
+                            <td>{{ item.wind_speed|default:"–" }}</td>
+                            <td>{{ item.wind_direction|default:"–" }}</td>
+                            <td>{{ item.wave_height|default:"–" }}</td>
+                            <td>{{ item.wave_period|default:"–" }}</td>
+                            <td>{{ item.wave_direction|default:"–" }}</td>
+                            <td>{{ item.uv_index|default:"–" }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

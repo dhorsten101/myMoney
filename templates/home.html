@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container p-0">
 
         <div class="text-center mb-3">
             <h1 class="display-5 mb-4"> Welcome <b class=" text-warning"> {{ user.username }} </b> to MyMoney App</h1>
@@ -30,19 +30,7 @@
         <hr>
     </div>
 
-    <div class="col-4 text-end">
-        <div class="d-flex flex-column align-items-end">
-            <div class="d-flex align-items-center">
-                <h1 class="mb-0">Crypto</h1>
 
-                <button id="toggleTotalBtn" class="btn btn-danger d-flex align-items-center justify-content-center mx-4" style="font-size: 0.9rem; padding: 0.15rem 0.5rem;" type="button">
-                    <i class="bi bi-eye me-1"></i> Show
-                </button>
-                <h2 id="totalValue" class="float-end text-success" style="min-width: 100px; display: none;">R {{ crypto.total_value|floatformat:2|intcomma }}</h2>
-                <h1 id="hiddenTotal" class="float-end text-success" style="min-width: 100px;"> * * * * * * * </h1>
-            </div>
-        </div>
-    </div>
 
     {#    <div style="height: 700px;">#}
     {#        <iframe allow="fullscreen" frameborder="0" height="100%" width="100%" src="https://console.rhombussystems.com/share/clips/z_6qPis9SNG6M0WafkGmbA/"></iframe>#}
@@ -64,6 +52,7 @@
                 totalValue.style.display = 'block';
                 hiddenTotal.style.display = 'none';
                 toggleTotalBtn.innerHTML = '<i class="bi bi-eye-slash me-1 "> </i> Hide ';
+                x
             } else {
                 totalValue.style.display = 'none';
                 hiddenTotal.style.display = 'block';
@@ -72,16 +61,20 @@
         });
     </script>
 
-    {#    <!-- This will load the table as soon as the page loads -->#}
-    {#    <div#}
-    {#            id="asset_list-container"#}
-    {#            hx-get="{% url 'asset_list' %}"#}
-    {#            hx-trigger="load"#}
-    {#            hx-swap="innerHTML">#}
-    {#    </div>#}
-    {##}
-    {#    <!-- Target container -->#}
-    {#    <div id="asset_list-container"></div>#}
+    <div id="weather_widget-container" hx-get="{% url 'weather_widget' %}" hx-trigger="load" hx-swap="innerHTML"></div>
 
+    <div class="col-4 text-end">
+        <div class="d-flex flex-column align-items-end">
+            <div class="d-flex align-items-center">
+                <h1 class="mb-0">Crypto</h1>
+
+                <button id="toggleTotalBtn" class="btn btn-danger d-flex align-items-center justify-content-center mx-4" style="font-size: 0.9rem; padding: 0.15rem 0.5rem;" type="button">
+                    <i class="bi bi-eye me-1"></i> Show
+                </button>
+                <h2 id="totalValue" class="float-end text-success" style="min-width: 100px; display: none;">R {{ crypto.total_value|floatformat:2|intcomma }}</h2>
+                <h1 id="hiddenTotal" class="float-end text-success" style="min-width: 100px;"> * * * * * * * </h1>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 

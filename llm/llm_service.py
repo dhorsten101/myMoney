@@ -1,5 +1,4 @@
-import os
-
+from decouple import config
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import OllamaLLM
@@ -11,7 +10,7 @@ class Assistant:
 		embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-MiniLM-L3-v2")
 		self.vectorstore = FAISS.load_local("local_index", embedding, allow_dangerous_deserialization=True)
 		self.local_llm = OllamaLLM(model="llama3")
-		api_key = os.getenv("OPENAI_API_KEY")
+		api_key = config("OPENAI_API_KEY")
 		self.client = OpenAI(api_key=api_key) if api_key else None
 	
 	def ask_local(self, question):

@@ -1,0 +1,26 @@
+{% if weather_data %}
+    <div class="card shadow-sm mb-4 mt-3">
+        <div class="card-header bg-primary text-white">
+            <strong>🌦️ Current Weather – Jeffreys Bay</strong>
+        </div>
+        <div class="card-body">
+            {% if latest %}
+                <div class="row row-cols-2 row-cols-md-3 g-2">
+                    <div><strong>Time:</strong> {{ latest.timestamp }}</div>
+                    <div><strong>Air Temp:</strong> {{ latest.air_temperature }} °C</div>
+                    <div><strong>Water Temp:</strong> {{ latest.water_temperature }} °C</div>
+                    <div><strong>Humidity:</strong> {{ latest.humidity }}%</div>
+                    <div><strong>Cloud Cover:</strong> {{ latest.cloud_cover }}%</div>
+                    <div><strong>Wind:</strong> {{ latest.wind_speed }} m/s @ {{ latest.wind_direction }}°</div>
+                    <div><strong>Wave Height:</strong> {{ latest.wave_height }} m</div>
+                    <div><strong>Precipitation:</strong> {{ latest.precipitation }} mm</div>
+                    <div><strong>UV Index:</strong> {{ latest.uv_index }}</div>
+                </div>
+            {% else %}
+                <p>No data available.</p>
+            {% endif %}
+        </div>
+    </div>
+{% else %}
+    <p class="text-muted">No forecast data available.</p>
+{% endif %}

@@ -1,7 +1,9 @@
 import os
 from pathlib import Path
 
+from decouple import config
 from django.contrib import staticfiles
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -13,7 +15,8 @@ BINANCE_SECRET_KEY = "PiVTqEjitltvVXb1Zw6KSRQmBKe1LtZsz0MfqmPwv3gohoOLbGTBFfC3PF
 
 SECRET_KEY = "django-insecure-$)^1s5m&dj6vf0b29a+^6wjli1i)o=wi$99yo0&j4vo!loz&dh"
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = config("OPENAI_API_KEY")
+STORMGLASS_API_KEY = config("STORMGLASS_API_KEY")
 
 DEBUG = True
 

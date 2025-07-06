@@ -7,21 +7,14 @@ from django.urls import reverse
 from django.utils import timezone
 
 from cryptos.crypto import process_crypto_data
-from cryptos.models import CryptoStats  # Import your model
-from worth.models import Worth
 from .models import Quote
 from .models import SystemMetric
 
 
 def home(request):
 	latest_quote = Quote.objects.order_by('-created_at').first()
-	latest_crypto = CryptoStats.objects.order_by('-timestamp').first()  # Get most recent
-	worth = Worth.objects.order_by('-created_at').first()
-	
 	return render(request, 'home.html', {
 		'quote': latest_quote,
-		'crypto': latest_crypto,
-		'worth': worth,
 	})
 
 

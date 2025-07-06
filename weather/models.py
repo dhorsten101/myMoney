@@ -11,7 +11,6 @@ class WeatherData(models.Model):
 	cloud_cover = models.FloatField(null=True, blank=True)
 	precipitation = models.FloatField(null=True, blank=True)
 	visibility = models.FloatField(null=True, blank=True)
-	uv_index = models.FloatField(null=True, blank=True)
 	gust = models.FloatField(null=True, blank=True)
 	wind_speed = models.FloatField(null=True, blank=True)
 	wind_direction = models.FloatField(null=True, blank=True)
@@ -21,12 +20,8 @@ class WeatherData(models.Model):
 	swell_height = models.FloatField(null=True, blank=True)
 	swell_direction = models.FloatField(null=True, blank=True)
 	swell_period = models.FloatField(null=True, blank=True)
-	secondary_swell_height = models.FloatField(null=True, blank=True)
-	secondary_swell_direction = models.FloatField(null=True, blank=True)
-	secondary_swell_period = models.FloatField(null=True, blank=True)
-	current_speed = models.FloatField(null=True, blank=True)
-	current_direction = models.FloatField(null=True, blank=True)
 	sea_level = models.FloatField(null=True, blank=True)
+	
 	timestamp = models.DateTimeField()
 	created_at = models.DateTimeField(auto_now_add=True)
 	

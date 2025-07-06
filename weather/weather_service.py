@@ -19,11 +19,8 @@ class StormGlassService:
 				'precipitation', 'visibility', 'gust',
 				'windSpeed', 'windDirection',
 				'waveHeight', 'waveDirection', 'wavePeriod',
-				'swellHeight', 'swellDirection', 'swellPeriod',
-				'secondarySwellHeight', 'secondarySwellDirection', 'secondarySwellPeriod',
-				'currentSpeed', 'currentDirection', 'seaLevel',
+				'swellHeight', 'swellDirection', 'swellPeriod', 'seaLevel',
 			]),
-			"source": "noaa"
 		}
 	
 	def fetch_and_save(self):
@@ -49,7 +46,7 @@ class StormGlassService:
 				defaults={
 					'air_temperature': entry.get('airTemperature', {}).get('noaa'),
 					'water_temperature': entry.get('waterTemperature', {}).get('noaa'),
-					'dew_point': entry.get('dewPoint', {}).get('noaa'),
+					'dew_point': entry.get('dewPoint', {}).get('sg'),
 					'humidity': entry.get('humidity', {}).get('noaa'),
 					'pressure': entry.get('pressure', {}).get('noaa'),
 					'cloud_cover': entry.get('cloudCover', {}).get('noaa'),
@@ -64,11 +61,6 @@ class StormGlassService:
 					'swell_height': entry.get('swellHeight', {}).get('noaa'),
 					'swell_direction': entry.get('swellDirection', {}).get('noaa'),
 					'swell_period': entry.get('swellPeriod', {}).get('noaa'),
-					'secondary_swell_height': entry.get('secondarySwellHeight', {}).get('noaa'),
-					'secondary_swell_direction': entry.get('secondarySwellDirection', {}).get('noaa'),
-					'secondary_swell_period': entry.get('secondarySwellPeriod', {}).get('noaa'),
-					'current_speed': entry.get('currentSpeed', {}).get('noaa'),
-					'current_direction': entry.get('currentDirection', {}).get('noaa'),
-					'sea_level': entry.get('seaLevel', {}).get('noaa'),
+					'sea_level': entry.get('seaLevel', {}).get('sg'),
 				}
 			)

@@ -3,11 +3,12 @@ from datetime import datetime
 import requests
 from decouple import config
 
-from .models import WeatherData
+from .models import WeatherData, TideEvent
 
 
 class StormGlassService:
 	BASE_URL = "https://api.stormglass.io/v2/weather/point"
+	EXTREMES_URL = "https://api.stormglass.io/v2/tide/extremes/point"
 	
 	def __init__(self, lat=-34.0507, lng=24.9215):  # Jeffreys Bay default
 		self.api_key = config("STORMGLASS_API_KEY")
@@ -15,11 +16,8 @@ class StormGlassService:
 		self.lng = lng
 		self.params = {
 			"params": ",".join([
-				'airTemperature', 'waterTemperature', 'dewPointTemperature', 'humidity', 'pressure', 'cloudCover',
-				'precipitation', 'visibility', 'gust',
-				'windSpeed', 'windDirection',
-				'waveHeight', 'waveDirection', 'wavePeriod',
-				'swellHeight', 'swellDirection', 'swellPeriod', 'seaLevel',
+				'airTemperature', 'waterTemperature', 'dewPointTemperature', 'humidity', 'pressure', 'cloudCover', 'dewPointTemperature', 'seaLevel',
+				'precipitation', 'visibility', 'gust', 'windSpeed', 'windDirection', 'waveHeight', 'waveDirection', 'wavePeriod', 'swellHeight', 'swellDirection', 'swellPeriod',
 			]),
 		}
 	
@@ -46,7 +44,7 @@ class StormGlassService:
 				defaults={
 					'air_temperature': entry.get('airTemperature', {}).get('noaa'),
 					'water_temperature': entry.get('waterTemperature', {}).get('noaa'),
-					'dew_point': entry.get('dewPoint', {}).get('sg'),
+					'dew_point': entry.get('dewPointTemperature', {}).get('noaa'),
 					'humidity': entry.get('humidity', {}).get('noaa'),
 					'pressure': entry.get('pressure', {}).get('noaa'),
 					'cloud_cover': entry.get('cloudCover', {}).get('noaa'),
@@ -62,5 +60,24 @@ class StormGlassService:
 					'swell_direction': entry.get('swellDirection', {}).get('noaa'),
 					'swell_period': entry.get('swellPeriod', {}).get('noaa'),
 					'sea_level': entry.get('seaLevel', {}).get('sg'),
+				}
+			)
+	
+	def fetch_tide_extremes(self):
+		response = requests.get(
+			self.EXTREMES_URL,
+			headers={"Authorization": self.api_key},
+			params={"lat": self.lat, "lng": self.lng}
+		)
+		if response.status_code != 200:
+			raise Exception(f"Tide extremes API error: {response.status_code} - {response.text}")
+		
+		for event in response.json().get("data", []):
+			TideEvent.objects.update_or_create(
+				time=datetime.fromisoformat(event["time"]),
+				type=event["type"],
+				defaults={
+					"height": event.get("height"),
+					"source": "stormglass"
 				}
 			)

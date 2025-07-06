@@ -32,3 +32,13 @@ class WeatherData(models.Model):
 	
 	def __str__(self):
 		return f"Weather at {self.timestamp.strftime('%Y-%m-%d %H:%M')} from {self.source}"
+
+
+class TideEvent(models.Model):
+	time = models.DateTimeField()
+	type = models.CharField(max_length=10)
+	height = models.FloatField(null=True, blank=True)
+	source = models.CharField(max_length=100, default='stormglass')
+	
+	class Meta:
+		ordering = ['time']

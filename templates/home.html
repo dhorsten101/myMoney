@@ -62,19 +62,6 @@
     </script>
 
     <div id="weather_widget-container" hx-get="{% url 'weather_widget' %}" hx-trigger="load" hx-swap="innerHTML"></div>
-
-    <div class="col-4 text-end">
-        <div class="d-flex flex-column align-items-end">
-            <div class="d-flex align-items-center">
-                <h1 class="mb-0">Crypto</h1>
-
-                <button id="toggleTotalBtn" class="btn btn-danger d-flex align-items-center justify-content-center mx-4" style="font-size: 0.9rem; padding: 0.15rem 0.5rem;" type="button">
-                    <i class="bi bi-eye me-1"></i> Show
-                </button>
-                <h2 id="totalValue" class="float-end text-success" style="min-width: 100px; display: none;">R {{ crypto.total_value|floatformat:2|intcomma }}</h2>
-                <h1 id="hiddenTotal" class="float-end text-success" style="min-width: 100px;"> * * * * * * * </h1>
-            </div>
-        </div>
-    </div>
+    
 {% endblock %}
 

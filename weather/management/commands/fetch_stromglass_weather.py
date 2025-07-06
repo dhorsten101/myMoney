@@ -10,6 +10,7 @@ class Command(BaseCommand):
 		try:
 			service = StormGlassService()
 			service.fetch_and_save()
+			service.fetch_tide_extremes()
 			self.stdout.write(self.style.SUCCESS("✅ Weather data fetched and saved."))
 		except Exception as e:
 			self.stderr.write(self.style.ERROR(f"❌ Failed to fetch weather data: {e}"))

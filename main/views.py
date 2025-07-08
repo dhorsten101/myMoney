@@ -134,3 +134,7 @@ def global_search(request):
 		}
 	
 	return render(request, "components/global_search.html", {"query": query, "results": results})
+
+
+def uml_view(request):
+	return render(request, 'uml_view.html', {})

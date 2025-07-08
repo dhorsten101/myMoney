@@ -32,6 +32,7 @@ INSTALLED_APPS = [
 	"django.contrib.humanize",
 	"widget_tweaks",
 	"django_crontab",
+	"django_extensions",
 	# "ckeditor_uploader",
 	'django_ckeditor_5',
 	"api",

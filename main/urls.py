@@ -2,7 +2,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from . import views
-from .views import error_log_list, test_error_logging, audit_log_list, logs, service_log_list, global_search
+from .views import error_log_list, test_error_logging, audit_log_list, logs, service_log_list, global_search, uml_view
 
 urlpatterns = [
 	path("login/", auth_views.LoginView.as_view(), name="login"),
@@ -16,5 +16,5 @@ urlpatterns = [
 	path('test-log/', test_error_logging, name='test_log'),
 	path("logs/", logs, name="logs"),
 	path("search/", global_search, name="global_search"),
-
+	path("uml/", uml_view, name="uml_view"),
 ]

@@ -68,3 +68,14 @@ class AuditLog(models.Model):
 	
 	def __str__(self):
 		return f"{self.model_name}: {self.user}"
+
+
+class UMLTool(models.Model):
+	updated_at = models.DateTimeField(auto_now=True)
+	
+	class Meta:
+		verbose_name = "Generate UML Diagram"
+		verbose_name_plural = "UML Diagram Generator"
+	
+	def __str__(self):
+		return "UML Diagram Trigger"

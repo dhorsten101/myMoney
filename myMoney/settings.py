@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
 	"ideas",
 	"worth",
 	"documents",
+	"folders",
 	"metrics",
 	"logs",
 	"llm",
@@ -74,7 +76,10 @@ MIDDLEWARE = [
 	"django.contrib.messages.middleware.MessageMiddleware",
 	"django.middleware.clickjacking.XFrameOptionsMiddleware",
 	"crum.CurrentRequestUserMiddleware",
+	"logs.query_profiler.QueryProfilerMiddleware",
 ]
+
+SLOW_QUERY_THRESHOLD = 1.0
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -97,6 +102,7 @@ TEMPLATES = [
 				"django.template.context_processors.request",
 				"django.contrib.auth.context_processors.auth",
 				"django.contrib.messages.context_processors.messages",
+				'system.context_processors.version_info',
 			],
 		},
 	},
@@ -157,6 +163,18 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DEFAULT_FROM_EMAIL = "dhorsten101@gmail.com"
 CONTACT_EMAIL = "dhorsten101@gmail.com"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # Use SMTP in prod
+
+try:
+	with open(BASE_DIR / "version.json") as f:
+		VERSION = json.load(f)
+except Exception:
+	VERSION = {
+		"version": "unknown",
+		"commit": "-",
+		"branch": "-",
+		"message": "",
+		"build_date": "-"
+	}
 
 # Email configuration
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

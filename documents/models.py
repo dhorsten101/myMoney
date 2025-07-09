@@ -18,6 +18,10 @@ class Document(models.Model):
 	content = CKEditor5Field('Content', config_name='default')
 	category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default="personal")
 	created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+	file = models.FileField(upload_to='documents/%Y/%m/')
+	description = models.TextField(blank=True)
+	tags = models.CharField(max_length=255, blank=True)
+	uploaded_at = models.DateTimeField(auto_now_add=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
 	

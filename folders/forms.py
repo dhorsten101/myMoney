@@ -1,5 +1,7 @@
 from django import forms
 
+from folders.models import Folder, StoredFile
+
 
 class FolderForm(forms.ModelForm):
 	class Meta:

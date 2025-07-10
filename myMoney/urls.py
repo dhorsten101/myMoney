@@ -18,6 +18,7 @@ urlpatterns = [
 				  path("", include("ideas.urls")),
 				  path("", include("weight.urls")),
 				  path("", include('documents.urls')),
+				  path("", include('folders.urls')),
 				  path("", include('llm.urls')),
 				  path("", include('weather.urls')),
 				  path("", include('system.urls')),

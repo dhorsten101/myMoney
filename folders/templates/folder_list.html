@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h2>📂 Your Folders</h2>
-    <a href="{% url 'folder_create' %}" class="btn btn-primary mb-3">Create New Folder</a>
+    <h2>📂 Root Folders</h2>
+    <a href="{% url 'folder_create' %}" class="btn btn-sm btn-primary mb-3">Create New Root Folder</a>
     <ul class="list-group">
         {% for folder in folders %}
-            <li class="list-group-item d-flex justify-content-between">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
                 <a href="{% url 'folder_detail' folder.pk %}">{{ folder.name }}</a>
-                <small>{{ folder.created_at }}</small>
+                <div>
+                    <small class="text-muted me-2">{{ folder.created_at|date:"Y-m-d H:i" }}</small>
+                    <a href="{% url 'folder_delete' folder.pk %}" class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Delete this root folder?');">🗑</a>
+                </div>
             </li>
         {% endfor %}
     </ul>

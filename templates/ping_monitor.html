@@ -1,0 +1,22 @@
+<!-- templates/ping/status.html -->
+<h2>Firewall Device Status</h2>
+<table class="table table-bordered table-sm">
+    <thead>
+    <tr>
+        <th>IP</th>
+        <th>Hostname</th>
+        <th>Status</th>
+        <th>Last Checked</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for d in devices %}
+        <tr class="{% if d.is_online %}table-success{% else %}table-danger{% endif %}">
+            <td>{{ d.ip_address }}</td>
+            <td>{{ d.hostname }}</td>
+            <td>{{ "Up" }} if d.is_online else "Down" }}</td>
+            <td>{{ d.last_checked }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

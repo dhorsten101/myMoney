@@ -55,6 +55,8 @@ INSTALLED_APPS = [
 	"llm",
 	"weather",
 	"system",
+	"monitoring",
+
 ]
 
 # CKEditor 5 config

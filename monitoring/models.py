@@ -11,3 +11,33 @@ class MonitoredDevice(models.Model):
 	
 	def __str__(self):
 		return f"{self.ip_address} ({'Online' if self.is_online else 'Down'})"
+
+
+# monitoring/models.py
+
+class PingResult(models.Model):
+	device = models.ForeignKey(MonitoredDevice, on_delete=models.CASCADE, related_name="ping_results")
+	latency_ms = models.FloatField(null=True, blank=True)
+	success = models.BooleanField(default=False)
+	ip = models.GenericIPAddressField()
+	status = models.CharField(max_length=10)
+	latency = models.FloatField(null=True)
+	
+	timestamp = models.DateTimeField(auto_now_add=True)
+	
+	class Meta:
+		ordering = ['-timestamp']
+	
+	def __str__(self):
+		return f"{self.device.ip_address} @ {self.timestamp} - {'UP' if self.success else 'DOWN'}"
+
+
+class PingControl(models.Model):
+	is_running = models.BooleanField(default=False)
+	
+	def __str__(self):
+		return "Running" if self.is_running else "Stopped"
+	
+	@classmethod
+	def get_state(cls):
+		return cls.objects.first() or cls.objects.create(is_running=False)

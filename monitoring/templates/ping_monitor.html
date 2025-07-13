@@ -1,22 +1,172 @@
-<!-- templates/ping/status.html -->
-<h2>Firewall Device Status</h2>
-<table class="table table-bordered table-sm">
-    <thead>
-    <tr>
-        <th>IP</th>
-        <th>Hostname</th>
-        <th>Status</th>
-        <th>Last Checked</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for d in devices %}
-        <tr class="{% if d.is_online %}table-success{% else %}table-danger{% endif %}">
-            <td>{{ d.ip_address }}</td>
-            <td>{{ d.hostname }}</td>
-            <td>{{ "Up" }} if d.is_online else "Down" }}</td>
-            <td>{{ d.last_checked }}</td>
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+{% load ping_tags %}  {# <-- Add this line #}
+
+{% block title %}
+    Monitoring
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+        <h2 class="mb-4">🖥️ Device Ping Dashboard</h2>
+        <!-- ping_dashboard.html -->
+        <h3>Live Ping Status</h3>
+        <table id="ping-table">
+            <thead>
+            <tr>
+                <th>IP</th>
+                <th>Status</th>
+                <th>Latency (ms)</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <script>
+            const socket = new WebSocket("ws://" + window.location.host + "/ws/ping/");
+            socket.onmessage = function (event) {
+                const data = JSON.parse(event.data);
+                const row = document.getElementById(data.ip) || document.createElement("tr");
+                row.id = data.ip;
+                row.innerHTML = `
+        <td>${data.ip}</td>
+        <td style="color:${data.status === "UP" ? "green" : "red"}">${data.status}</td>
+        <td>${data.latency !== null ? data.latency.toFixed(1) : "N/A"}</td>`;
+                document.querySelector("#ping-table tbody").appendChild(row);
+            };
+        </script>
+
+        <div class="row g-3 align-items-start mb-4">
+
+            <!-- 🔔 Messages (left column) -->
+            <div class="col-md-4">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- 🔍 Subnet Form Row -->
+            <div class="row g-3 align-items-start mb-4">
+                <div class="col-md-12">
+                    <form method="post" action="{% url 'monitoring' %}" class="p-3 bg-white shadow-sm border rounded">
+                        {% csrf_token %}
+                        <div class="row align-items-end g-2">
+                            <!-- Subnet Input -->
+                            <div class="col-md-9">
+                                <label for="id_subnet" class="form-label">Subnet</label>
+                                {{ subnet_form.subnet }}
+                                <div class="form-text">e.g. 192.168.1.0/24</div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="col-md-3">
+                                <label class="form-label invisible">Submit</label>  <!-- Keeps alignment -->
+                                <button type="submit" class="btn btn-primary w-100">🔍 Discover</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <form method="post" action="{% url 'monitoring' %}" class="d-inline">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="start_pings">
+        <button class="btn btn-success mb-3">▶️ Start Pings</button>
+    </form>
+
+    <form method="post" action="{% url 'monitoring' %}" class="d-inline">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="stop_pings">
+        <button class="btn btn-danger mb-3">⏹ Stop Pings</button>
+    </form>
+
+
+    <!-- 🖥️ Device Table -->
+    <table class="table table-bordered table-sm align-middle">
+        <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>IP Address</th>
+            <th>Hostname</th>
+            <th>Status</th>
+            <th>Drop Count</th>
+            <th>Latency / Loss</th>
+            <th>Last Checked</th>
         </tr>
-    {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        {% for device in devices %}
+            <tr class="{% if device.is_online %}table-success{% else %}table-danger{% endif %}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ device.ip_address }}</td>
+                <td>{{ device.hostname|default:"-" }}</td>
+                <td class="status">
+                    {% if device.is_online %}
+                        ✅ Up
+                    {% else %}
+                        ❌ Down
+                    {% endif %}
+                </td>
+                <td class="latency">
+                    {% with pings=device.ping_results.all|slice:":5" %}
+                        {% if pings %}
+                            {{ pings.0.latency_ms|default:"—" }} ms
+                            <br>
+                            <small class="text-muted">
+                                Loss: {{ pings|failed_pings }}/{{ pings|length }}
+                            </small>
+                        {% else %}
+                            —
+                        {% endif %}
+                    {% endwith %}
+                </td>
+                <td class="last-checked">{{ device.last_checked|date:"Y-m-d H:i:s" }}</td>
+                <td>
+                    {% with pings=device.ping_results.all|slice:":5" %}
+                        {% if pings %}
+                            {{ pings.0.latency_ms|default:"—" }} ms
+                            <br>
+                            <small class="text-muted">
+                                Loss: {{ pings|failed_pings }}/{{ pings|length }}
+                            </small>
+                        {% else %}
+                            —
+                        {% endif %}
+                    {% endwith %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    <script>
+        function updateTable() {
+            fetch("{% url 'ping-status-api' %}")
+                .then(res => res.json())
+                .then(data => {
+                    const rows = document.querySelectorAll("tbody tr");
+                    data.devices.forEach((device, index) => {
+                        const row = rows[index];
+                        if (!row) return;
+
+                        row.querySelector(".status").innerHTML = device.is_online ? "✅ Up" : "❌ Down";
+                        row.querySelector(".latency").innerHTML = device.latency !== null ? `${device.latency} ms<br><small class='text-muted'>Loss: ${device.loss}/5</small>` : "—";
+                        row.querySelector(".last-checked").innerHTML = device.last_checked;
+                        row.className = device.is_online ? "table-success" : "table-danger";
+                    });
+                });
+        }
+
+        setInterval(updateTable, 1000);
+    </script>
+{% endblock %}

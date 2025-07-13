@@ -1,0 +1,15 @@
+<h2>WebSocket Test</h2>
+<div id="output"></div>
+
+<script>
+    const socket = new WebSocket("ws://" + window.location.host + "/ws/ping/");
+
+    socket.onopen = () => {
+        console.log("WebSocket connected");
+    };
+
+    socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        document.getElementById("output").innerText = "Ping received: " + JSON.stringify(data);
+    };
+</script>

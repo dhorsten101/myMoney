@@ -34,6 +34,7 @@ INSTALLED_APPS = [
 	"widget_tweaks",
 	"django_crontab",
 	"django_extensions",
+	"channels",
 	# "ckeditor_uploader",
 	'django_ckeditor_5',
 	"api",
@@ -110,7 +111,16 @@ TEMPLATES = [
 	},
 ]
 
+CHANNEL_LAYERS = {
+	"default": {
+		"BACKEND": "channels_redis.core.RedisChannelLayer",
+		"CONFIG": {"hosts": [("127.0.0.1", 6379)]},
+		"password": "Wundi!)!1"
+	},
+}
+
 WSGI_APPLICATION = "myMoney.wsgi.application"
+ASGI_APPLICATION = "myMoney.asgi.application"
 
 DATABASES = {
 	"default": {

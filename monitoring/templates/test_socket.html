@@ -3,7 +3,8 @@
 
 <script>
     {#const socket = new WebSocket("ws://localhost:8010/ws/ping/");#}
-    const socket = new WebSocket("ws://192.168.0.100:8010/ws/ping/");
+    {#const socket = new WebSocket("ws://192.168.0.100:8010/ws/ping/");#}
+    const socket = new WebSocket("ws://" + window.location.host + "/ws/ping/");
 
     socket.onopen = () => {
         console.log("✅ WebSocket connected");

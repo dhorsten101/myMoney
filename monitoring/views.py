@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 
-from monitoring.models import MonitoredDevice, PingControl
+from monitoring.models import MonitoredDevice, PingControl, PingResult
 from monitoring.ping import discover_devices, ping_and_log_all_devices, run_ping_loop
 from .forms import MonitoredDeviceForm
 from .forms import SubnetDiscoveryForm
@@ -14,7 +14,15 @@ from .forms import SubnetDiscoveryForm
 
 def start_pings(request):
 	# Set control flag
-	PingControl.objects.update_or_create(defaults={"active": True})
+	PingControl.objects.update_or_create(defaults={"is_running": True})
+	
+	PingResult.objects.create(
+		device=MonitoredDevice.objects.first(),
+		latency_ms=42.0,
+		success=True,
+		ip="192.168.0.1",
+		status="UP"
+	)
 	
 	# Launch background thread
 	thread = threading.Thread(target=run_ping_loop)
@@ -26,7 +34,7 @@ def start_pings(request):
 
 
 def stop_pings(request):
-	PingControl.objects.update_or_create(defaults={"active": False})
+	PingControl.objects.update_or_create(defaults={"is_running": False})
 	messages.warning(request, "⏹ Ping loop stopped.")
 	return redirect("monitoring")
 

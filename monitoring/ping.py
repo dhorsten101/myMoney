@@ -67,7 +67,7 @@ def discover_devices(subnet):
 
 def run_ping_loop():
 	print("📡 Ping loop started")
-	while PingControl.objects.first().active:
+	while PingControl.objects.first().is_running:
 		devices = MonitoredDevice.objects.all()
 		for device in devices:
 			print(f"🔁 Pinging {device.ip_address}")

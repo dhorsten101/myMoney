@@ -22,6 +22,7 @@ class PingResult(models.Model):
 	ip = models.GenericIPAddressField()
 	status = models.CharField(max_length=10)
 	latency = models.FloatField(null=True)
+	active = models.BooleanField(default=False)
 	
 	timestamp = models.DateTimeField(auto_now_add=True)
 	

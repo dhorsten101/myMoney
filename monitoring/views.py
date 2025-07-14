@@ -6,25 +6,16 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 
-from monitoring.models import MonitoredDevice, PingControl, PingResult
+from monitoring.models import MonitoredDevice, PingControl
 from monitoring.ping import discover_devices, ping_and_log_all_devices, run_ping_loop
 from .forms import MonitoredDeviceForm
 from .forms import SubnetDiscoveryForm
 
 
 def start_pings(request):
-	# Set control flag
 	PingControl.objects.update_or_create(defaults={"is_running": True})
 	
-	PingResult.objects.create(
-		device=MonitoredDevice.objects.first(),
-		latency_ms=42.0,
-		success=True,
-		ip="192.168.0.1",
-		status="UP"
-	)
-	
-	# Launch background thread
+	print("🔥 Starting thread...")
 	thread = threading.Thread(target=run_ping_loop)
 	thread.daemon = True
 	thread.start()

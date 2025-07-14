@@ -7,6 +7,7 @@ import nmap
 from django.utils.timezone import now
 from ping3 import ping
 
+from monitoring.consumers import broadcast_ping
 from monitoring.models import MonitoredDevice, PingResult, PingControl
 
 MAX_DROP_THRESHOLD = 5
@@ -87,8 +88,16 @@ def run_ping_loop():
 			except Exception as e:
 				print(f"❌ ERROR saving ping for {device.ip_address}: {e}")
 			
+			# Update MonitoredDevice status
 			device.is_online = is_online
 			device.last_checked = now()
 			device.save()
+			
+			# 🔊 WebSocket Broadcast
+			broadcast_ping({
+				"ip": device.ip_address,
+				"latency": round(latency * 1000, 1) if latency else None,
+				"status": status
+			})
 		
 		time.sleep(2)

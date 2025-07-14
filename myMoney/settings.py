@@ -111,16 +111,20 @@ TEMPLATES = [
 	},
 ]
 
+WSGI_APPLICATION = "myMoney.wsgi.application"
+ASGI_APPLICATION = "myMoney.asgi.application"
+
 CHANNEL_LAYERS = {
 	"default": {
 		"BACKEND": "channels_redis.core.RedisChannelLayer",
-		"CONFIG": {"hosts": [("127.0.0.1", 6379)]},
-		"password": "Wundi!)!1"
+		"CONFIG": {
+			"hosts": [{
+				"address": "redis://127.0.0.1:6379",
+				# "password": "Wu!",
+			}],
+		},
 	},
 }
-
-WSGI_APPLICATION = "myMoney.wsgi.application"
-ASGI_APPLICATION = "myMoney.asgi.application"
 
 DATABASES = {
 	"default": {

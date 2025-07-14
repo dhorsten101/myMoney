@@ -128,6 +128,7 @@ wcwidth = "==0.2.13"
 websockets = "==15.0.1"
 yarl = "==1.18.3"
 zstandard = "==0.23.0"
+gunicorn = "*"
 
 [dev-packages]
 

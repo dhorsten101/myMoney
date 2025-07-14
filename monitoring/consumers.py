@@ -1,6 +1,7 @@
 # consumers.py
 import json
 from concurrent.futures import ThreadPoolExecutor
+from datetime import timezone
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -29,13 +30,18 @@ def ping_ip(ip):
 	}
 
 
-def ping_all(ips):
+def ping_all():
+	from monitoring.models import MonitoredDevice
+	devices = MonitoredDevice.objects.all()
 	results = []
 	with ThreadPoolExecutor(max_workers=50) as executor:
-		for result in executor.map(ping_ip, ips):
-			results.append(result)
+		for result in executor.map(ping_ip, [d.ip_address for d in devices]):
+			# update DB record
+			MonitoredDevice.objects.filter(ip_address=result["ip"]).update(
+				is_online=result["status"] == "UP",
+				last_checked=timezone.now()
+			)
 			broadcast_ping(result)
-	return results
 
 
 def broadcast_ping(result):

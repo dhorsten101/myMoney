@@ -2,14 +2,25 @@
 <div id="output"></div>
 
 <script>
-    const socket = new WebSocket("ws://" + window.location.host + "/ws/ping/");
+    const socket = new WebSocket("ws://localhost:8010/ws/ping/");
 
     socket.onopen = () => {
-        console.log("WebSocket connected");
+        console.log("✅ WebSocket connected");
     };
 
-    socket.onmessage = (event) => {
+    socket.onmessage = function (event) {
         const data = JSON.parse(event.data);
-        document.getElementById("output").innerText = "Ping received: " + JSON.stringify(data);
+        console.log("Received WebSocket message:", data);
+        document.getElementById("output").innerText = `Ping: ${JSON.stringify(data)}`;
+    };
+
+    socket.onerror = function (error) {
+        console.error("❌ WebSocket error:", error);
+    };
+
+    socket.onclose = () => {
+        console.warn("WebSocket connection closed");
     };
 </script>
+
+

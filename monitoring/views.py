@@ -1,4 +1,5 @@
 # monitoring/views.py
+import redis
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -8,6 +9,20 @@ from monitoring.models import MonitoredDevice
 from monitoring.ping import discover_devices, ping_and_log_all_devices
 from .forms import MonitoredDeviceForm
 from .forms import SubnetDiscoveryForm
+
+
+def start_pings(request):
+	r = redis.Redis()
+	r.set("ping_running", "1")
+	messages.success(request, "▶️ Ping loop started.")
+	return redirect("monitoring")
+
+
+def stop_pings(request):
+	r = redis.Redis()
+	r.set("ping_running", "0")
+	messages.warning(request, "⏹️ Ping loop stopped.")
+	return redirect("monitoring")
 
 
 def ping_status_api(request):

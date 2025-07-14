@@ -1,10 +1,5 @@
 """
 ASGI config for myMoney project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information, see:
-https://docs.djangoproject.com/en/5.1/howto/deployment/asgi/
 """
 
 import os
@@ -17,10 +12,10 @@ from django.core.asgi import get_asgi_application
 import monitoring.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myMoney.settings')
-django.setup()  # Ensure Django apps are loaded before importing ASGI app
+django.setup()  # Setup Django before loading ASGI application
 
-# HTTP and WebSocket protocol routing
-application = ProtocolTypeRouter({
+# Define the actual application router
+asgi_app = ProtocolTypeRouter({
 	"http": get_asgi_application(),
 	"websocket": AuthMiddlewareStack(
 		URLRouter(
@@ -28,3 +23,17 @@ application = ProtocolTypeRouter({
 		)
 	),
 })
+
+
+# Wrap the router with debug middleware
+class DebugMiddleware:
+	def __init__(self, app):
+		self.app = app
+	
+	async def __call__(self, scope, receive, send):
+		print("🔍 Scope type:", scope["type"])
+		await self.app(scope, receive, send)
+
+
+# Final export
+application = DebugMiddleware(asgi_app)

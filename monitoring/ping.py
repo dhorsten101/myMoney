@@ -1,12 +1,13 @@
 # monitoring/services/ping_service.py
 
+import time
 from concurrent.futures import ThreadPoolExecutor
 
 import nmap
 from django.utils.timezone import now
 from ping3 import ping
 
-from monitoring.models import MonitoredDevice, PingResult
+from monitoring.models import MonitoredDevice, PingResult, PingControl
 
 MAX_DROP_THRESHOLD = 5
 
@@ -62,3 +63,32 @@ def discover_devices(subnet):
 			MonitoredDevice.objects.create(ip_address=ip)
 			added += 1
 	return added
+
+
+def run_ping_loop():
+	print("📡 Ping loop started")
+	while PingControl.objects.first().active:
+		devices = MonitoredDevice.objects.all()
+		for device in devices:
+			print(f"🔁 Pinging {device.ip_address}")
+			latency = ping(device.ip_address, timeout=1)
+			is_online = latency is not None
+			status = "UP" if is_online else "DOWN"
+			
+			try:
+				PingResult.objects.create(
+					device=device,
+					latency_ms=round(latency * 1000, 1) if latency else None,
+					success=is_online,
+					ip=device.ip_address,
+					status=status
+				)
+				print(f"✅ Saved ping for {device.ip_address} - {status}")
+			except Exception as e:
+				print(f"❌ ERROR saving ping for {device.ip_address}: {e}")
+			
+			device.is_online = is_online
+			device.last_checked = now()
+			device.save()
+		
+		time.sleep(2)

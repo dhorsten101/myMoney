@@ -1,27 +1,33 @@
 # monitoring/views.py
-import redis
+import threading
+
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 
-from monitoring.models import MonitoredDevice
-from monitoring.ping import discover_devices, ping_and_log_all_devices
+from monitoring.models import MonitoredDevice, PingControl
+from monitoring.ping import discover_devices, ping_and_log_all_devices, run_ping_loop
 from .forms import MonitoredDeviceForm
 from .forms import SubnetDiscoveryForm
 
 
 def start_pings(request):
-	r = redis.Redis()
-	r.set("ping_running", "1")
+	# Set control flag
+	PingControl.objects.update_or_create(defaults={"active": True})
+	
+	# Launch background thread
+	thread = threading.Thread(target=run_ping_loop)
+	thread.daemon = True
+	thread.start()
+	
 	messages.success(request, "▶️ Ping loop started.")
 	return redirect("monitoring")
 
 
 def stop_pings(request):
-	r = redis.Redis()
-	r.set("ping_running", "0")
-	messages.warning(request, "⏹️ Ping loop stopped.")
+	PingControl.objects.update_or_create(defaults={"active": False})
+	messages.warning(request, "⏹ Ping loop stopped.")
 	return redirect("monitoring")
 
 

@@ -10,8 +10,6 @@ from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 
-import monitoring.routing
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myMoney.settings')
 django.setup()  # Setup Django before loading ASGI application
 
@@ -41,7 +39,3 @@ class DebugMiddleware:
 	async def __call__(self, scope, receive, send):
 		print("🔍 Scope type:", scope["type"])
 		await self.app(scope, receive, send)
-
-
-# Final export
-application = DebugMiddleware(asgi_app)

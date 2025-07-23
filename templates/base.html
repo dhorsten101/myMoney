@@ -43,14 +43,14 @@
                 <li class="nav-item"><a class="nav-link active" href="/folder/">Folders</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/asset/">Crypto</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/income/">Income</a></li>
-                {#                <li class="nav-item"><a class="nav-link active" href="/credit/">Credits</a></li>#}
+                <li class="nav-item"><a class="nav-link active" href="/credit/">Credits</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/expense/">Expenses</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/worth/">Net Worth</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/idea/">Ideas</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/weight/">Weight</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/sellable/">Sellable</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/monitoring/">Monitoring</a></li>
-
+                <li class="nav-item"><a class="nav-link active" href="/cameras/">Cameras</a></li>
             </ul>
         </div>
 
@@ -129,6 +129,13 @@
     }
 
     function toggleLogs(containerId) {
+        const container = document.getElementById(containerId);
+        if (container) {
+            container.classList.toggle("d-none");
+        }
+    }
+
+    function toggleSlowQueryLogs(containerId) {
         const container = document.getElementById(containerId);
         if (container) {
             container.classList.toggle("d-none");

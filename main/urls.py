@@ -1,6 +1,7 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
+from logs.views import slow_queries_view
 from . import views
 from .views import error_log_list, test_error_logging, audit_log_list, logs, service_log_list, global_search, uml_view
 
@@ -12,6 +13,7 @@ urlpatterns = [
 	path("contact/", views.contact_view, name="contact"),
 	path("error-logs/", error_log_list, name="error_log_list"),
 	path("audit-logs/", audit_log_list, name="audit_log_list"),
+	path("slow-queries/", slow_queries_view, name="slow_queries"),
 	path("service-logs/", service_log_list, name="service_log_list"),
 	path('test-log/', test_error_logging, name='test_log'),
 	path("logs/", logs, name="logs"),

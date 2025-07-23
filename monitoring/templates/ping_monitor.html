@@ -89,7 +89,7 @@
                                 {{ pings.0.latency_ms|default:"—" }} ms
                                 <br>
                                 <small class="text-muted">
-                                    Loss: {{ pings|failed_pings }}/{{ pings|length }}
+                                    Loss: {{ pings }}/{{ pings|length }}
                                 </small>
                             {% else %}
                                 —

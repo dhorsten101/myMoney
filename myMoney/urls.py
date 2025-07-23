@@ -23,6 +23,7 @@ urlpatterns = [
 				  path("", include('weather.urls')),
 				  path("", include('system.urls')),
 				  path("", include('monitoring.urls')),
+				  path("", include('logs.urls')),
 				  path("cameras/", include("cameras.urls")),
 				  path('ckeditor5/', include('django_ckeditor_5.urls')),
 			  

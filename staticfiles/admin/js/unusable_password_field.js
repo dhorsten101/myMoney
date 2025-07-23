@@ -6,10 +6,10 @@ try {
     // If browser does not support :has selector this will raise an error
     document.querySelector("form:has(input)");
 } catch (error) {
-    console.log("Defaulting to javascript for usable password form management: " + error);
+    console.log("Defaulting to javascript for usable password form managements: " + error);
     // JS replacement for unsupported :has selector
     document.querySelectorAll('input[name="usable_password"]').forEach(option => {
-        option.addEventListener('change', function() {
+        option.addEventListener('change', function () {
             const usablePassword = (this.value === "true" ? this.checked : !this.checked);
             const submit1 = document.querySelector('input[type="submit"].set-password');
             const submit2 = document.querySelector('input[type="submit"].unset-password');

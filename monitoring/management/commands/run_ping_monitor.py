@@ -1,4 +1,4 @@
-# ping_monitor/management/commandss/ping_devices.py
+# ping_monitor/managements/commandss/ping_devices.py
 from django.core.management.base import BaseCommand
 
 from monitoring.ping import ping_all_devices

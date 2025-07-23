@@ -19,12 +19,7 @@ def home(request):
 
 
 @login_required
-def dashboard(request):
-	return render(request, "dashboards/dashboard.html")
-
-
-@login_required
-def update_dashboard(request):
+def update_crypto(request):
 	process_crypto_data()
 	return redirect(reverse("asset_list"))
 
@@ -84,4 +79,4 @@ def system_metrics_view(request):
 		"bytes_recv": [round(m.bytes_recv / (1024 ** 3), 2) if m.bytes_recv else 0 for m in metrics],
 		'current_period': period
 	}
-	return render(request, 'metrics/system_metrics.html', context)
+	return render(request, 'system_metrics.html', context)

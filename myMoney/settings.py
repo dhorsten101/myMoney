@@ -35,7 +35,6 @@ INSTALLED_APPS = [
 	"django_crontab",
 	"django_extensions",
 	"channels",
-	# "ckeditor_uploader",
 	'django_ckeditor_5',
 	"api",
 	"cryptos",

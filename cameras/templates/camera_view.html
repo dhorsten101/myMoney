@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>🎥 Live Stream: {{ camera.name }}</h2>
+    <video width="100%" controls autoplay>
+        <source src="{{ hls_path }}" type="application/x-mpegURL">
+        Your browser does not support HLS playback.
+    </video>
+{% endblock %}

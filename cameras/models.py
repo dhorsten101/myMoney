@@ -4,7 +4,7 @@ from django.db import models
 class Camera(models.Model):
 	name = models.CharField(max_length=100)
 	location = models.CharField(max_length=255, blank=True)
-	rtsp_url = models.URLField()
+	rtsp_url = models.CharField(max_length=512)
 	stream_slug = models.SlugField(unique=True)
 	ip_address = models.GenericIPAddressField()
 	username = models.CharField(max_length=100)

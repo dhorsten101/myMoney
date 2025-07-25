@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>📋 Discovered Devices in {{ job.subnet }}</h2>
+
+    {% if job.results %}
+        <ul class="list-group mt-3">
+            {% for ip in job.results %}
+                <li class="list-group-item">{{ ip }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results found or scan failed.</p>
+    {% endif %}
+{% endblock %}

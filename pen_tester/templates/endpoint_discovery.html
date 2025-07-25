@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>🔍 Network Discovery</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <label>Enter subnet (e.g., 192.168.0.0/24):</label>
+        <input name="subnet" class="form-control" required>
+        <button class="btn btn-primary mt-2">Start Scan</button>
+    </form>
+{% endblock %}

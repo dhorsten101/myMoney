@@ -30,3 +30,11 @@ def camera_create(request):
 		form.save()
 		return redirect("camera_list")
 	return render(request, "camera_form.html", {"form": form, "title": "Add Camera"})
+
+
+def camera_delete(request, pk):
+	camera = get_object_or_404(Camera, pk=pk)
+	if request.method == "POST":
+		camera.delete()
+		return redirect("camera_list")
+	return render(request, "camera_confirm_delete.html", {"camera": camera})

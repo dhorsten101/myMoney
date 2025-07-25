@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>🔍 Report for {{ target.domain_or_ip }}</h2>
+    {% for r in results %}
+        <h4>{{ r.tool }} - {{ r.scanned_at }}</h4>
+        <pre style="white-space: pre-wrap;">{{ r.output }}</pre>
+    {% endfor %}
+{% endblock %}

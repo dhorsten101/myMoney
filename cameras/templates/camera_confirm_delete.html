@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-
 {% block content %}
     <h2>🗑️ Delete Camera</h2>
     <p>Are you sure you want to delete <strong>{{ camera.name }}</strong>?</p>
+
     <form method="post">
         {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Yes, delete</button>
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
         <a href="{% url 'camera_list' %}" class="btn btn-secondary">Cancel</a>
     </form>
 {% endblock %}

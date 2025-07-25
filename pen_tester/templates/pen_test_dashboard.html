@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>🛡️ Pentest Dashboard</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary">Start Scan</button>
+    </form>
+
+    <hr>
+    <h3>Previous Scans</h3>
+    <ul>
+        {% for t in targets %}
+            <li><a href="{% url 'report' t.id %}">{{ t.domain_or_ip }} - {{ t.submitted_at }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

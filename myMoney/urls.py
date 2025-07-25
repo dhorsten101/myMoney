@@ -24,7 +24,8 @@ urlpatterns = [
 				  path("", include('system.urls')),
 				  path("", include('monitoring.urls')),
 				  path("", include('logs.urls')),
-				  path("cameras/", include("cameras.urls")),
+				  path("", include("cameras.urls")),
+				  path("", include("pen_tester.urls")),
 				  path('ckeditor5/', include('django_ckeditor_5.urls')),
 			  
 			  ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

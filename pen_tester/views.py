@@ -37,21 +37,31 @@ def discovery_view(request):
 		job = DiscoveryJob.objects.create(subnet=subnet)
 		
 		docker_cmd = [
-			'docker', 'run', '--rm', 'kali-scanner', subnet
+			'docker', 'run', '--rm', '--network=host', 'kali-scanner', subnet
 		]
 		result = subprocess.run(docker_cmd, capture_output=True, text=True)
 		
 		try:
-			ip_list = json.loads(result.stdout)
-			job.results = ip_list
+			raw_output = result.stdout.strip()
+			lines = raw_output.splitlines()
+			json_start = next((i for i, line in enumerate(lines) if line.startswith('[')), None)
+			
+			if json_start is not None:
+				cleaned_json = '\n'.join(lines[json_start:])
+				ip_list = json.loads(cleaned_json)
+				job.results = ip_list
+				job.finished = True
+				job.save()
+				return redirect('discovery_result', job_id=job.id)
+			else:
+				raise ValueError("No valid JSON found in output.")
+		
+		except Exception as e:
+			job.results = [f"Error parsing results: {str(e)}"]
 			job.finished = True
 			job.save()
-			return redirect('discovery_result', job_id=job.id)
-		except Exception as e:
-			job.results = ['Error parsing results']
-			job.save()
 			return render(request, 'endpoint_discovery.html', {
-				'error': str(e),
+				'error': f"Parsing error: {str(e)}",
 				'job': job
 			})
 	

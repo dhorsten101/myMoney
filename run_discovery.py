@@ -11,7 +11,7 @@ def discover(subnet):
 		text=True
 	)
 	
-	live_hosts = []
+	live_hosts = set()
 	current_ip = None
 	lines = result.stdout.splitlines()
 	
@@ -20,10 +20,12 @@ def discover(subnet):
 		if line.startswith("Nmap scan report for"):
 			current_ip = line.split()[-1]
 		elif "Host is up" in line and current_ip:
-			live_hosts.append(current_ip)
-			current_ip = None
+			live_hosts.add(current_ip)
+			current_ip = None  # reset
+		elif "Host seems down" in line or "0 hosts up" in line:
+			current_ip = None  # explicitly reset if host is unreachable
 	
-	print(json.dumps(live_hosts))
+	print(json.dumps(sorted(list(live_hosts))))
 
 
 if __name__ == "__main__":

@@ -37,7 +37,7 @@ def discovery_view(request):
 		job = DiscoveryJob.objects.create(subnet=subnet)
 		
 		docker_cmd = [
-			'docker', 'run', '--rm', '--network=host', 'kali-scanner', subnet
+			'/usr/bin/docker', 'run', '--rm', '--network=host', 'kali-scanner', subnet
 		]
 		result = subprocess.run(docker_cmd, capture_output=True, text=True)
 		

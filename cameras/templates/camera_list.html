@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+
 {% block content %}
+
+    <!-- Add HLS.js -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <div class="row align-items-center mb-3">
         <!-- Left: Add Button -->
@@ -19,32 +23,47 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
                         <span>{{ camera.name }}</span>
-                        <span>
-                        {# Optional buttons here #}
-                    </span>
                         <a href="{% url 'camera_delete' camera.pk %}" class="btn btn-sm btn-outline-danger">🗑️</a>
-
                     </div>
                     <div class="card-body p-0">
-                        <video width="100%" controls autoplay muted playsinline style="max-height: 240px;">
-                            <source src="/camera_streams/{{ camera.stream_slug }}/index.m3u8" type="application/x-mpegURL">
-                        </video>
+                        <!-- Video Player -->
+                        <video id="video-{{ camera.id }}" width="100%" controls autoplay muted playsinline style="max-height: 240px;"></video>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                const video = document.getElementById("video-{{ camera.id }}");
+                                const hlsSource = "/camera_streams/{{ camera.stream_slug }}/index.m3u8";
+
+                                if (Hls.isSupported()) {
+                                    const hls = new Hls();
+                                    hls.loadSource(hlsSource);
+                                    hls.attachMedia(video);
+                                } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+                                    video.src = hlsSource;
+                                }
+                            });
+                        </script>
                     </div>
                 </div>
             </div>
         {% endfor %}
     </div>
 
-    {% for cam in cameras %}
-        <div class="card mb-3">
-            <div class="card-header">{{ cam.name }}</div>
-            <div class="card-body">
-                <video width="100%" controls>
-                    <source src="/camera_streams/{{ cam.id }}/index.m3u8" type="application/x-mpegURL">
-                    Your browser does not support HLS playback.
-                </video>
-            </div>
-        </div>
-    {% endfor %}
+    <video id="hls-video" width="100%" controls autoplay muted playsinline></video>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        const video = document.getElementById('hls-video');
+        const hlsSource = '/camera_streams/101/index.m3u8';  // Replace with actual slug
+
+        if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(hlsSource);
+            hls.attachMedia(video);
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = hlsSource;
+        } else {
+            console.error("HLS not supported in this browser.");
+        }
+    </script>
 
 {% endblock %}

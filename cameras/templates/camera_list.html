@@ -35,4 +35,16 @@
         {% endfor %}
     </div>
 
+    {% for cam in cameras %}
+        <div class="card mb-3">
+            <div class="card-header">{{ cam.name }}</div>
+            <div class="card-body">
+                <video width="100%" controls>
+                    <source src="/camera_streams/{{ cam.id }}/index.m3u8" type="application/x-mpegURL">
+                    Your browser does not support HLS playback.
+                </video>
+            </div>
+        </div>
+    {% endfor %}
+
 {% endblock %}

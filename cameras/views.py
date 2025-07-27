@@ -1,10 +1,16 @@
 import os
 
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import render
 
 from .forms import CameraForm
 from .models import Camera
 from .streamer import start_stream
+
+
+def camera_stream_list(request):
+	cameras = Camera.objects.all()
+	return render(request, "camera_list.html", {"cameras": cameras})
 
 
 def camera_list(request):

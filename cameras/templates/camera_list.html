@@ -25,24 +25,6 @@
                         <span>{{ camera.name }}</span>
                         <a href="{% url 'camera_delete' camera.pk %}" class="btn btn-sm btn-outline-danger">🗑️</a>
                     </div>
-                    <div class="card-body p-0">
-                        <!-- Video Player -->
-                        <video id="video-{{ camera.id }}" width="100%" controls autoplay muted playsinline style="max-height: 240px;"></video>
-                        <script>
-                            document.addEventListener("DOMContentLoaded", function () {
-                                const video = document.getElementById("video-{{ camera.id }}");
-                                const hlsSource = "/camera_streams/{{ camera.stream_slug }}/index.m3u8";
-
-                                if (Hls.isSupported()) {
-                                    const hls = new Hls();
-                                    hls.loadSource(hlsSource);
-                                    hls.attachMedia(video);
-                                } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-                                    video.src = hlsSource;
-                                }
-                            });
-                        </script>
-                    </div>
                 </div>
             </div>
         {% endfor %}

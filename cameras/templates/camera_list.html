@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <div class="row row-cols-2 row-cols-md-6 row-cols-lg-1 g-4">
         {% for camera in cameras %}
             <div class="col">
                 <div class="card shadow-sm">
@@ -25,27 +25,26 @@
                         <span>{{ camera.name }}</span>
                         <a href="{% url 'camera_delete' camera.pk %}" class="btn btn-sm btn-outline-danger">🗑️</a>
                     </div>
+                    <video id="hls-video" width="100%" controls autoplay muted playsinline></video>
+
+                    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+                    <script>
+                        const video = document.getElementById('hls-video');
+                        const hlsSource = '/camera_streams/101/index.m3u8';  // Replace with actual slug
+
+                        if (Hls.isSupported()) {
+                            const hls = new Hls();
+                            hls.loadSource(hlsSource);
+                            hls.attachMedia(video);
+                        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                            video.src = hlsSource;
+                        } else {
+                            console.error("HLS not supported in this browser.");
+                        }
+                    </script>
                 </div>
             </div>
         {% endfor %}
     </div>
-
-    <video id="hls-video" width="100%" controls autoplay muted playsinline></video>
-
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script>
-        const video = document.getElementById('hls-video');
-        const hlsSource = '/camera_streams/101/index.m3u8';  // Replace with actual slug
-
-        if (Hls.isSupported()) {
-            const hls = new Hls();
-            hls.loadSource(hlsSource);
-            hls.attachMedia(video);
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = hlsSource;
-        } else {
-            console.error("HLS not supported in this browser.");
-        }
-    </script>
 
 {% endblock %}

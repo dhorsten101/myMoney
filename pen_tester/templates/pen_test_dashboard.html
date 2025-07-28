@@ -1,12 +1,13 @@
 {% extends "base.html" %}
+
 {% block content %}
-    <h2>🛡️ Pentest Dashboard</h2>
+    <h2 class="text-center">🛡️ Pentest Dashboard</h2>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button class="btn btn-primary">Start Scan</button>
+        <button class="btn btn-primary btn-sm">Start Scan</button>
+        <a class=" btn btn-primary btn-sm mx-2" href="/discover/">Discover</a>
     </form>
-
     <hr>
     <h3>Previous Scans</h3>
     <ul>

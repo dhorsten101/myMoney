@@ -2,13 +2,9 @@
 
 {% block content %}
     <h2 class="text-center">🛡️ Pentest Dashboard</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-primary btn-sm">Start Scan</button>
-        <a class=" btn btn-primary btn-sm mx-2" href="/discover/">Discover</a>
-        <a class=" btn btn-outline-primary btn-sm" href="/pen_tester/devices/">Devices</a>
-    </form>
+    <div class="text-center my-3">
+        <a class="btn btn-primary btn-sm" href="/discover/">Start Discovery</a>
+    </div>
     <hr>
     <h3>Previous Scans</h3>
     <ul>

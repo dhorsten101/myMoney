@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Device Summary</h2>
+    <form method="post" action="{% url 'scan_all_devices' %}">
+        {% csrf_token %}
+        <button class="btn btn-sm btn-primary">Scan all discovered devices</button>
+    </form>
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <th>IP</th>
+                <th>Open Ports</th>
+                <th>Example Services</th>
+                <th>Last Scan</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for d in devices %}
+            <tr>
+                <td>{{ d.ip }}</td>
+                <td>{{ d.open_ports_count }}</td>
+                <td>
+                    {% if d.example_services and d.example_services|length > 0 %}
+                        <ul class="mb-0">
+                        {% for s in d.example_services %}
+                            <li>{{ s }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}-{% endif %}
+                </td>
+                <td>{{ d.when|default:"-" }}</td>
+                <td>
+                    <form method="post" action="{% url 'scan_device' d.ip %}">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-primary">Run basic scan</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+

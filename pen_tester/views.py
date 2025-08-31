@@ -1,16 +1,18 @@
 # pen_tester/views.py
 
 import json
-import socket
 import subprocess
+import shutil
+import socket
 import time
-from django.utils import timezone
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 
 from .forms import TargetForm
 from .models import DiscoveryJob
-from .models import ScanResult, Target
+from .models import Target
 
 
 def pen_test_dashboard(request):
@@ -38,10 +40,18 @@ def discovery_view(request):
 	if request.method == 'POST':
 		subnet = request.POST.get('subnet')
 		job = DiscoveryJob.objects.create(subnet=subnet)
+		# Resolve docker binary dynamically
+		docker_path = shutil.which('docker')
+		if not docker_path:
+			job.results = ["Docker not found on PATH"]
+			job.finished = True
+			job.save()
+			return render(request, 'endpoint_discovery.html', {
+				'error': 'Docker not found. Please install Docker Desktop or add docker to PATH.',
+				'job': job
+			})
 		
-		docker_cmd = [
-			'/usr/bin/docker', 'run', '--rm', '--network=host', 'kali-scanner', subnet
-		]
+		docker_cmd = [docker_path, 'run', '--rm', '--network=host', 'kali-scanner', subnet]
 		result = subprocess.run(docker_cmd, capture_output=True, text=True)
 		
 		try:
@@ -52,20 +62,33 @@ def discovery_view(request):
 			if json_start is not None:
 				cleaned_json = '\n'.join(lines[json_start:])
 				ip_list = json.loads(cleaned_json)
-				job.results = ip_list
+				# Keep only actually reachable hosts by probing common ports briefly
+				reachable = _filter_reachable_hosts(ip_list)
+				job.results = reachable
 				job.finished = True
 				job.save()
-				# Create or update targets for each discovered IP
-				for ip in ip_list:
+				# Upsert targets for discovered IPs and mark others offline
+				Target.objects.exclude(ip_address__in=reachable).update(is_online=False)
+				for ip in reachable:
 					target, _ = Target.objects.get_or_create(
 						ip_address=ip,
-						defaults={'domain_or_ip': ip, 'is_online': True, 'last_discovered': timezone.now()},
+						defaults={'domain_or_ip': ip}
 					)
-					# If existing, update last_discovered and online flag
 					target.is_online = True
 					target.last_discovered = timezone.now()
-					target.save(update_fields=['is_online', 'last_discovered'])
-				return redirect('discovery_result', job_id=job.id)
+					target.save(update_fields=['is_online', 'last_discovered', 'domain_or_ip'])
+				# Immediately run basic scans for all discovered IPs via Kali and store results
+				from .models import ScanResult
+				scan_results = run_kali_scan_many(reachable)
+				for result in scan_results:
+					ip = result.get('ip')
+					if not ip:
+						continue
+					t = Target.objects.filter(ip_address=ip).first()
+					if not t:
+						continue
+					ScanResult.objects.create(target=t, tool='kali_basic_many', output=json.dumps(result))
+				return redirect('device_summary')
 			else:
 				raise ValueError("No valid JSON found in output.")
 		
@@ -86,19 +109,78 @@ def discovery_result(request, job_id):
 	return render(request, 'discovery_result.html', {'job': job})
 
 
-def devices_list(request):
-	targets = Target.objects.order_by('-last_discovered', '-last_scanned_at')
-	return render(request, 'devices_list.html', {'targets': targets})
+def run_kali_basic_scan(ip: str) -> dict:
+	docker_path = shutil.which('docker')
+	if not docker_path:
+		return {'error': 'Docker not found'}
+	cmd = [docker_path, 'run', '--rm', '--network=host', 'kali-scanner', 'python3', 'run_basic_scan.py', ip]
+	res = subprocess.run(cmd, capture_output=True, text=True)
+	try:
+		return json.loads(res.stdout.strip())
+	except Exception:
+		return {'error': 'Failed to parse scan output', 'raw': res.stdout}
 
 
-def _tcp_port_is_open(ip_address: str, port: int, timeout_seconds: float) -> bool:
+def run_kali_scan_many(ips: list[str]) -> list[dict]:
+	docker_path = shutil.which('docker')
+	if not docker_path:
+		return []
+	cmd = [docker_path, 'run', '--rm', '--network=host', 'kali-scanner', 'python3', 'run_scan_many.py'] + ips
+	res = subprocess.run(cmd, capture_output=True, text=True)
+	try:
+		return json.loads(res.stdout.strip())
+	except Exception:
+		return []
+
+
+def device_summary(request):
+	devices = []
+	for target in Target.objects.filter(is_online=True):
+		latest = target.results.order_by('-scanned_at').first()
+		entry = {
+			'id': target.id,
+			'ip': target.ip_address,
+			'when': latest.scanned_at if latest else None,
+			'open_ports_count': 0,
+			'example_services': [],
+		}
+		if latest:
+			try:
+				data = json.loads(latest.output)
+				entry['open_ports_count'] = len(data.get('open_ports', []))
+				entry['example_services'] = data.get('open_ports', [])[:3]
+			except Exception:
+				pass
+		devices.append(entry)
+	return render(request, 'device_summary.html', {'devices': devices})
+
+
+def scan_device(request, ip):
+	if request.method != 'POST':
+		return redirect('device_summary')
+	data = run_kali_basic_scan(ip)
+	target = Target.objects.filter(ip_address=ip).first()
+	if target:
+		from .models import ScanResult
+		ScanResult.objects.create(target=target, tool='kali_basic', output=json.dumps(data))
+	return redirect('device_summary')
+
+
+def scan_all_devices(request):
+	if request.method != 'POST':
+		return redirect('device_summary')
+	for target in Target.objects.filter(is_online=True):
+		data = run_kali_basic_scan(target.ip_address)
+		from .models import ScanResult
+		ScanResult.objects.create(target=target, tool='kali_basic', output=json.dumps(data))
+	return redirect('device_summary')
+
+
+def _tcp_port_open(ip: str, port: int, timeout_seconds: float = 0.2) -> bool:
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	sock.settimeout(timeout_seconds)
 	try:
-		start = time.perf_counter()
-		sock.connect((ip_address, port))
-		# successful connect means port open
-		return True
+		return sock.connect_ex((ip, port)) == 0
 	except Exception:
 		return False
 	finally:
@@ -108,35 +190,26 @@ def _tcp_port_is_open(ip_address: str, port: int, timeout_seconds: float) -> boo
 			pass
 
 
-def run_basic_scan(request, target_id):
-	target = get_object_or_404(Target, id=target_id)
-	if request.method != 'POST':
-		return redirect('devices_list')
-	common_ports = [21, 22, 23, 25, 53, 80, 110, 135, 139, 143, 389, 443, 445, 465, 587, 993, 995, 1433, 1521, 1723, 1883, 2375, 2376, 3000, 3306, 3389, 5000, 5432, 5672, 5900, 5985, 5986, 6379, 7001, 8080, 8081, 8443, 9000, 9200]
-	open_ports = []
-	latency_ms = 0
-	# Measure latency as the fastest successful connect, else 0
-	best_latency = None
-	for port in common_ports:
-		start = time.perf_counter()
-		is_open = _tcp_port_is_open(target.ip_address, port, timeout_seconds=0.5)
-		elapsed_ms = int((time.perf_counter() - start) * 1000)
-		if is_open:
-			open_ports.append(port)
-			if best_latency is None or elapsed_ms < best_latency:
-				best_latency = elapsed_ms
-	latency_ms = best_latency or 0
-	# Update target summary fields
-	target.open_ports = open_ports
-	target.port_count = len(open_ports)
-	target.is_online = len(open_ports) > 0
-	target.latency_ms = latency_ms
-	target.last_scanned_at = timezone.now()
-	target.save()
-	# Store raw scan result
-	ScanResult.objects.create(
-		target=target,
-		tool='basic_tcp_scan',
-		output=json.dumps({'open_ports': open_ports, 'latency_ms': latency_ms}),
-	)
-	return redirect('devices_list')
+def _ip_is_reachable(ip: str) -> bool:
+	# Probe a handful of very common ports quickly
+	for port in (22, 80, 443, 445, 139, 53):
+		if _tcp_port_open(ip, port):
+			return True
+	return False
+
+
+def _filter_reachable_hosts(ip_list):
+	if not ip_list:
+		return []
+	results = []
+	max_workers = min(128, max(16, len(ip_list)))
+	with ThreadPoolExecutor(max_workers=max_workers) as executor:
+		future_map = {executor.submit(_ip_is_reachable, ip): ip for ip in ip_list}
+		for future in as_completed(future_map):
+			ip = future_map[future]
+			try:
+				if future.result():
+					results.append(ip)
+			except Exception:
+				pass
+	return sorted(results)

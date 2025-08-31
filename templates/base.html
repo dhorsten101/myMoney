@@ -39,19 +39,33 @@
                 <li class="nav-item"><a class="nav-link active" href="/history_record/">Stats</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/weather/">Weather</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/todo/">ToDo</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/document/">My Notes</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/document/">Notes</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/folder/">Folders</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/asset/">Crypto</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/income/">Income</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/credit/">Credits</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/expense/">Expenses</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/worth/">Net Worth</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/idea/">Ideas</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/weight/">Weight</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/sellable/">Sellable</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/monitoring/">Monitoring</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/cameras/">Cameras</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/pen_tester/">Pen Test</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" id="toolsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Tools
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="toolsDropdown">
+                        <li><a class="dropdown-item" href="/pen_tester/">Pen Test</a></li>
+                        <li><a class="dropdown-item" href="/cameras/">Cameras</a></li>
+                        <li><a class="dropdown-item" href="/monitoring/">Monitoring</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" id="financesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Finances
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="financesDropdown">
+                        <li><a class="dropdown-item" href="/income/">Income</a></li>
+                        <li><a class="dropdown-item" href="/credit/">Credits</a></li>
+                        <li><a class="dropdown-item" href="/expense/">Expenses</a></li>
+                        <li><a class="dropdown-item" href="/asset/">Crypto</a></li>
+                        <li><a class="dropdown-item" href="/worth/">Net Worth</a></li>
+                        <li><a class="dropdown-item" href="/sellable/">Sellable</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
 
@@ -62,8 +76,8 @@
         <a class="nav-link active text-black mx-2" href="/assistant/">Ask</a>
         <a class="nav-link active text-black mx-2" href="/logs/">Logs</a>
         <a class="nav-link active text-black mx-2" href="/metrics/">Metrics</a>
-        <a class="nav-link active text-black mx-2" href="/pricing">Pricing</a>
         <a class="nav-link active text-black mx-2" href="/system/">System</a>
+        <a class="nav-link active text-black mx-2" href="/pricing">Pricing</a>
         <div class="text-white mx-4">
             {% if user.is_authenticated %}
                 <form method="POST" action="{% url 'logout' %}">

@@ -9,6 +9,7 @@ RUN apt update && apt install -y \
     nmap \
     net-tools \
     iputils-ping \
+    fping \
     arp-scan \
     curl \
     python3 \
@@ -20,6 +21,8 @@ WORKDIR /scanner
 
 # Copy your scanning script into the container
 COPY run_discovery.py .
+COPY run_basic_scan.py .
+COPY run_scan_many.py .
 
 # Default command to run the script (overridden in Django subprocess)
 ENTRYPOINT ["python3", "run_discovery.py"]

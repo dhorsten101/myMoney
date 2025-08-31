@@ -1,0 +1,48 @@
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+	dependencies = [
+		("pen_tester", "0003_target_ip_address_target_is_online_and_more"),
+	]
+
+	operations = [
+		migrations.AddField(
+			model_name="target",
+			name="hostname",
+			field=models.CharField(blank=True, default="", max_length=255),
+		),
+		migrations.AddField(
+			model_name="target",
+			name="mac_address",
+			field=models.CharField(blank=True, default="", max_length=64),
+		),
+		migrations.AddField(
+			model_name="target",
+			name="open_ports",
+			field=models.JSONField(default=list),
+		),
+		migrations.AddField(
+			model_name="target",
+			name="port_count",
+			field=models.IntegerField(default=0),
+		),
+		migrations.AddField(
+			model_name="target",
+			name="latency_ms",
+			field=models.IntegerField(default=0),
+		),
+		migrations.AddField(
+			model_name="target",
+			name="last_scanned_at",
+			field=models.DateTimeField(blank=True, null=True),
+		),
+		migrations.AddField(
+			model_name="target",
+			name="vendor",
+			field=models.CharField(blank=True, default="", max_length=255),
+		),
+	]
+
+

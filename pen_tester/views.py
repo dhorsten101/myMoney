@@ -50,9 +50,27 @@ def discovery_view(request):
 				'error': 'Docker not found. Please install Docker Desktop or add docker to PATH.',
 				'job': job
 			})
+		# Ensure the kali-scanner image exists (user must build it from Dockerfile.kali)
+		inspect = subprocess.run([docker_path, 'image', 'inspect', 'kali-scanner'], capture_output=True, text=True)
+		if inspect.returncode != 0:
+			job.results = ["Missing docker image 'kali-scanner'"]
+			job.finished = True
+			job.save()
+			return render(request, 'endpoint_discovery.html', {
+				'error': "Missing docker image 'kali-scanner'. Build it with: docker build -f Dockerfile.kali -t kali-scanner .",
+				'job': job
+			})
 		
 		docker_cmd = [docker_path, 'run', '--rm', '--network=host', 'kali-scanner', subnet]
 		result = subprocess.run(docker_cmd, capture_output=True, text=True)
+		if result.returncode != 0:
+			job.results = ["Discovery container failed"]
+			job.finished = True
+			job.save()
+			return render(request, 'endpoint_discovery.html', {
+				'error': f"Kali discovery failed (exit {result.returncode}): {result.stderr}",
+				'job': job
+			})
 		
 		try:
 			raw_output = result.stdout.strip()

@@ -113,6 +113,7 @@ def test_error_logging(request):
 def global_search(request):
 	query = request.GET.get("q", "")
 	results = {}
+	has_results = False
 	
 	if query:
 		results = {
@@ -127,13 +128,12 @@ def global_search(request):
 			"sellables": Sellable.objects.filter(Q(name__icontains=query) | Q(description__icontains=query)),
 			"weights": Weight.objects.filter(Q(weight__icontains=query)),
 			"history": HistoryRecord.objects.filter(Q(total_value__icontains=query)),
-			"asset": Asset.objects.filter(Q(name__icontains=query) | Q(exchange__icontains=query)),
-			"audits": AuditLog.objects.filter(Q(model_name__icontains=query) | Q(action__icontains=query)),
-			"errors": ErrorLog.objects.filter(Q(message__icontains=query) | Q(exception__icontains=query)),
-			"external_errors": ExternalServiceLog.objects.filter(Q(name__icontains=query) | Q(url__icontains=query) | Q(error_message__icontains=query)),
+			"assets": Asset.objects.filter(Q(name__icontains=query) | Q(exchange__icontains=query)),
 		}
-	
-	return render(request, "components/global_search.html", {"query": query, "results": results})
+		# Determine if any results exist without forcing full evaluation
+		has_results = any(qs.exists() for qs in results.values())
+
+	return render(request, "components/global_search.html", {"query": query, "results": results, "has_results": has_results})
 
 
 def uml_view(request):

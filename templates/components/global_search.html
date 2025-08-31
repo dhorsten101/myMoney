@@ -116,27 +116,7 @@
         {% endif %}
 
 
-        {% if results.external_errors %}
-            <h4 class="mt-4">external_error</h4>
-            <ul class="list-group mb-3">
-                {% for external_error in results.external_errors %}
-                    <li class="list-group-item">
-                        {{ external_error.name }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-
-        {% if results.errors %}
-            <h4 class="mt-4">errors</h4>
-            <ul class="list-group mb-3">
-                {% for error in results.errors %}
-                    <li class="list-group-item">
-                        {{ error.message }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        
 
         {% if results.quotes %}
             <h4 class="mt-4">Quotes</h4>
@@ -149,7 +129,7 @@
             </ul>
         {% endif %}
 
-        {% if results %}
+        {% if query and not has_results %}
             <p class="text-muted">No results found.</p>
         {% endif %}
     </div>

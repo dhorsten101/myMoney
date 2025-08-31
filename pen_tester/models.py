@@ -9,6 +9,14 @@ class Target(models.Model):
 	ip_address = models.GenericIPAddressField()
 	is_online = models.BooleanField(default=False)
 	last_discovered = models.DateTimeField(auto_now_add=True)
+	# Device summary fields populated by tests
+	hostname = models.CharField(max_length=255, blank=True, default='')
+	mac_address = models.CharField(max_length=64, blank=True, default='')
+	open_ports = models.JSONField(default=list)
+	port_count = models.IntegerField(default=0)
+	latency_ms = models.IntegerField(default=0)
+	last_scanned_at = models.DateTimeField(null=True, blank=True)
+	vendor = models.CharField(max_length=255, blank=True, default='')
 	
 	def __str__(self):
 		return self.domain_or_ip

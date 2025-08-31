@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>🖧 Discovered Devices</h2>
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <th>IP</th>
+                <th>Hostname</th>
+                <th>Online</th>
+                <th>Ports</th>
+                <th>Latency (ms)</th>
+                <th>Last Scanned</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for t in targets %}
+            <tr>
+                <td>{{ t.ip_address }}</td>
+                <td>{{ t.hostname|default:"-" }}</td>
+                <td>
+                    {% if t.is_online %}
+                        <span class="badge bg-success">Online</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Unknown</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if t.open_ports and t.open_ports|length > 0 %}
+                        {{ t.open_ports|join:", " }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>{{ t.latency_ms }}</td>
+                <td>{{ t.last_scanned_at|default:"-" }}</td>
+                <td>
+                    <form method="post" action="{% url 'run_basic_scan' t.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-primary">Run basic test</button>
+                    </form>
+                    <a class="btn btn-sm btn-outline-secondary mt-1" href="{% url 'report' t.id %}">View report</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a class="btn btn-link" href="/discover/">Back to discovery</a>
+{% endblock %}
+

@@ -1,31 +1,29 @@
 {% extends "base.html" %}
+{% block main_class %}container-fluid{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h2 class="mb-0">Calendar</h2>
-  <form method="post" class="d-flex gap-2">
-    {% csrf_token %}
-    {{ form.title }}
-    {{ form.due_at }}
-    <button class="btn btn-sm btn-primary">Add</button>
-  </form>
+  <div>
+    <a class="btn btn-sm btn-primary" href="{% url 'reminders_new' %}">Add event</a>
+  </div>
 </div>
 <style>
-  #calendar { min-height: 70vh; }
+  #calendar { min-height: calc(100vh - 230px); }
   .fc { font-size: 0.95rem; }
   .fc-toolbar-title { font-size: 1.1rem; }
   .fc .fc-daygrid-day-number { font-size: 0.85rem; }
 </style>
 <div id="calendar"></div>
 
-<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css' rel='stylesheet' />
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.js'></script>
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   var calendarEl = document.getElementById('calendar');
   var calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: 'dayGridMonth',
     events: '/reminders/events/',
-    height: 'auto',
+    height: '100%',
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
@@ -39,8 +37,10 @@ document.addEventListener('DOMContentLoaded', function() {
     },
     eventClick: function(info) {
       var props = info.event.extendedProps || {};
-      var msg = info.event.title + '\n' + (props.description || '') + '\n' + (props.source || '');
-      alert(msg);
+      var id = props.id;
+      if (id) {
+        window.location.href = '/reminders/edit/' + id + '/';
+      }
     }
   });
   calendar.render();

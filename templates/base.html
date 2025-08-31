@@ -43,6 +43,8 @@
                 <li class="nav-item"><a class="nav-link active" href="/folder/">Folders</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/idea/">Ideas</a></li>
                 <li class="nav-item"><a class="nav-link active" href="/weight/">Weight</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/reminders/calendar/">Calendar</a></li>
+=
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle active" href="#" id="toolsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Tools
@@ -51,10 +53,8 @@
                         <li><a class="dropdown-item" href="/pen_tester/">Pen Test</a></li>
                         <li><a class="dropdown-item" href="/cameras/">Cameras</a></li>
                         <li><a class="dropdown-item" href="/monitoring/">Monitoring</a></li>
-                        <li><a class="dropdown-item" href="/reminders/calendar/">Calendar</a></li>
                     </ul>
                 </li>
-                <li class="nav-item"><a class="nav-link active" href="/reminders/calendar/">Calendar</a></li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle active" href="#" id="financesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Finances
@@ -93,7 +93,7 @@
 </nav>
 
 <!-- Main Content Area -->
-<main class="container mt-4 flex-grow-1">
+<main class="{% block main_class %}container{% endblock %} mt-4 flex-grow-1">
     {% block content %}
     {% endblock %}
 </main>

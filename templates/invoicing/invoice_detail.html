@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Invoice {{ invoice.number }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Invoice {{ invoice.number }}</h2>
+    <div>
+        <a class="btn btn-outline-primary" href="{% url 'invoice_update' invoice.id %}">Edit</a>
+        <a class="btn btn-outline-secondary" href="{% url 'invoice_list' %}">Back</a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Invoice #:</strong> {{ invoice.number }}</p>
+                <p><strong>Customer:</strong> {{ invoice.customer_name }}</p>
+                <p><strong>Email:</strong> {{ invoice.customer_email }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Issue Date:</strong> {{ invoice.issue_date }}</p>
+                <p><strong>Due Date:</strong> {{ invoice.due_date }}</p>
+                <p><strong>Status:</strong> {{ invoice.get_status_display }}</p>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-4"><strong>Subtotal:</strong> {{ invoice.subtotal }}</div>
+            <div class="col-md-4"><strong>Tax:</strong> {{ invoice.tax }}</div>
+            <div class="col-md-4"><strong>Total:</strong> {{ invoice.total }}</div>
+        </div>
+        {% if invoice.notes %}
+            <hr>
+            <p><strong>Notes:</strong></p>
+            <p>{{ invoice.notes }}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+

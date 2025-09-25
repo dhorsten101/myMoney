@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}{{ property.name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>{{ property.name }}</h2>
+    <div>
+        <a class="btn btn-outline-primary" href="{% url 'rental_property_update' property.id %}">Edit</a>
+        <a class="btn btn-outline-secondary" href="{% url 'rental_property_list' %}">Back</a>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <p><strong>Address:</strong> {{ property.address }}</p>
+        <div class="row">
+            <div class="col-md-4"><strong>Capital Value:</strong> {{ property.capital_value }}</div>
+            <div class="col-md-4"><strong>Cash Flow:</strong> {{ property.flow_value }}</div>
+            <div class="col-md-4"><strong>Expenses:</strong> {{ property.cost_value }}</div>
+        </div>
+    </div>
+    </div>
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        Linked Invoices
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Customer</th>
+                    <th>Issue Date</th>
+                    <th>Status</th>
+                    <th class="text-end">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for inv in property.invoices.all %}
+                <tr>
+                    <td><a href="{% url 'invoice_detail' inv.id %}">{{ inv.number }}</a></td>
+                    <td>{{ inv.customer_name }}</td>
+                    <td>{{ inv.issue_date }}</td>
+                    <td>{{ inv.get_status_display }}</td>
+                    <td class="text-end">{{ inv.total }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="5" class="text-center text-muted">No invoices linked.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+

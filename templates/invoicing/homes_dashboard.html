@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Horsten Homes Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Horsten Homes Dashboard</h2>
+
+<div class="row g-3 mb-3">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted mb-1">Total (All)</h6>
+                <div class="display-6">{{ totals.total_all }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted mb-1">Paid</h6>
+                <div class="display-6 text-success">{{ totals.total_paid }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted mb-1">Unpaid</h6>
+                <div class="display-6 text-danger">{{ totals.total_unpaid }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-striped table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Customer</th>
+                    <th>Property</th>
+                    <th>Issue Date</th>
+                    <th>Status</th>
+                    <th class="text-end">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for inv in recent %}
+                <tr>
+                    <td><a href="{% url 'invoice_detail' inv.id %}">{{ inv.number }}</a></td>
+                    <td>{{ inv.customer_name }}</td>
+                    <td>{% if inv.rental_property %}<a href="{% url 'rental_property_detail' inv.rental_property.id %}">{{ inv.rental_property.name }}</a>{% else %}<span class="text-muted">—</span>{% endif %}</td>
+                    <td>{{ inv.issue_date }}</td>
+                    <td>{{ inv.get_status_display }}</td>
+                    <td class="text-end">{{ inv.total }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="6" class="text-center text-muted">No recent invoices.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="card-body">
+        <a class="btn btn-outline-primary" href="{% url 'invoice_monthly_totals' %}">Monthly Totals</a>
+        <a class="btn btn-outline-secondary" href="{% url 'invoice_list' %}">All Invoices</a>
+        <a class="btn btn-outline-secondary" href="{% url 'rental_property_list' %}">Rental Properties</a>
+    </div>
+</div>
+{% endblock %}
+
+

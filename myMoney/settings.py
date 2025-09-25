@@ -59,6 +59,8 @@ INSTALLED_APPS = [
 	"cameras",
 	"pen_tester",
 	"reminders",
+		"time_tracker",
+	"invoicing",
 ]
 
 # CKEditor 5 config

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}{% if form.instance.pk %}Edit Property{% else %}New Property{% endif %}{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">{% if form.instance.pk %}Edit Property{% else %}New Property{% endif %}</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                    {{ form.name|add_class:"form-control" }}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>
+                    {{ form.address|add_class:"form-control" }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="{{ form.capital_value.id_for_label }}">{{ form.capital_value.label }}</label>
+                    {{ form.capital_value|add_class:"form-control" }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="{{ form.flow_value.id_for_label }}">{{ form.flow_value.label }}</label>
+                    {{ form.flow_value|add_class:"form-control" }}
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="{{ form.cost_value.id_for_label }}">{{ form.cost_value.label }}</label>
+                    {{ form.cost_value|add_class:"form-control" }}
+                </div>
+            </div>
+            <div class="mt-3">
+                <button class="btn btn-success" type="submit">Save</button>
+                <a class="btn btn-secondary" href="{% if form.instance.pk %}{% url 'rental_property_detail' form.instance.pk %}{% else %}{% url 'rental_property_list' %}{% endif %}">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+

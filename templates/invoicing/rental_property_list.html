@@ -3,47 +3,60 @@
 {% block title %}Rental Properties{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Rental Properties</h2>
-    <div class="d-flex gap-2">
-        <a class="btn btn-outline-secondary" href="{% url 'homes_dashboard' %}">Go to Dash</a>
-        <a class="btn btn-success" href="{% url 'rental_property_create' %}">New Property</a>
-    </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Rental Properties</h2>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary" href="{% url 'homes_dashboard' %}">Go to Dash</a>
+            <a class="btn btn-success" href="{% url 'rental_property_create' %}">New Property</a>
+        </div>
     </div>
 
-<div class="card shadow-sm">
-    <div class="table-responsive">
-        <table class="table table-striped table-hover mb-0">
-            <thead class="table-light">
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-striped  table-hover mb-0">
+                <thead class="">
                 <tr>
                     <th>Name</th>
                     <th>Address</th>
                     <th class="text-end">Capital</th>
                     <th class="text-end">Flow</th>
-                    <th class="text-end">Cost</th>
-                    <th></th>
+                    <th class="text-end">Monthly Costs</th>
+                    <th class="text-end">Actions</th>
                 </tr>
-            </thead>
-            <tbody>
-            {% for p in properties %}
-                <tr>
-                    <td><a href="{% url 'rental_property_detail' p.id %}">{{ p.name }}</a></td>
-                    <td>{{ p.address }}</td>
-                    <td class="text-end">{{ p.capital_value }}</td>
-                    <td class="text-end">{{ p.flow_value }}</td>
-                    <td class="text-end">{{ p.cost_value }}</td>
-                    <td class="text-end">
-                        <a class="btn btn-sm btn-outline-primary" href="{% url 'rental_property_update' p.id %}">Edit</a>
-                        <a class="btn btn-sm btn-outline-danger" href="{% url 'rental_property_delete' p.id %}">Delete</a>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr><td colspan="6" class="text-center text-muted">No properties yet.</td></tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for p in properties %}
+                    <tr>
+                        <td><a href="{% url 'rental_property_detail' p.id %}">{{ p.name }}</a></td>
+                        <td>{{ p.address }}</td>
+                        <td class="text-end">{{ p.capital_value }}</td>
+                        <td class="text-end">{{ p.flow_value }}</td>
+                        <td class="text-end">{{ p.cost_value }}</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-primary" href="{% url 'rental_property_update' p.id %}">Edit</a>
+                            <a class="btn btn-sm btn-outline-danger" href="{% url 'rental_property_delete' p.id %}">Delete</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No properties yet.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                {% if properties %}
+                    <tfoot>
+                    <tr>
+                        <th colspan="2" class="text-end bg-info  ">Totals:</th>
+                        <th class="text-end bg-info ">{{ totals.total_capital|default:0 }}</th>
+                        <th class="text-end bg-info ">{{ totals.total_flow|default:0 }}</th>
+                        <th class="text-end bg-info ">{{ totals.total_cost|default:0 }}</th>
+                        <th class="text-end bg-info "></th>
+                    </tr>
+                    </tfoot>
+                {% endif %}
+            </table>
+        </div>
     </div>
-</div>
 {% endblock %}
 
 

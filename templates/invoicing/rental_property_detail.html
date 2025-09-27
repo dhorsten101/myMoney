@@ -7,6 +7,7 @@
     <h2>{{ property.name }}</h2>
     <div>
         <a class="btn btn-outline-primary" href="{% url 'rental_property_update' property.id %}">Edit</a>
+        <a class="btn btn-outline-success" href="{% url 'rental_property_earnings' property.id %}">View Earnings</a>
         <a class="btn btn-outline-secondary" href="{% url 'rental_property_list' %}">Back</a>
     </div>
 </div>

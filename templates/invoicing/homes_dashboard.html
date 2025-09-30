@@ -3,9 +3,20 @@
 {% block title %}Horsten Homes Dashboard{% endblock %}
 
 {% block content %}
-    <h1 class="mb-3">Horsten Homes Dashboard</h1>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">Horsten Homes Dashboard</h1>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary" href="{% url 'invoice_list' %}">Invoices</a>
+            <a class="btn btn-outline-secondary" href="{% url 'expense_list' %}">Expenses</a>
+            <a class="btn btn-outline-info" href="{% url 'rental_property_list' %}">Properties</a>
+            <a class="btn btn-outline-primary" href="{% url 'rental_pipeline_list' %}">Pipeline</a>
+            <a class="btn btn-outline-secondary" href="{% url 'agent_list' %}">Agent</a>
 
-    <h2 class="mb-3 mt-3 text-center">Invoices</h2>
+
+        </div>
+    </div>
+
+    <h2 class="mb-3 mt-3 text-center">Revenue</h2>
     <div class="row g-3 mb-3">
         <div class="col-md-4">
             <div class="card shadow-sm">
@@ -108,20 +119,24 @@
                 </tbody>
             </table>
         </div> -->
-   
+
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
     <script>
-        (function(){
+        (function () {
             const labels = {{ agg_labels|default:'[]'|safe }};
             const cumulative = {{ agg_cumulative|default:'[]'|safe }};
             const capitalLine = {{ agg_capital_line|default:'[]'|safe }};
             const initialCapital = {{ agg_initial_capital_line|default:'[]'|safe }};
             const coverage = {{ agg_coverage_line|default:'[]'|safe }};
-            const payoffFlow = JSON.parse(document.getElementById('agg-payoff-flow')?.textContent || 'null');
-            const payoffGrow = JSON.parse(document.getElementById('agg-payoff-grow')?.textContent || 'null');
-            const payoffFlowMonths = JSON.parse(document.getElementById('agg-payoff-flow-months')?.textContent || 'null');
-            const payoffGrowMonths = JSON.parse(document.getElementById('agg-payoff-grow-months')?.textContent || 'null');
+            const elPayoffFlow = document.getElementById('agg-payoff-flow');
+            const elPayoffGrow = document.getElementById('agg-payoff-grow');
+            const elPayoffFlowMonths = document.getElementById('agg-payoff-flow-months');
+            const elPayoffGrowMonths = document.getElementById('agg-payoff-grow-months');
+            const payoffFlow = elPayoffFlow ? JSON.parse(elPayoffFlow.textContent) : null;
+            const payoffGrow = elPayoffGrow ? JSON.parse(elPayoffGrow.textContent) : null;
+            const payoffFlowMonths = elPayoffFlowMonths ? JSON.parse(elPayoffFlowMonths.textContent) : null;
+            const payoffGrowMonths = elPayoffGrowMonths ? JSON.parse(elPayoffGrowMonths.textContent) : null;
             if (!labels.length) return;
 
             const ctx = document.getElementById('aggProjectionChart').getContext('2d');
@@ -130,26 +145,26 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Cumulative Flow (All)', data: cumulative, borderColor: 'rgba(25,135,84,1)', backgroundColor: 'rgba(25,135,84,0.2)', tension: 0.2, fill: true },
-                        { label: 'Capital (All)', data: capitalLine, borderColor: 'rgba(220,53,69,1)', backgroundColor: 'rgba(220,53,69,0.2)', tension: 0, fill: false },
-                        { label: 'Initial Capital (All)', data: initialCapital, borderColor: 'rgba(108,117,125,1)', backgroundColor: 'rgba(108,117,125,0.2)', borderDash: [6,6], tension: 0, fill: false },
-                        { label: 'Flow + Appreciation (Coverage, All)', data: coverage, borderColor: 'rgba(255,159,64,1)', backgroundColor: 'rgba(255,159,64,0.2)', tension: 0.2, fill: false },
+                        {label: 'Cumulative Flow (All)', data: cumulative, borderColor: 'rgba(25,135,84,1)', backgroundColor: 'rgba(25,135,84,0.2)', tension: 0.2, fill: true},
+                        {label: 'Capital (All)', data: capitalLine, borderColor: 'rgba(220,53,69,1)', backgroundColor: 'rgba(220,53,69,0.2)', tension: 0, fill: false},
+                        {label: 'Initial Capital (All)', data: initialCapital, borderColor: 'rgba(108,117,125,1)', backgroundColor: 'rgba(108,117,125,0.2)', borderDash: [6, 6], tension: 0, fill: false},
+                        {label: 'Flow + Appreciation (Coverage, All)', data: coverage, borderColor: 'rgba(255,159,64,1)', backgroundColor: 'rgba(255,159,64,0.2)', tension: 0.2, fill: false},
                     ]
                 },
                 options: {
                     responsive: true,
-                    scales: { y: { beginAtZero: true } },
+                    scales: {y: {beginAtZero: true}},
                     plugins: {
                         annotation: {
-                            annotations: (function(){
+                            annotations: (function () {
                                 const ann = {};
                                 if (payoffFlow) {
                                     const flowContent = payoffFlowMonths ? `Payoff (Flow All): ${payoffFlow} (${payoffFlowMonths} months)` : `Payoff (Flow All): ${payoffFlow}`;
-                                    ann.payoffFlowAll = { type: 'line', scaleID: 'x', value: payoffFlow, borderColor: 'rgba(13,110,253,0.8)', borderDash: [4,4], borderWidth: 2, label: { display: true, content: flowContent, backgroundColor: 'rgba(255,255,255,0.8)', padding: 4, position: 'center' } };
+                                    ann.payoffFlowAll = {type: 'line', scaleID: 'x', value: payoffFlow, borderColor: 'rgba(13,110,253,0.8)', borderDash: [4, 4], borderWidth: 2, label: {display: true, content: flowContent, backgroundColor: 'rgba(255,255,255,0.8)', padding: 4, position: 'center'}};
                                 }
                                 if (payoffGrow) {
                                     const growContent = payoffGrowMonths ? `Payoff (Flow+App All): ${payoffGrow} (${payoffGrowMonths} months)` : `Payoff (Flow+App All): ${payoffGrow}`;
-                                    ann.payoffGrowAll = { type: 'line', scaleID: 'x', value: payoffGrow, borderColor: 'rgba(33,37,41,0.7)', borderDash: [6,4], borderWidth: 2, label: { display: true, content: growContent, backgroundColor: 'rgba(255,255,255,0.8)', padding: 4, position: 'start' } };
+                                    ann.payoffGrowAll = {type: 'line', scaleID: 'x', value: payoffGrow, borderColor: 'rgba(33,37,41,0.7)', borderDash: [6, 4], borderWidth: 2, label: {display: true, content: growContent, backgroundColor: 'rgba(255,255,255,0.8)', padding: 4, position: 'start'}};
                                 }
                                 return ann;
                             })()

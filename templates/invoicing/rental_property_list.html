@@ -18,9 +18,15 @@
                 <tr>
                     <th>Name</th>
                     <th>Address</th>
+                    <th>Website</th>
                     <th class="text-end">Capital</th>
-                    <th class="text-end">Flow</th>
-                    <th class="text-end">Monthly Costs</th>
+                    <th class="text-end">Rental Income</th>
+                    <th class="text-end">Income (Net)</th>
+                    <th class="text-end">Total Expenses</th>
+                    <!-- <th class="text-end">Levies</th>
+                    <th class="text-end">Rates & Taxes</th>
+                    <th class="text-end">Water & Electricity</th>
+                    <th class="text-end">Internet</th> -->
                     <th class="text-end">Actions</th>
                 </tr>
                 </thead>
@@ -29,9 +35,15 @@
                     <tr>
                         <td><a href="{% url 'rental_property_detail' p.id %}">{{ p.name }}</a></td>
                         <td>{{ p.address }}</td>
+                        <td>{% if p.website %}<a href="{{ p.website }}" target="_blank" rel="noopener">Link</a>{% endif %}</td>
                         <td class="text-end">{{ p.capital_value }}</td>
                         <td class="text-end">{{ p.flow_value }}</td>
-                        <td class="text-end">{{ p.cost_value }}</td>
+                        <td class="text-end">{{ p.income }}</td>
+                        <td class="text-end">{{ p.total_expenses }}</td>
+                        <!-- <td class="text-end">{{ p.levies }}</td>
+                        <td class="text-end">{{ p.rates_taxes }}</td>
+                        <td class="text-end">{{ p.water_electricity }}</td>
+                        <td class="text-end">{{ p.internet }}</td> -->
                         <td class="text-end">
                             <a class="btn btn-sm btn-outline-primary" href="{% url 'rental_property_update' p.id %}">Edit</a>
                             <a class="btn btn-sm btn-outline-danger" href="{% url 'rental_property_delete' p.id %}">Delete</a>
@@ -46,10 +58,15 @@
                 {% if properties %}
                     <tfoot>
                     <tr>
-                        <th colspan="2" class="text-end bg-info  ">Totals:</th>
+                        <th colspan="3" class="text-end bg-info  ">Totals:</th>
                         <th class="text-end bg-info ">{{ totals.total_capital|default:0 }}</th>
                         <th class="text-end bg-info ">{{ totals.total_flow|default:0 }}</th>
-                        <th class="text-end bg-info ">{{ totals.total_cost|default:0 }}</th>
+                        <th class="text-end bg-info "></th>
+                        <th class="text-end bg-info ">{{ totals.total_expenses|default:0 }}</th>
+                        <th class="text-end bg-info "></th>
+                        <th class="text-end bg-info "></th>
+                        <th class="text-end bg-info "></th>
+                        <th class="text-end bg-info "></th>
                         <th class="text-end bg-info "></th>
                     </tr>
                     </tfoot>

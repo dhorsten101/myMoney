@@ -59,7 +59,7 @@ INSTALLED_APPS = [
 	"cameras",
 	"pen_tester",
 	"reminders",
-		"time_tracker",
+	"time_tracker",
 	"invoicing",
 ]
 
@@ -90,7 +90,8 @@ SLOW_QUERY_THRESHOLD = 1.0
 CORS_ALLOW_ALL_ORIGINS = True
 
 CSRF_TRUSTED_ORIGINS = [
-	'https://192.168.0.100',
+	'http://102.222.109.40',
+	'https://102.222.109.40',
 	'http://192.168.0.100',
 	'https://192.168.0.100',
 ]
@@ -123,7 +124,6 @@ CHANNEL_LAYERS = {
 		"CONFIG": {
 			"hosts": [{
 				"address": "redis://127.0.0.1:6379",
-				# "password": "Wu!",
 			}],
 		},
 	},

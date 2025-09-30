@@ -8,12 +8,43 @@ class RentalProperty(models.Model):
     capital_value = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     flow_value = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     cost_value = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    levies = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    rates_taxes = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    water_electricity = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    internet = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        # Ensure expenses reflect the sum of the four component costs
+        from decimal import Decimal
+        total_expenses = (
+            (self.levies or Decimal("0"))
+            + (self.rates_taxes or Decimal("0"))
+            + (self.internet or Decimal("0"))
+            + (self.water_electricity or Decimal("0"))
+        )
+        self.cost_value = total_expenses
+        super().save(*args, **kwargs)
+
+    @property
+    def income(self):
+        # Net income = cash flow - total expenses
+        from decimal import Decimal
+        return (self.flow_value or Decimal("0")) - (self.cost_value or Decimal("0"))
+
+
+class RentalPropertyImage(models.Model):
+    property = models.ForeignKey(RentalProperty, related_name="images", on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="rental_property_images/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Image for {self.property.name}"
 
 
 class Invoice(models.Model):

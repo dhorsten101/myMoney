@@ -15,13 +15,43 @@
 <div class="card shadow-sm mb-3">
     <div class="card-body">
         <p><strong>Address:</strong> {{ property.address }}</p>
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-md-4"><strong>Capital Value:</strong> {{ property.capital_value }}</div>
-            <div class="col-md-4"><strong>Cash Flow:</strong> {{ property.flow_value }}</div>
-            <div class="col-md-4"><strong>Expenses:</strong> {{ property.cost_value }}</div>
+            <div class="col-md-4"><strong>Levies:</strong> {{ property.levies }}</div>
+            <div class="col-md-4"><strong>Rates & Taxes:</strong> {{ property.rates_taxes }}</div>
+            <div class="col-md-4"><strong>Water & Electricity:</strong> {{ property.water_electricity }}</div>
+            <div class="col-md-4"><strong>Internet:</strong> {{ property.internet }}</div>
+        </div>
+     
+        <div class="row mt-2">
+            <div class="col-md-12 text-info"><strong>Cash Flow:</strong> {{ property.flow_value }}</div>
+            <div class="col-md-12 text-danger"><strong>Total Expenses:</strong> {{ property.cost_value }}</div>
+            <div class="col-md-12 fw-bold  text-success"><strong>Income:</strong> {{ property.income }}</div>
         </div>
     </div>
     </div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-header">Images</div>
+    <div class="card-body">
+        <div class="row g-3 mb-3">
+            {% for img in property.images.all %}
+                <div class="col-6 col-md-3">
+                    <img src="{{ img.image.url }}" alt="{{ property.name }}" class="img-fluid rounded border">
+                </div>
+            {% empty %}
+                <div class="text-muted">No images uploaded.</div>
+            {% endfor %}
+        </div>
+        <form method="post" enctype="multipart/form-data" action="{% url 'rental_property_upload_image' property.id %}">
+            {% csrf_token %}
+            <div class="input-group">
+                {{ image_form.image }}
+                <button class="btn btn-sm btn-primary" type="submit">Upload</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <div class="card shadow-sm">
     <div class="card-header">

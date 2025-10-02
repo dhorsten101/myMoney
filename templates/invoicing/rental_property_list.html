@@ -5,12 +5,15 @@
 {% block content %}
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Rental Properties</h2>
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 btn-group">
             <a class="btn btn-outline-secondary" href="{% url 'homes_dashboard' %}">Go to Dash</a>
             <a class="btn btn-success" href="{% url 'rental_property_create' %}">New Property</a>
+        
+            <a class="btn btn-outline-primary" href="{% url 'rental_pipeline_list' %}">Pipeline</a>        
         </div>
     </div>
 
+    
     <div class="card shadow-sm">
         <div class="table-responsive">
             <table class="table table-striped  table-hover mb-0">

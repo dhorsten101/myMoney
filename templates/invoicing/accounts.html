@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Accounts{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">Accounts</h1>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-primary" href="{% url 'invoice_list' %}">Invoices</a>
+            <a class="btn btn-outline-info" href="{% url 'expense_list' %}">Expenses</a>
+        </div>
+    </div>
+
+    <h2 class="mb-3 mt-3 text-center">Expenses</h2>
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Total (All)</h6>
+                    <div class="display-6 ">{{ expense_totals.total_all }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">This Month</h6>
+                    <div class="display-6 text-success">{{ expense_totals.this_month }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Last Month</h6>
+                    <div class="display-6 text-danger">{{ expense_totals.last_month }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mb-3 mt-3 text-center">Revenue</h2>
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Total (All)</h6>
+                    <div class="display-6">{{ totals.total_all }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Paid</h6>
+                    <div class="display-6 text-success">{{ totals.total_paid }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Unpaid</h6>
+                    <div class="display-6 text-danger">{{ totals.total_unpaid }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

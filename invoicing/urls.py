@@ -4,6 +4,7 @@ from invoicing import views
 
 
 urlpatterns = [
+    path("accounts/", views.accounts_home, name="accounts_home"),
     path("homes/", views.homes_dashboard, name="homes_dashboard"),
     path("invoice/", views.invoice_list, name="invoice_list"),
     path("invoice/new/", views.invoice_create, name="invoice_create"),
@@ -25,6 +26,8 @@ urlpatterns = [
     # Expenses
     path("expenses/", views.expense_list, name="expense_list"),
     path("expenses/monthly/", views.expense_monthly_totals, name="expense_monthly_totals"),
+    path("expenses/<int:id>/edit/", views.expense_update, name="expense_update"),
+    path("expenses/<int:id>/delete/", views.expense_delete, name="expense_delete"),
     # Agents
     path("agents/", views.agent_list, name="agent_list"),
     path("agents/new/", views.agent_create, name="agent_create"),

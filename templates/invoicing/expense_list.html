@@ -33,6 +33,7 @@
                 <th class="text-end">Amount</th>
                 <th>Description</th>
                 <th>Property</th>
+                <th class="text-end">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -42,9 +43,13 @@
                     <td class="text-end">{{ e.amount }}</td>
                     <td>{{ e.description }}</td>
                     <td>{% if e.property %}<a href="{% url 'rental_property_detail' e.property.id %}">{{ e.property.name }}</a>{% else %}<span class="text-muted">—</span>{% endif %}</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" href="{% url 'expense_update' e.id %}">Edit</a>
+                        <a class="btn btn-sm btn-outline-danger" href="{% url 'expense_delete' e.id %}">Delete</a>
+                    </td>
                 </tr>
             {% empty %}
-                <tr><td colspan="4" class="text-center text-muted">No expenses yet.</td></tr>
+                <tr><td colspan="5" class="text-center text-muted">No expenses yet.</td></tr>
             {% endfor %}
             </tbody>
         </table>

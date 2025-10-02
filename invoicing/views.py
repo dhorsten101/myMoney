@@ -11,6 +11,46 @@ from invoicing.models import Invoice, RentalProperty, RentalPropertyPipeline, Mo
 
 
 @login_required
+def accounts_home(request):
+	# Invoice revenue totals
+	totals = Invoice.objects.aggregate(
+		total_all=Sum("total"),
+		total_paid=Sum("total", filter=models.Q(status=Invoice.STATUS_PAID)),
+		total_unpaid=Sum("total", filter=~models.Q(status=Invoice.STATUS_PAID)),
+	)
+	totals = {k: v or Decimal("0.00") for k, v in totals.items()}
+
+	# Expense totals (all-time, this month, last month)
+	from datetime import date, timedelta
+	today = date.today()
+	month_start = today.replace(day=1)
+	last_month_end = month_start - timedelta(days=1)
+	last_month_start = last_month_end.replace(day=1)
+
+	expense_total_all = MonthlyExpense.objects.aggregate(Sum("amount")).get("amount__sum") or Decimal("0.00")
+	expense_this_month = (
+		MonthlyExpense.objects
+		.filter(date__gte=month_start, date__lte=today)
+		.aggregate(Sum("amount"))
+		.get("amount__sum") or Decimal("0.00")
+	)
+	expense_last_month = (
+		MonthlyExpense.objects
+		.filter(date__gte=last_month_start, date__lte=last_month_end)
+		.aggregate(Sum("amount"))
+		.get("amount__sum") or Decimal("0.00")
+	)
+
+	expense_totals = {
+		"total_all": expense_total_all,
+		"this_month": expense_this_month,
+		"last_month": expense_last_month,
+	}
+
+	return render(request, "invoicing/accounts.html", {"totals": totals, "expense_totals": expense_totals})
+
+
+@login_required
 def invoice_list(request):
 	invoices = Invoice.objects.order_by("-issue_date", "-id")
 	
@@ -119,6 +159,28 @@ def expense_list(request):
 	else:
 		form = MonthlyExpenseForm()
 	return render(request, "invoicing/expense_list.html", {"expenses": expenses, "form": form})
+
+
+@login_required
+def expense_update(request, id):
+    expense = get_object_or_404(MonthlyExpense, id=id)
+    if request.method == "POST":
+        form = MonthlyExpenseForm(request.POST, instance=expense)
+        if form.is_valid():
+            form.save()
+            return redirect("expense_list")
+    else:
+        form = MonthlyExpenseForm(instance=expense)
+    return render(request, "invoicing/expense_form.html", {"form": form, "expense": expense})
+
+
+@login_required
+def expense_delete(request, id):
+    expense = get_object_or_404(MonthlyExpense, id=id)
+    if request.method == "POST":
+        expense.delete()
+        return redirect("expense_list")
+    return render(request, "invoicing/expense_confirm_delete.html", {"expense": expense})
 
 
 @login_required

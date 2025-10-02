@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from invoicing.models import Invoice, RentalProperty, RentalPropertyPipeline, RentalAgent
+from invoicing.models import Invoice, RentalProperty, RentalPropertyPipeline, RentalAgent, EstateAgent, ManagingAgent
 
 
 @admin.register(Invoice)
@@ -12,10 +12,20 @@ class InvoiceAdmin(admin.ModelAdmin):
 
 @admin.register(RentalProperty)
 class RentalPropertyAdmin(admin.ModelAdmin):
-	list_display = ("name", "address", "website", "capital_value", "flow_value", "total_expenses", "income", "agent")
+	list_display = ("name", "address", "website", "capital_value", "flow_value", "total_expenses", "income", "agent", "estate_agent", "managing_agent")
 	search_fields = ("name", "address")
 @admin.register(RentalAgent)
 class RentalAgentAdmin(admin.ModelAdmin):
+	list_display = ("name", "email", "phone")
+	search_fields = ("name", "email", "phone")
+
+@admin.register(EstateAgent)
+class EstateAgentAdmin(admin.ModelAdmin):
+	list_display = ("name", "email", "phone")
+	search_fields = ("name", "email", "phone")
+
+@admin.register(ManagingAgent)
+class ManagingAgentAdmin(admin.ModelAdmin):
 	list_display = ("name", "email", "phone")
 	search_fields = ("name", "email", "phone")
 

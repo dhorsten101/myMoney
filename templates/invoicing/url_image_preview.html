@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}URL Image Preview{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">URL Image Preview</h2>
+    <form method="get" class="d-flex" action="">
+        <input type="url" name="url" value="{{ src_url }}" class="form-control me-2" placeholder="https://..." required>
+        <button class="btn btn-primary" type="submit">Load</button>
+    </form>
+    </div>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+{% if images %}
+<div class="row g-3">
+    {% for img in images %}
+    <div class="col-6 col-md-3">
+        <img src="{{ img }}" class="img-fluid rounded border" alt="image">
+    </div>
+    {% endfor %}
+    </div>
+{% else %}
+<p class="text-muted">No images found for this URL.</p>
+{% endif %}
+{% endblock %}
+
+

@@ -56,6 +56,14 @@
                         <label class="form-label" for="{{ form.agent.id_for_label }}">{{ form.agent.label }}</label>
                         {{ form.agent|add_class:"form-select" }}
                     </div>
+                    <div class="col-md-6"> 
+                        <label class="form-label" for="{{ form.managing_agent.id_for_label }}">{{ form.managing_agent.label }}</label>
+                        {{ form.managing_agent|add_class:"form-select" }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="{{ form.estate_agent.id_for_label }}">{{ form.estate_agent.label }}</label>
+                        {{ form.estate_agent|add_class:"form-select" }}
+                    </div>
                 </div>
                 <div class="mt-3">
                     <button class="btn btn-success" type="submit">Save</button>

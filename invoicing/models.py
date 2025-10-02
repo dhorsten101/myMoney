@@ -16,6 +16,8 @@ class RentalProperty(models.Model):
 	total_expenses = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 	income = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 	agent = models.ForeignKey('RentalAgent', null=True, blank=True, on_delete=models.SET_NULL, related_name='properties')
+	estate_agent = models.ForeignKey('EstateAgent', null=True, blank=True, on_delete=models.SET_NULL, related_name='estate_properties')
+	managing_agent = models.ForeignKey('ManagingAgent', null=True, blank=True, on_delete=models.SET_NULL, related_name='managed_properties')
 	
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
@@ -121,6 +123,7 @@ class RentalPropertyPipeline(models.Model):
 	url = models.URLField()
 	title = models.CharField(max_length=255, blank=True)
 	notes = models.TextField(blank=True)
+	price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, default=0)
 	status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="interested")
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
@@ -128,6 +131,14 @@ class RentalPropertyPipeline(models.Model):
 	def __str__(self):
 		return self.title or self.url
 
+
+class RentalPropertyPipelineImage(models.Model):
+	pipeline = models.ForeignKey(RentalPropertyPipeline, related_name="images", on_delete=models.CASCADE)
+	image = models.ImageField(upload_to="rental_property_images/")
+	uploaded_at = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return f"Image for pipeline {self.pipeline.id}"
 
 class MonthlyExpense(models.Model):
 	property = models.ForeignKey(RentalProperty, null=True, blank=True, on_delete=models.SET_NULL, related_name="monthly_expenses")
@@ -143,6 +154,30 @@ class MonthlyExpense(models.Model):
 
 
 class RentalAgent(models.Model):
+	name = models.CharField(max_length=200)
+	email = models.EmailField(blank=True)
+	phone = models.CharField(max_length=50, blank=True)
+	notes = models.TextField(blank=True)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
+	def __str__(self):
+		return self.name
+
+
+class EstateAgent(models.Model):
+	name = models.CharField(max_length=200)
+	email = models.EmailField(blank=True)
+	phone = models.CharField(max_length=50, blank=True)
+	notes = models.TextField(blank=True)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
+	def __str__(self):
+		return self.name
+
+
+class ManagingAgent(models.Model):
 	name = models.CharField(max_length=200)
 	email = models.EmailField(blank=True)
 	phone = models.CharField(max_length=50, blank=True)

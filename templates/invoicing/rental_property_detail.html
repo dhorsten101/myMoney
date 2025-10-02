@@ -19,7 +19,13 @@
                 <p><strong>Website:</strong> <a href="{{ property.website }}" target="_blank" rel="noopener">{{ property.website }}</a></p>
             {% endif %}
             {% if property.agent %}
-                <p><strong>Agent:</strong> {{ property.agent.name }}{% if property.agent.phone %} ({{ property.agent.phone }}){% endif %}{% if property.agent.email %} - {{ property.agent.email }}{% endif %}</p>
+                <p><strong>Rental Agent:</strong> <a href="{% url 'agent_detail' property.agent.id %}">{{ property.agent.name }}</a>{% if property.agent.phone %} ({{ property.agent.phone }}){% endif %}{% if property.agent.email %} - {{ property.agent.email }}{% endif %}</p>
+            {% endif %}
+            {% if property.estate_agent %}
+                <p><strong>Estate Agent:</strong> <a href="{% url 'estate_agent_detail' property.estate_agent.id %}">{{ property.estate_agent.name }}</a>{% if property.estate_agent.phone %} ({{ property.estate_agent.phone }}){% endif %}{% if property.estate_agent.email %} - {{ property.estate_agent.email }}{% endif %}</p>
+            {% endif %}
+            {% if property.managing_agent %}
+                <p><strong>Managing Agent:</strong> <a href="{% url 'managing_agent_detail' property.managing_agent.id %}">{{ property.managing_agent.name }}</a>{% if property.managing_agent.phone %} ({{ property.managing_agent.phone }}){% endif %}{% if property.managing_agent.email %} - {{ property.managing_agent.email }}{% endif %}</p>
             {% endif %}
             <div class="row mb-3">
                 <div class="col-md-4"><strong>Capital Value:</strong> {{ property.capital_value }}</div>
@@ -56,8 +62,13 @@
                     <button class="btn btn-sm btn-primary" type="submit">Upload</button>
                 </div>
             </form>
+            {% if property.website %}
+            <a class="btn btn-sm btn-outline-primary mt-2" href="{% url 'preview_images_from_url' %}?url={{ property.website|urlencode }}" target="_blank" rel="noopener">Preview Images From Website</a>
+            {% endif %}
         </div>
     </div>
+
+    
 
     <div class="card shadow-sm">
         <div class="card-header">

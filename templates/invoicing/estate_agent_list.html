@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Estate Agents{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Estate Agents</h2>
+    <a class="btn btn-success" href="{% url 'estate_agent_create' %}">New Estate Agent</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-striped table-hover mb-0">
+            <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th class="text-end">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for a in agents %}
+                <tr>
+                    <td><a href="{% url 'estate_agent_detail' a.id %}">{{ a.name }}</a></td>
+                    <td>{{ a.email }}</td>
+                    <td>{{ a.phone }}</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" href="{% url 'estate_agent_update' a.id %}">Edit</a>
+                        <a class="btn btn-sm btn-outline-danger" href="{% url 'estate_agent_delete' a.id %}">Delete</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4" class="text-center text-muted">No estate agents.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+

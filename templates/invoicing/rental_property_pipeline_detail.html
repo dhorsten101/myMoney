@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Pipeline Detail{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Pipeline Item</h2>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-primary" href="{% url 'rental_pipeline_edit' item.id %}">Edit</a>
+        <a class="btn btn-outline-secondary" href="{% url 'rental_pipeline_list' %}">Back</a>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <p><strong>Title:</strong> {{ item.title|default:"—" }}</p>
+        <p><strong>URL:</strong> <a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.url }}</a></p>
+        <p><strong>Price:</strong> {{ item.price|default:"—" }}</p>
+        <p><strong>Status:</strong> {{ item.get_status_display }}</p>
+        <p><strong>Notes:</strong> {{ item.notes|default:"—" }}</p>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header">Images</div>
+    <div class="card-body">
+        <div class="row g-3 mb-3">
+            {% for img in item.images.all %}
+                <div class="col-6 col-md-3">
+                    <img src="{{ img.image.url }}" class="img-fluid rounded border" alt="image">
+                </div>
+            {% empty %}
+                <div class="text-muted">No images uploaded.</div>
+            {% endfor %}
+        </div>
+        <form method="post" enctype="multipart/form-data" action="{% url 'rental_pipeline_upload_image' item.id %}">
+            {% csrf_token %}
+            <div class="input-group">
+                {{ image_form.image }}
+                <button class="btn btn-sm btn-primary" type="submit">Upload</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+

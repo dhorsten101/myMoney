@@ -1,6 +1,6 @@
 from django import forms
 
-from invoicing.models import Invoice, RentalProperty, RentalPropertyImage, RentalPropertyPipeline, MonthlyExpense, RentalAgent
+from invoicing.models import Invoice, RentalProperty, RentalPropertyImage, RentalPropertyPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, RentalPropertyPipelineImage
 
 
 class InvoiceForm(forms.ModelForm):
@@ -41,6 +41,8 @@ class RentalPropertyForm(forms.ModelForm):
 			"water_electricity",
 			"internet",
 			"agent",
+			"estate_agent",
+			"managing_agent",
 		]
 		widgets = {
 			"name": forms.TextInput(attrs={"class": "form-control"}),
@@ -53,6 +55,8 @@ class RentalPropertyForm(forms.ModelForm):
 			"water_electricity": forms.NumberInput(attrs={"class": "form-control"}),
 			"internet": forms.NumberInput(attrs={"class": "form-control"}),
 			"agent": forms.Select(attrs={"class": "form-select"}),
+			"estate_agent": forms.Select(attrs={"class": "form-select"}),
+			"managing_agent": forms.Select(attrs={"class": "form-select"}),
 		}
 
 
@@ -65,14 +69,24 @@ class RentalPropertyImageForm(forms.ModelForm):
 		}
 
 
+class RentalPropertyPipelineImageForm(forms.ModelForm):
+	class Meta:
+		model = RentalPropertyPipelineImage
+		fields = ["image"]
+		widgets = {
+			"image": forms.ClearableFileInput(attrs={"class": "form-control"}),
+		}
+
+
 class RentalPropertyPipelineForm(forms.ModelForm):
 	class Meta:
 		model = RentalPropertyPipeline
-		fields = ["url", "title", "notes"]
+		fields = ["url", "title", "notes", "price"]
 		widgets = {
 			"url": forms.URLInput(attrs={"class": "form-control", "placeholder": "https://..."}),
 			"title": forms.TextInput(attrs={"class": "form-control"}),
 			"notes": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
+			"price": forms.NumberInput(attrs={"class": "form-control", "step": "0.01"}),
 		}
 
 
@@ -97,4 +111,37 @@ class RentalAgentForm(forms.ModelForm):
 			"email": forms.EmailInput(attrs={"class": "form-control"}),
 			"phone": forms.TextInput(attrs={"class": "form-control"}),
 			"notes": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+		}
+
+
+class EstateAgentForm(forms.ModelForm):
+	class Meta:
+		model = EstateAgent
+		fields = ["name", "email", "phone", "notes"]
+		widgets = {
+			"name": forms.TextInput(attrs={"class": "form-control"}),
+			"email": forms.EmailInput(attrs={"class": "form-control"}),
+			"phone": forms.TextInput(attrs={"class": "form-control"}),
+			"notes": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+		}
+
+
+class ManagingAgentForm(forms.ModelForm):
+	class Meta:
+		model = ManagingAgent
+		fields = ["name", "email", "phone", "notes"]
+		widgets = {
+			"name": forms.TextInput(attrs={"class": "form-control"}),
+			"email": forms.EmailInput(attrs={"class": "form-control"}),
+			"phone": forms.TextInput(attrs={"class": "form-control"}),
+			"notes": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+		}
+
+
+class RentalPropertyManagingAgentForm(forms.ModelForm):
+	class Meta:
+		model = RentalProperty
+		fields = ["managing_agent"]
+		widgets = {
+			"managing_agent": forms.Select(attrs={"class": "form-select"}),
 		}

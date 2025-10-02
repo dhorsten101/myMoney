@@ -5,9 +5,13 @@ from django.db import models
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth, TruncDay
 from django.shortcuts import render, get_object_or_404, redirect
+from urllib.parse import urljoin
 
-from invoicing.forms import InvoiceForm, RentalPropertyForm, RentalPropertyImageForm, RentalPropertyPipelineForm, MonthlyExpenseForm, RentalAgentForm
-from invoicing.models import Invoice, RentalProperty, RentalPropertyPipeline, MonthlyExpense, RentalAgent
+import requests
+from bs4 import BeautifulSoup
+
+from invoicing.forms import InvoiceForm, RentalPropertyForm, RentalPropertyImageForm, RentalPropertyPipelineForm, MonthlyExpenseForm, RentalAgentForm, EstateAgentForm, ManagingAgentForm, RentalPropertyPipelineImageForm
+from invoicing.models import Invoice, RentalProperty, RentalPropertyPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, RentalPropertyPipelineImage
 
 
 @login_required
@@ -309,7 +313,12 @@ def rental_pipeline_list(request):
 	status_filter = request.GET.get("status", "interested").strip()
 	if status_filter not in {"interested", "sold", "not_interested"}:
 		status_filter = "interested"
-	items = RentalPropertyPipeline.objects.filter(status=status_filter).order_by("-created_at")
+	items = (
+		RentalPropertyPipeline.objects
+		.filter(status=status_filter)
+		.prefetch_related("images")
+		.order_by("-created_at")
+	)
 	if request.method == "POST":
 		form = RentalPropertyPipelineForm(request.POST)
 		if form.is_valid():
@@ -329,11 +338,34 @@ def rental_pipeline_update_status(request, id, status):
 	return redirect("rental_pipeline_list")
 
 
+@login_required
+def rental_pipeline_edit(request, id):
+    item = get_object_or_404(RentalPropertyPipeline, id=id)
+    if request.method == "POST":
+        form = RentalPropertyPipelineForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect("rental_pipeline_list")
+    else:
+        form = RentalPropertyPipelineForm(instance=item)
+    image_form = RentalPropertyPipelineImageForm()
+    return render(request, "invoicing/rental_property_pipeline_form.html", {"form": form, "item": item, "image_form": image_form})
+
+
+@login_required
+def rental_pipeline_detail(request, id):
+    item = get_object_or_404(RentalPropertyPipeline, id=id)
+    image_form = RentalPropertyPipelineImageForm()
+    return render(request, "invoicing/rental_property_pipeline_detail.html", {"item": item, "image_form": image_form})
+
+
 # Rental Agent CRUD
 @login_required
 def agent_list(request):
 	agents = RentalAgent.objects.order_by("name")
-	return render(request, "invoicing/agent_list.html", {"agents": agents})
+	estate_agents = EstateAgent.objects.order_by("name")
+	managing_agents = ManagingAgent.objects.order_by("name")
+	return render(request, "invoicing/agent_list.html", {"agents": agents, "estate_agents": estate_agents, "managing_agents": managing_agents})
 
 
 @login_required
@@ -376,6 +408,121 @@ def agent_delete(request, id):
 	return render(request, "invoicing/agent_confirm_delete.html", {"agent": agent})
 
 
+# EstateAgent CRUD
+@login_required
+def estate_agent_list(request):
+    agents = EstateAgent.objects.order_by("name")
+    return render(request, "invoicing/estate_agent_list.html", {"agents": agents})
+
+
+@login_required
+def estate_agent_create(request):
+    if request.method == "POST":
+        form = EstateAgentForm(request.POST)
+        if form.is_valid():
+            agent = form.save()
+            return redirect("estate_agent_detail", id=agent.id)
+    else:
+        form = EstateAgentForm()
+    return render(request, "invoicing/estate_agent_form.html", {"form": form})
+
+
+@login_required
+def estate_agent_update(request, id):
+    agent = get_object_or_404(EstateAgent, id=id)
+    if request.method == "POST":
+        form = EstateAgentForm(request.POST, instance=agent)
+        if form.is_valid():
+            agent = form.save()
+            return redirect("estate_agent_detail", id=agent.id)
+    else:
+        form = EstateAgentForm(instance=agent)
+    return render(request, "invoicing/estate_agent_form.html", {"form": form, "agent": agent})
+
+
+@login_required
+def estate_agent_detail(request, id):
+    agent = get_object_or_404(EstateAgent, id=id)
+    return render(request, "invoicing/estate_agent_detail.html", {"agent": agent})
+
+
+@login_required
+def estate_agent_delete(request, id):
+    agent = get_object_or_404(EstateAgent, id=id)
+    if request.method == "POST":
+        agent.delete()
+        return redirect("estate_agent_list")
+    return render(request, "invoicing/estate_agent_confirm_delete.html", {"agent": agent})
+
+
+# ManagingAgent CRUD
+@login_required
+def managing_agent_list(request):
+    agents = ManagingAgent.objects.order_by("name")
+    return render(request, "invoicing/managing_agent_list.html", {"agents": agents})
+
+
+@login_required
+def managing_agent_create(request):
+    if request.method == "POST":
+        form = ManagingAgentForm(request.POST)
+        if form.is_valid():
+            agent = form.save()
+            return redirect("managing_agent_detail", id=agent.id)
+    else:
+        form = ManagingAgentForm()
+    return render(request, "invoicing/managing_agent_form.html", {"form": form})
+
+
+@login_required
+def managing_agent_update(request, id):
+    agent = get_object_or_404(ManagingAgent, id=id)
+    if request.method == "POST":
+        form = ManagingAgentForm(request.POST, instance=agent)
+        if form.is_valid():
+            agent = form.save()
+            return redirect("managing_agent_detail", id=agent.id)
+    else:
+        form = ManagingAgentForm(instance=agent)
+    return render(request, "invoicing/managing_agent_form.html", {"form": form, "agent": agent})
+
+
+@login_required
+def managing_agent_detail(request, id):
+    agent = get_object_or_404(ManagingAgent, id=id)
+    return render(request, "invoicing/managing_agent_detail.html", {"agent": agent})
+
+
+@login_required
+def managing_agent_delete(request, id):
+    agent = get_object_or_404(ManagingAgent, id=id)
+    if request.method == "POST":
+        agent.delete()
+        return redirect("managing_agent_list")
+    return render(request, "invoicing/managing_agent_confirm_delete.html", {"agent": agent})
+
+
+@login_required
+def preview_images_from_url(request):
+    src_url = request.GET.get("url", "").strip()
+    images = []
+    error = None
+    if src_url:
+        try:
+            resp = requests.get(src_url, timeout=10)
+            resp.raise_for_status()
+            soup = BeautifulSoup(resp.text, "html.parser")
+            for img in soup.find_all("img"):
+                src = img.get("src") or img.get("data-src")
+                if not src:
+                    continue
+                full = urljoin(src_url, src)
+                images.append(full)
+        except Exception as e:
+            error = str(e)
+    return render(request, "invoicing/url_image_preview.html", {"images": images, "src_url": src_url, "error": error})
+
+
 # RentalProperty CRUD
 @login_required
 def rental_property_list(request):
@@ -393,9 +540,9 @@ def rental_property_list(request):
 
 @login_required
 def rental_property_detail(request, id):
-	prop = get_object_or_404(RentalProperty, id=id)
-	image_form = RentalPropertyImageForm()
-	return render(request, "invoicing/rental_property_detail.html", {"property": prop, "image_form": image_form})
+    prop = get_object_or_404(RentalProperty, id=id)
+    image_form = RentalPropertyImageForm()
+    return render(request, "invoicing/rental_property_detail.html", {"property": prop, "image_form": image_form})
 
 
 @login_required
@@ -408,6 +555,18 @@ def rental_property_upload_image(request, id):
 			img.property = prop
 			img.save()
 	return redirect("rental_property_detail", id=prop.id)
+
+
+@login_required
+def rental_pipeline_upload_image(request, id):
+    item = get_object_or_404(RentalPropertyPipeline, id=id)
+    if request.method == "POST":
+        form = RentalPropertyPipelineImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            img = form.save(commit=False)
+            img.pipeline = item
+            img.save()
+    return redirect("rental_pipeline_edit", id=item.id)
 
 
 @login_required

@@ -94,12 +94,20 @@ class Invoice(models.Model):
 				)
 				self.number = 1 if last is None else last.number + 1
 		
-		# Always compute tax at 15% of subtotal (rounded to 2 decimals)
-		computed_tax = (self.subtotal or Decimal("0")) * Decimal("0.15")
-		self.tax = computed_tax.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-		
-		# Ensure total is always subtotal + tax
-		self.total = (self.subtotal or Decimal("0")) + (self.tax or Decimal("0"))
+		# Compute amounts assuming UI enters Gross Total (incl. VAT)
+		gross_total = self.total or Decimal("0")
+		if gross_total > 0:
+			# Back-calc net and tax from gross
+			net = (gross_total / Decimal("1.15")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+			tax = (net * Decimal("0.15")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+			self.subtotal = net
+			self.tax = tax
+			self.total = (net + tax).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+		else:
+			# Fallback: compute from subtotal if gross wasn't provided
+			computed_tax = (self.subtotal or Decimal("0")) * Decimal("0.15")
+			self.tax = computed_tax.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+			self.total = (self.subtotal or Decimal("0")) + (self.tax or Decimal("0"))
 		
 		super().save(*args, **kwargs)
 

@@ -6,6 +6,7 @@ from invoicing import views
 urlpatterns = [
     path("accounts/", views.accounts_home, name="accounts_home"),
     path("homes/", views.homes_dashboard, name="homes_dashboard"),
+    path("money/", views.money_dashboard, name="money_dashboard"),
     path("invoice/", views.invoice_list, name="invoice_list"),
     path("invoice/new/", views.invoice_create, name="invoice_create"),
     path("invoice/<int:id>/", views.invoice_detail, name="invoice_detail"),

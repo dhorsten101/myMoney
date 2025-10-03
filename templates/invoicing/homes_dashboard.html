@@ -3,43 +3,16 @@
 {% block title %}Horsten Homes Dashboard{% endblock %}
 
 {% block content %}
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1 class="mb-0">Horsten Homes Dashboard</h1>
-        <a class="btn btn-outline-primary" href="/accounts/">Accounts</a>
-        <a class="btn btn-outline-primary" href="/rental/">Properties</a>
-        <a class="btn btn-outline-primary" href="/agents/">Agents</a>
-    </div>
-    
-
-
-    <h2 class="mb-3 mt-3 text-center">Revenue</h2>
-    <div class="row g-3 mb-3">
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-muted mb-1">Total (All)</h6>
-                    <div class="display-6">{{ totals.total_all }}</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-muted mb-1">Paid</h6>
-                    <div class="display-6 text-success">{{ totals.total_paid }}</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-muted mb-1">Unpaid</h6>
-                    <div class="display-6 text-danger">{{ totals.total_unpaid }}</div>
-                </div>
-            </div>
+        <div class="btn-group">
+            <a class="btn btn-outline-primary" href="/accounts/">Accounts</a>
+            <a class="btn btn-outline-primary" href="/rental/">Properties</a>
+            <a class="btn btn-outline-primary" href="/agents/">Agents</a>
         </div>
     </div>
-    <h2 class="mb-3 mt-3 text-center">Projections</h2>
+
 
 
     <div class="card shadow-sm mb-3">
@@ -74,7 +47,7 @@
                     </select>
                 </form>
             </div>
-            <canvas id="aggProjectionChart" height="120"></canvas>
+            <canvas id="aggProjectionChart" height="180"></canvas>
         </div>
     </div>
 

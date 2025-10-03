@@ -13,7 +13,7 @@ class InvoiceForm(forms.ModelForm):
 			"due_date",
 			"status",
 			"rental_property",
-			"subtotal",
+			"total",  # capture Gross Total (incl. VAT) directly
 			"notes",
 		]
 		widgets = {
@@ -23,8 +23,39 @@ class InvoiceForm(forms.ModelForm):
 	
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
-		# Tax is computed; show as read-only if present in bound instance
-		# Optionally, we could add a non-editable display, but we keep the form clean
+		# Relabel total field
+		self.fields["total"].label = "Total (incl. VAT)"
+
+	def clean(self):
+		cleaned = super().clean()
+		return cleaned
+
+	def save(self, commit=True):
+		"""
+		Treat the entered "total" field as Gross Total (incl. VAT at 15%).
+		Back-calculate net (subtotal field in DB) and tax so that:
+			total = entered_amount
+			tax = round(net * 0.15, 2)
+			net = total / 1.15
+		"""
+		instance = super().save(commit=False)
+		try:
+			from decimal import Decimal, ROUND_HALF_UP
+			entered_total = self.cleaned_data.get("total") or Decimal("0")
+			if entered_total < 0:
+				entered_total = Decimal("0")
+			# Compute net by dividing by 1.15 and rounding to cents
+			net = (entered_total / Decimal("1.15")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+			tax = (net * Decimal("0.15")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+			instance.subtotal = net
+			instance.tax = tax
+			instance.total = (net + tax).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+		except Exception:
+			# Fallback to default model behavior if anything unexpected occurs
+			pass
+		if commit:
+			instance.save()
+		return instance
 
 
 class RentalPropertyForm(forms.ModelForm):

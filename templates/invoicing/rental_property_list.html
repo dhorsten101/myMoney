@@ -7,7 +7,7 @@
         <h2>Rental Properties</h2>
         <div class="d-flex gap-2 btn-group">
             <a class="btn btn-outline-secondary" href="{% url 'homes_dashboard' %}">Go to Dash</a>
-            <a class="btn btn-success" href="{% url 'rental_property_create' %}">New Property</a>
+            <a class="btn btn-outline-success" href="{% url 'rental_property_create' %}">New Property</a>
         
             <a class="btn btn-outline-primary" href="{% url 'rental_pipeline_list' %}">Pipeline</a>        
         </div>
@@ -21,14 +21,13 @@
                 <tr>
                     <th>Name</th>
                     <th>Address</th>
-                    <th>Website</th>
                     <th>Rental Agent</th>
                     <th>Estate Agent</th>
                     <th>Managing Agent</th>
-                    <th class="text-end">Capital</th>
-                    <th class="text-end">Rental Income</th>
+                    <!-- <th class="text-end">Capital</th> -->
+                    <!-- <th class="text-end">Rental Income</th>
                     <th class="text-end">Income (Net)</th>
-                    <th class="text-end">Total Expenses</th>
+                    <th class="text-end">Total Expenses</th> -->
                     <!-- <th class="text-end">Levies</th>
                     <th class="text-end">Rates & Taxes</th>
                     <th class="text-end">Water & Electricity</th>
@@ -41,14 +40,13 @@
                     <tr>
                         <td><a href="{% url 'rental_property_detail' p.id %}">{{ p.name }}</a></td>
                         <td>{{ p.address }}</td>
-                        <td>{% if p.website %}<a href="{{ p.website }}" target="_blank" rel="noopener">Link</a>{% endif %}</td>
                         <td>{% if p.agent %}<a href="{% url 'agent_detail' p.agent.id %}">{{ p.agent.name }}</a>{% else %}<span class="text-muted">—</span>{% endif %}</td>
                         <td>{% if p.estate_agent %}<a href="{% url 'estate_agent_detail' p.estate_agent.id %}">{{ p.estate_agent.name }}</a>{% else %}<span class="text-muted">—</span>{% endif %}</td>
                         <td>{% if p.managing_agent %}<a href="{% url 'managing_agent_detail' p.managing_agent.id %}">{{ p.managing_agent.name }}</a>{% else %}<span class="text-muted">—</span>{% endif %}</td>
-                        <td class="text-end">{{ p.capital_value }}</td>
-                        <td class="text-end">{{ p.flow_value }}</td>
+                        <!-- <td class="text-end">{{ p.capital_value }}</td> -->
+                        <!-- <td class="text-end">{{ p.flow_value }}</td>
                         <td class="text-end">{{ p.income }}</td>
-                        <td class="text-end">{{ p.total_expenses }}</td>
+                        <td class="text-end">{{ p.total_expenses }}</td> -->
                         <!-- <td class="text-end">{{ p.levies }}</td>
                         <td class="text-end">{{ p.rates_taxes }}</td>
                         <td class="text-end">{{ p.water_electricity }}</td>
@@ -64,22 +62,7 @@
                     </tr>
                 {% endfor %}
                 </tbody>
-                {% if properties %}
-                    <tfoot>
-                    <tr>
-                        <th colspan="3" class="text-end bg-info  ">Totals:</th>
-                        <th class="text-end bg-info ">{{ totals.total_capital|default:0 }}</th>
-                        <th class="text-end bg-info ">{{ totals.total_flow|default:0 }}</th>
-                        <th class="text-end bg-info "></th>
-                        <th class="text-end bg-info ">{{ totals.total_expenses|default:0 }}</th>
-                        <th class="text-end bg-info "></th>
-                        <th class="text-end bg-info "></th>
-                        <th class="text-end bg-info "></th>
-                        <th class="text-end bg-info "></th>
-                        <th class="text-end bg-info "></th>
-                    </tr>
-                    </tfoot>
-                {% endif %}
+               
             </table>
         </div>
     </div>

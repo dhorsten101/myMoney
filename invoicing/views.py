@@ -26,7 +26,27 @@ def accounts_home(request):
 
 	# Expense totals (all-time, this month, last month)
 	from datetime import date, timedelta
-	today = date.today()
+	# Optional selected end month for chart window
+	selected_month_param = (request.GET.get("month") or "").strip()
+	# Default end date is today; if month=YYYY-MM provided, use last day of that month
+	if selected_month_param:
+		try:
+			year, mon = selected_month_param.split("-")
+			year = int(year)
+			mon = int(mon)
+			end_month_start = date(year, mon, 1)
+			# compute end-of-month by jumping to next month start - 1 day
+			if mon == 12:
+				next_month_start = date(year + 1, 1, 1)
+			else:
+				next_month_start = date(year, mon + 1, 1)
+			selected_end_date = next_month_start - timedelta(days=1)
+		except Exception:
+			selected_end_date = date.today()
+	else:
+		selected_end_date = date.today()
+
+	today = selected_end_date
 	month_start = today.replace(day=1)
 	last_month_end = month_start - timedelta(days=1)
 	last_month_start = last_month_end.replace(day=1)
@@ -51,7 +71,66 @@ def accounts_home(request):
 		"last_month": expense_last_month,
 	}
 
-	return render(request, "invoicing/accounts.html", {"totals": totals, "expense_totals": expense_totals})
+	# Build last 12 months labels and series for billed, paid, and expenses
+	# Months list from 11 months ago up to selected month (inclusive)
+	month_keys = []
+	for i in range(11, -1, -1):
+		m_index = (month_start.month - 1) - i
+		year = month_start.year + (m_index // 12)
+		month = (m_index % 12) + 1
+		month_keys.append(date(year, month, 1))
+
+	# Helper to normalize TruncMonth value to date
+	def _norm_month(m):
+		try:
+			return m.date()
+		except Exception:
+			return m
+
+	# Invoices billed per month (by issue_date)
+	billed_qs = (
+		Invoice.objects
+		.filter(issue_date__gte=month_keys[0], issue_date__lte=today)
+		.annotate(month=TruncMonth("issue_date"))
+		.values("month")
+		.annotate(total=Sum("total"))
+	)
+	billed_map = {_norm_month(r["month"]): float(r["total"]) for r in billed_qs}
+
+	# Invoices PAID per month (by issue_date)
+	paid_qs = (
+		Invoice.objects
+		.filter(status=Invoice.STATUS_PAID, issue_date__gte=month_keys[0], issue_date__lte=today)
+		.annotate(month=TruncMonth("issue_date"))
+		.values("month")
+		.annotate(total=Sum("total"))
+	)
+	paid_map = {_norm_month(r["month"]): float(r["total"]) for r in paid_qs}
+
+	# Expenses per month
+	exp_qs = (
+		MonthlyExpense.objects
+		.filter(date__gte=month_keys[0], date__lte=today)
+		.annotate(month=TruncMonth("date"))
+		.values("month")
+		.annotate(total=Sum("amount"))
+	)
+	exp_map = {_norm_month(r["month"]): float(r["total"]) for r in exp_qs}
+
+	month_labels = [m.strftime("%Y-%m") for m in month_keys]
+	billed_series = [billed_map.get(m, 0.0) for m in month_keys]
+	paid_series = [paid_map.get(m, 0.0) for m in month_keys]
+	expense_series = [exp_map.get(m, 0.0) for m in month_keys]
+
+	return render(request, "invoicing/accounts.html", {
+		"totals": totals,
+		"expense_totals": expense_totals,
+		"month_labels": month_labels,
+		"billed_series": billed_series,
+		"paid_series": paid_series,
+		"expense_series": expense_series,
+		"selected_month": month_start.strftime("%Y-%m"),
+	})
 
 
 @login_required
@@ -295,6 +374,114 @@ def homes_dashboard(request):
 		"rental_labels": rental_labels,
 		"rental_totals": rental_totals,
 		# Aggregated projection context
+		"agg_labels": agg_labels,
+		"agg_cumulative": agg_cumulative,
+		"agg_capital_line": agg_capital_line,
+		"agg_initial_capital_line": agg_initial_capital_line,
+		"agg_coverage_line": agg_coverage_line,
+		"payoff_flow_label_all": payoff_flow_label_all,
+		"payoff_growing_label_all": payoff_growing_label_all,
+		"months_to_payoff_flow_all": months_to_payoff_flow_all,
+		"months_to_payoff_growing_all": months_to_payoff_growing_all,
+		"growth_rate_percent": float(rate_percent),
+	})
+
+
+@login_required
+def money_dashboard(request):
+	# Reuse the same data as homes_dashboard
+	totals = Invoice.objects.aggregate(
+		total_all=Sum("total"),
+		total_paid=Sum("total", filter=models.Q(status=Invoice.STATUS_PAID)),
+		total_unpaid=Sum("total", filter=~models.Q(status=Invoice.STATUS_PAID)),
+	)
+	totals = {k: v or Decimal("0.00") for k, v in totals.items()}
+
+	# Recent invoices
+	recent = Invoice.objects.order_by("-issue_date", "-id")[:10]
+
+	# Rental properties totals by month (sum across all properties)
+	from django.db.models.functions import TruncMonth
+	rental_monthly = (
+		Invoice.objects
+		.filter(status=Invoice.STATUS_PAID, rental_property__isnull=False)
+		.annotate(month=TruncMonth("issue_date"))
+		.values("month")
+		.annotate(total=Sum("total"))
+		.order_by("month")
+	)
+	rental_labels = [r["month"].strftime("%Y-%m") for r in rental_monthly]
+	rental_totals = [float(r["total"]) for r in rental_monthly]
+
+	# Aggregated projection across all rental properties (same rules as per-property earnings)
+	from datetime import date
+	capital_sum = RentalProperty.objects.aggregate(Sum("capital_value")).get("capital_value__sum") or Decimal("0")
+	flow_sum = RentalProperty.objects.aggregate(Sum("flow_value")).get("flow_value__sum") or Decimal("0")
+
+	# Growth rate from query param (defaults to 5%)
+	try:
+		rate_percent = Decimal(request.GET.get("rate", "5").strip())
+	except Exception:
+		rate_percent = Decimal("5")
+	if rate_percent < 0:
+		rate_percent = Decimal("0")
+	growth_base = Decimal("1") + (rate_percent / Decimal("100"))
+
+	agg_labels: list[str] = []
+	agg_cumulative: list[float] = []
+	agg_capital_line: list[float] = []
+	agg_initial_capital_line: list[float] = []
+	agg_coverage_line: list[float] = []
+	payoff_flow_label_all = None
+	payoff_growing_label_all = None
+	months_to_payoff_flow_all = None
+	months_to_payoff_growing_all = None
+
+	if flow_sum > 0 and capital_sum > 0:
+		start = date.today().replace(day=1)
+		cumulative = Decimal("0")
+		i = 0
+		max_months = 600
+		flow_annual_growth = float(growth_base)  # stepwise annual increase
+		capital_annual_growth = float(growth_base)  # monthly compounding
+		while i < max_months:
+			# Cap overall projection window to 10 years
+			if i >= 120:
+				break
+			years_elapsed = i // 12
+			flow_factor = flow_annual_growth ** years_elapsed
+			cap_factor = capital_annual_growth ** (i / 12.0)
+			month_flow = (flow_sum * Decimal(str(flow_factor))).quantize(Decimal("0.01"))
+			capital_current = (capital_sum * Decimal(str(cap_factor))).quantize(Decimal("0.01"))
+
+			m_index = (start.month - 1 + i)
+			year = start.year + (m_index // 12)
+			month = (m_index % 12) + 1
+			label = f"{year:04d}-{month:02d}"
+
+			cumulative += month_flow
+			agg_labels.append(label)
+			agg_cumulative.append(float(cumulative))
+			agg_capital_line.append(float(capital_current))
+			agg_initial_capital_line.append(float(capital_sum))
+
+			appreciation = capital_current - capital_sum
+			coverage = cumulative + appreciation
+			agg_coverage_line.append(float(coverage))
+
+			if payoff_flow_label_all is None and cumulative >= capital_sum:
+				payoff_flow_label_all = label
+				months_to_payoff_flow_all = len(agg_labels)
+			if payoff_growing_label_all is None and coverage >= capital_sum:
+				payoff_growing_label_all = label
+				months_to_payoff_growing_all = len(agg_labels)
+			i += 1
+
+	return render(request, "invoicing/money_dashboard.html", {
+		"totals": totals,
+		"recent": recent,
+		"rental_labels": rental_labels,
+		"rental_totals": rental_totals,
 		"agg_labels": agg_labels,
 		"agg_cumulative": agg_cumulative,
 		"agg_capital_line": agg_capital_line,

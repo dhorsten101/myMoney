@@ -15,6 +15,9 @@ class RentalProperty(models.Model):
 	internet = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 	total_expenses = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 	income = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+	cost_of_money_monthly = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+	appreciation_monthly = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+	total_income = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 	agent = models.ForeignKey('RentalAgent', null=True, blank=True, on_delete=models.SET_NULL, related_name='properties')
 	estate_agent = models.ForeignKey('EstateAgent', null=True, blank=True, on_delete=models.SET_NULL, related_name='estate_properties')
 	managing_agent = models.ForeignKey('ManagingAgent', null=True, blank=True, on_delete=models.SET_NULL, related_name='managed_properties')
@@ -28,15 +31,24 @@ class RentalProperty(models.Model):
 	def save(self, *args, **kwargs):
 		# Ensure expenses reflect the sum of the four component costs
 		from decimal import Decimal
+		# Compute cost of money per month at 6% per annum on capital value FIRST
+		monthly_rate = (Decimal("0.06") / Decimal("12"))
+		self.cost_of_money_monthly = ((self.capital_value or Decimal("0")) * monthly_rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 		total_expenses = (
 				(self.levies or Decimal("0"))
 				+ (self.rates_taxes or Decimal("0"))
 				+ (self.internet or Decimal("0"))
 				+ (self.water_electricity or Decimal("0"))
+			# + (self.cost_of_money_monthly or Decimal("0"))
 		)
 		self.total_expenses = total_expenses
 		# Compute income = flow - total_expenses
 		self.income = (self.flow_value or Decimal("0")) - (self.total_expenses or Decimal("0"))
+		# Compute monthly appreciation from capital value at 5% p.a. compounded monthly
+		monthly_app_rate = (Decimal("1.05") ** (Decimal("1") / Decimal("12"))) - Decimal("1")
+		self.appreciation_monthly = ((self.capital_value or Decimal("0")) * monthly_app_rate).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+		# Total income = rental income + appreciation
+		self.total_income = (self.income or Decimal("0")) + (self.appreciation_monthly or Decimal("0"))
 		super().save(*args, **kwargs)
 
 
@@ -127,7 +139,7 @@ class RentalPropertyPipeline(models.Model):
 		("not_interested", "Not Interested"),
 		("sold", "Sold"),
 	]
-
+	
 	url = models.URLField()
 	title = models.CharField(max_length=255, blank=True)
 	notes = models.TextField(blank=True)
@@ -135,7 +147,7 @@ class RentalPropertyPipeline(models.Model):
 	status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="interested")
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
-
+	
 	def __str__(self):
 		return self.title or self.url
 
@@ -144,9 +156,10 @@ class RentalPropertyPipelineImage(models.Model):
 	pipeline = models.ForeignKey(RentalPropertyPipeline, related_name="images", on_delete=models.CASCADE)
 	image = models.ImageField(upload_to="rental_property_images/")
 	uploaded_at = models.DateTimeField(auto_now_add=True)
-
+	
 	def __str__(self):
 		return f"Image for pipeline {self.pipeline.id}"
+
 
 class MonthlyExpense(models.Model):
 	property = models.ForeignKey(RentalProperty, null=True, blank=True, on_delete=models.SET_NULL, related_name="monthly_expenses")
@@ -155,7 +168,7 @@ class MonthlyExpense(models.Model):
 	description = models.CharField(max_length=255)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
-
+	
 	def __str__(self):
 		prop = f" for {self.property.name}" if self.property else ""
 		return f"Expense {self.date} - {self.amount}{prop}"
@@ -168,7 +181,7 @@ class RentalAgent(models.Model):
 	notes = models.TextField(blank=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
-
+	
 	def __str__(self):
 		return self.name
 
@@ -180,7 +193,7 @@ class EstateAgent(models.Model):
 	notes = models.TextField(blank=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
-
+	
 	def __str__(self):
 		return self.name
 
@@ -192,7 +205,6 @@ class ManagingAgent(models.Model):
 	notes = models.TextField(blank=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
-
+	
 	def __str__(self):
 		return self.name
-

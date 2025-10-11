@@ -12,7 +12,7 @@ class InvoiceAdmin(admin.ModelAdmin):
 
 @admin.register(RentalProperty)
 class RentalPropertyAdmin(admin.ModelAdmin):
-	list_display = ("name", "address", "website", "capital_value", "flow_value", "total_expenses", "income", "agent", "estate_agent", "managing_agent")
+	list_display = ("name", "address", "website", "capital_value", "flow_value", "total_expenses", "income", "cost_of_money_monthly", "appreciation_monthly", "total_income", "agent", "estate_agent", "managing_agent")
 	search_fields = ("name", "address")
 @admin.register(RentalAgent)
 class RentalAgentAdmin(admin.ModelAdmin):

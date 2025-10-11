@@ -51,46 +51,98 @@
         </div>
     </div>
 
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <h5 class="card-title mb-3">Monthly Paid Totals</h5>
+        <canvas id="aggEarningsChart" height="60"></canvas>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-striped table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Month</th>
+                    <th class="text-end">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for r in rows %}
+                <tr>
+                    <td>{{ r.month|date:"Y-m" }}</td>
+                    <td class="text-end">{{ r.total }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="2" class="text-center text-muted">No paid invoices for this property.</td></tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="table-light">
+                    <th>Grand Total</th>
+                    <th class="text-end">{{ grand_total }}</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
     {# Provide payoff markers as safe JSON for JS to read #}
     {{ payoff_flow_label_all|json_script:'agg-payoff-flow' }}
     {{ payoff_growing_label_all|json_script:'agg-payoff-grow' }}
     {{ months_to_payoff_flow_all|json_script:'agg-payoff-flow-months' }}
     {{ months_to_payoff_growing_all|json_script:'agg-payoff-grow-months' }}
 
-    <div class="card shadow-sm">
-        <!-- <div class="table-responsive">
-            <table class="table table-striped table-hover mb-0">
-                <thead class="table-light">
-                <tr>
-                    <th>#</th>
-                    <th>Customer</th>
-                    <th>Property</th>
-                    <th>Issue Date</th>
-                    <th>Status</th>
-                    <th class="text-end">Total</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for inv in recent %}
-                    <tr>
-                        <td><a href="{% url 'invoice_detail' inv.id %}">{{ inv.number }}</a></td>
-                        <td>{{ inv.customer_name }}</td>
-                        <td>{% if inv.rental_property %}<a href="{% url 'rental_property_detail' inv.rental_property.id %}">{{ inv.rental_property.name }}</a>{% else %}<span class="text-muted">—</span>{% endif %}</td>
-                        <td>{{ inv.issue_date }}</td>
-                        <td>{{ inv.get_status_display }}</td>
-                        <td class="text-end">{{ inv.total }}</td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="6" class="text-center text-muted">No recent invoices.</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div> -->
-
-    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
+    <script>
+        (function(){
+            // Ensure annotation plugin is registered
+            if (window['chartjs-plugin-annotation']) {
+                try { Chart.register(window['chartjs-plugin-annotation']); } catch (e) {}
+            }
+            const histLabels = JSON.parse(document.getElementById('hist-labels').textContent || '[]');
+            const histValues = JSON.parse(document.getElementById('hist-values').textContent || '[]');
+            if (histLabels.length) {
+                const ctx = document.getElementById('earningsChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: histLabels,
+                        datasets: [{
+                            label: 'Paid Total',
+                            data: histValues,
+                            borderColor: 'rgba(13, 110, 253, 1)',
+                            backgroundColor: 'rgba(13, 110, 253, 0.2)',
+                            tension: 0.2,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            }
+        })();
+    </script>
+    <script>
+        (function(){
+            const labels = {{ agg_labels|default:'[]'|safe }};
+            const cumulative = {{ agg_cumulative|default:'[]'|safe }};
+            const ctx = document.getElementById('aggEarningsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{label: 'Paid Total', data: cumulative, borderColor: 'rgba(13, 110, 253, 1)', backgroundColor: 'rgba(13, 110, 253, 0.2)', tension: 0.2, fill: true}]
+                }
+            });
+        })();
+    </script>
+
     <script>
         (function () {
             const labels = {{ agg_labels|default:'[]'|safe }};

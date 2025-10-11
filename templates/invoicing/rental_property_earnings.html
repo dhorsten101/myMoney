@@ -13,94 +13,69 @@
 
 
 
-{% if months_to_payoff %}
-<div class="card shadow-sm mb-3">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center"> 
-            <h5 class="card-title mb-0">Projection to Payoff's</h5>
-            <div class="d-flex align-items-center">
-                <form method="get" class="d-flex align-items-center">
-                    <label for="rateSelect" class="me-2 mb-0 small">Growth</label>
-                    <select id="rateSelect" name="rate" class="form-select form-select-sm" onchange="this.form.submit()">
-                        <option value="3" {% if growth_rate_percent|floatformat:'2' == '3.00' %}selected{% endif %}>3%</option>
-                        <option value="4" {% if growth_rate_percent|floatformat:'2' == '4.00' %}selected{% endif %}>4%</option>
-                        <option value="5" {% if growth_rate_percent|floatformat:'2' == '5.00' %}selected{% endif %}>5%</option>
-                        <option value="6" {% if growth_rate_percent|floatformat:'2' == '6.00' %}selected{% endif %}>6%</option>
-                        <option value="7.5" {% if growth_rate_percent|floatformat:'2' == '7.50' %}selected{% endif %}>7.5%</option>
-                        <option value="10" {% if growth_rate_percent|floatformat:'2' == '10.00' %}selected{% endif %}>10%</option>
-                        <option value="12.5" {% if growth_rate_percent|floatformat:'2' == '12.50' %}selected{% endif %}>12.5%</option>
-                        <option value="15" {% if growth_rate_percent|floatformat:'2' == '15.00' %}selected{% endif %}>15%</option>
-                        <option value="17.5" {% if growth_rate_percent|floatformat:'2' == '17.50' %}selected{% endif %}>17.5%</option>
-                        <option value="20" {% if growth_rate_percent|floatformat:'2' == '20.00' %}selected{% endif %}>20%</option>
-                        <option value="22.5" {% if growth_rate_percent|floatformat:'2' == '22.50' %}selected{% endif %}>22.5%</option>
-                        <option value="25" {% if growth_rate_percent|floatformat:'2' == '25.00' %}selected{% endif %}>25%</option>
-                        <option value="27.5" {% if growth_rate_percent|floatformat:'2' == '27.50' %}selected{% endif %}>27.5%</option>
-                        <option value="30" {% if growth_rate_percent|floatformat:'2' == '30.00' %}selected{% endif %}>30%</option>
-                        <option value="32.5" {% if growth_rate_percent|floatformat:'2' == '32.50' %}selected{% endif %}>32.5%</option>
-                        <option value="35" {% if growth_rate_percent|floatformat:'2' == '35.00' %}selected{% endif %}>35%</option>
-                        <option value="37.5" {% if growth_rate_percent|floatformat:'2' == '37.50' %}selected{% endif %}>37.5%</option>
-                        <option value="40" {% if growth_rate_percent|floatformat:'2' == '40.00' %}selected{% endif %}>40%</option>
-                        <option value="42.5" {% if growth_rate_percent|floatformat:'2' == '42.50' %}selected{% endif %}>42.5%</option>
-                        <option value="45" {% if growth_rate_percent|floatformat:'2' == '45.00' %}selected{% endif %}>45%</option>
-                        <option value="47.5" {% if growth_rate_percent|floatformat:'2' == '47.50' %}selected{% endif %}>47.5%</option>
-                        <option value="50" {% if growth_rate_percent|floatformat:'2' == '50.00' %}selected{% endif %}>50%</option>
-                    </select>
-                </form>
-            </div>
-            <!-- <div>
-                <span class="me-3"><strong>Capital:</strong> {{ capital }}</span>
-                <span class="me-3"><strong>Monthly Flow:</strong> {{ monthly_flow }}</span>
-                <span class="me-3"><strong>Growth:</strong> {{ growth_rate_percent|default:5 }}%</span>
-                <span class="me-3"><strong>Months:</strong> {{ months_to_payoff }}</span>
-                <span class="me-3"><strong>Payoff Date (Flow + Appreciation):</strong> {{ projected_payoff_date }}</span>
-                {% if months_to_payoff_flow %}
-                    <span class="me-3"><strong>Months (Flow Only):</strong> {{ months_to_payoff_flow }}</span>
-                    <span class="me-3"><strong>Payoff Date (Flow Only):</strong> {{ projected_payoff_date_flow }}</span>
-                {% endif %}
-                {% if payoff_years is not None %}
-                    <span><strong>Time to Payoff:</strong> {{ payoff_years }}y {{ payoff_months }}m</span>
-                {% endif %}
-            </div> -->
-        </div>
-        <canvas id="projectionChart" height="180" class="mt-3"></canvas>
-    </div>
-</div>
-<div class="card shadow-sm mb-3">
-    <div class="card-body">
-        <h5 class="card-title mb-3">Monthly Paid Totals</h5>
-        <canvas id="earningsChart" height="60"></canvas>
-    </div>
-</div>
-{% endif %}
 
-<div class="card shadow-sm">
-    <div class="table-responsive">
-        <table class="table table-striped table-hover mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>Month</th>
-                    <th class="text-end">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for r in rows %}
-                <tr>
-                    <td>{{ r.month|date:"Y-m" }}</td>
-                    <td class="text-end">{{ r.total }}</td>
-                </tr>
-            {% empty %}
-                <tr><td colspan="2" class="text-center text-muted">No paid invoices for this property.</td></tr>
-            {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr class="table-light">
-                    <th>Grand Total</th>
-                    <th class="text-end">{{ grand_total }}</th>
-                </tr>
-            </tfoot>
-        </table>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Chart Excluding Asset</h5>
+            <form method="get" class="d-flex align-items-center">
+                <input type="hidden" name="rate" value="{{ growth_rate_percent }}" />
+                <label for="horizonSelectBasic" class="ms-3 me-2 mb-0 small">Horizon</label>
+                <select id="horizonSelectBasic" name="horizon" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="1" {% if horizon_years == 1 %}selected{% endif %}>1 year</option>
+                    <option value="2.5" {% if horizon_years == 2.5 %}selected{% endif %}>2.5 years</option>
+                    <option value="5" {% if horizon_years == 5 %}selected{% endif %}>5 years</option>
+                    <option value="10" {% if horizon_years == 10 %}selected{% endif %}>10 years</option>
+                    <option value="15" {% if horizon_years == 15 %}selected{% endif %}>15 years</option>
+                    <option value="20" {% if horizon_years == 20 %}selected{% endif %}>20 years</option>
+                    <option value="25" {% if horizon_years == 25 %}selected{% endif %}>25 years</option>
+                    <option value="30" {% if horizon_years == 30 %}selected{% endif %}>30 years</option>
+                </select>
+            </form>
+        </div>
+        <canvas id="basicChart" height="100" class="mt-3"></canvas>
     </div>
 </div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Chart Including Asset</h5>
+            <form method="get" class="d-flex align-items-center">
+                <input type="hidden" name="rate" value="{{ growth_rate_percent }}" />
+                <label for="appSelectBusiness" class="ms-3 me-2 mb-0 small">Appreciation</label>
+                <select id="appSelectBusiness" name="app" class="form-select form-select-sm me-2" onchange="this.form.submit()">
+                    <option value="3" {% if appreciation_rate_percent|floatformat:'2' == '3.00' %}selected{% endif %}>3%</option>
+                    <option value="4" {% if appreciation_rate_percent|floatformat:'2' == '4.00' %}selected{% endif %}>4%</option>
+                    <option value="5" {% if appreciation_rate_percent|floatformat:'2' == '5.00' %}selected{% endif %}>5%</option>
+                    <option value="6" {% if appreciation_rate_percent|floatformat:'2' == '6.00' %}selected{% endif %}>6%</option>
+                    <option value="7.5" {% if appreciation_rate_percent|floatformat:'2' == '7.50' %}selected{% endif %}>7.5%</option>
+                    <option value="10" {% if appreciation_rate_percent|floatformat:'2' == '10.00' %}selected{% endif %}>10%</option>
+                    <option value="15" {% if appreciation_rate_percent|floatformat:'2' == '15.00' %}selected{% endif %}>15%</option>
+                    <option value="20" {% if appreciation_rate_percent|floatformat:'2' == '20.00' %}selected{% endif %}>20%</option>
+                    <option value="25" {% if appreciation_rate_percent|floatformat:'2' == '25.00' %}selected{% endif %}>25%</option>
+                    <option value="50" {% if appreciation_rate_percent|floatformat:'2' == '50.00' %}selected{% endif %}>50%</option>
+                </select>
+                <label for="horizonSelectBusiness" class="ms-3 me-2 mb-0 small">Horizon</label>
+                <select id="horizonSelectBusiness" name="horizon" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="1" {% if horizon_years == 1 %}selected{% endif %}>1 year</option>
+                    <option value="2.5" {% if horizon_years == 2.5 %}selected{% endif %}>2.5 years</option>
+                    <option value="5" {% if horizon_years == 5 %}selected{% endif %}>5 years</option>
+                    <option value="10" {% if horizon_years == 10 %}selected{% endif %}>10 years</option>
+                    <option value="15" {% if horizon_years == 15 %}selected{% endif %}>15 years</option>
+                    <option value="20" {% if horizon_years == 20 %}selected{% endif %}>20 years</option>
+                    <option value="25" {% if horizon_years == 25 %}selected{% endif %}>25 years</option>
+                    <option value="30" {% if horizon_years == 30 %}selected{% endif %}>30 years</option>
+                </select>
+            </form>
+        </div>
+        <canvas id="businessModelChart" height="100" class="mt-3"></canvas>
+    </div>
+    
+</div>
+
+
 
 {# Embed data safely as JSON outside JS block #}
 {{ labels|json_script:'hist-labels' }}
@@ -110,149 +85,251 @@
 {{ proj_capital_line|json_script:'proj-capital-line' }}
 {{ proj_initial_capital_line|json_script:'proj-initial-capital-line' }}
 {{ proj_remaining_growing_capital_line|json_script:'proj-remaining-growing' }}
+{{ proj_monthly_flow_step_line|json_script:'proj-monthly-flow-step' }}
+{{ proj_monthly_flow_step_line_raw|json_script:'proj-monthly-flow-step-raw' }}
+{{ appreciation_monthly|json_script:'prop-appreciation-monthly' }}
+{{ total_income_monthly|json_script:'prop-total-income-monthly' }}
+{{ appreciation_rate_percent|json_script:'app-rate' }}
 {{ projected_payoff_date|json_script:'proj-payoff-label' }}
 {{ months_to_payoff|json_script:'proj-payoff-months' }}
 {{ payoff_flow_label|json_script:'proj-payoff-flow' }}
 {{ months_to_payoff_flow|json_script:'proj-payoff-flow-months' }}
 {{ payoff_flow_label|json_script:'proj-payoff-flow' }}
+{{ capital|json_script:'prop-initial-capital' }}
+{{ monthly_flow|json_script:'prop-monthly-flow' }}
+{{ monthly_expenses|json_script:'prop-monthly-expenses' }}
 
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
 <script>
-    (function(){
-        const histLabels = JSON.parse(document.getElementById('hist-labels').textContent || '[]');
-        const histValues = JSON.parse(document.getElementById('hist-values').textContent || '[]');
-        if (histLabels.length) {
-            const ctx = document.getElementById('earningsChart').getContext('2d');
+
+
+        // Basic Chart: cumulative FLOW (5% yearly step), cumulative EXPENSES (5% yearly step), cumulative INCOME
+        (function(){
+            const labels = JSON.parse(document.getElementById('proj-labels').textContent || '[]');
+            const flowRawStep = JSON.parse(document.getElementById('proj-monthly-flow-step-raw').textContent || '[]');
+            const baseExpenses = Number(JSON.parse(document.getElementById('prop-monthly-expenses').textContent || '0'));
+            const incomeStep = JSON.parse(document.getElementById('proj-monthly-flow-step').textContent || '[]');
+            if (!labels.length) { return; }
+            // Build expenses stepwise series (5% yearly increase)
+            const expensesStep = [];
+            for (let i = 0; i < labels.length; i++) {
+                const years = Math.floor(i / 12);
+                const factor = Math.pow(1 + 0.05, years);
+                expensesStep.push(baseExpenses * factor);
+            }
+            const cumFlow = []; let f=0;
+            const cumExp = []; let e=0;
+            const cumInc = []; let inc=0;
+            const incomeMonthlyRate = 0.06 / 12; // 6% per year compounded monthly
+            for (let i=0;i<labels.length;i++){
+                // zero-start
+                cumFlow.push(f);
+                cumExp.push(e);
+                cumInc.push(inc);
+                f += Number(flowRawStep[i] || 0);
+                e += Number(expensesStep[i] || 0);
+                inc = inc * (1 + incomeMonthlyRate) + Number(incomeStep[i] || 0);
+            }
+            const ctx = document.getElementById('basicChart').getContext('2d');
             new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: histLabels,
-                    datasets: [{
-                        label: 'Paid Total',
-                        data: histValues,
-                        borderColor: 'rgba(13, 110, 253, 1)',
-                        backgroundColor: 'rgba(13, 110, 253, 0.2)',
-                        tension: 0.2,
-                        fill: true
-                    }]
+                    labels: labels,
+                    datasets: [
+                        { label: 'Rental Income', data: cumFlow, borderColor: 'rgba(13,110,253,1)', backgroundColor: 'rgba(13,110,253,0.15)', tension: 0.2, fill: false },
+                        { label: 'Expenses', data: cumExp, borderColor: 'rgba(220,53,69,0.9)', backgroundColor: 'rgba(220,53,69,0.15)', tension: 0.2, fill: false },
+                        { label: 'Income', data: cumInc, borderColor: 'rgba(25,135,84,1)', backgroundColor: 'rgba(25,135,84,0.15)', tension: 0.2, fill: true }
+                    ]
                 },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
-                }
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
             });
-        }
+        })();
 
+
+        // Business Model chart: Cumulative Flow (5% yearly step), Expenses (5% yearly step), Income with 6% bank growth (zero-start)
         (function(){
-            const plabels = JSON.parse(document.getElementById('proj-labels').textContent || '[]');
-            const pvalues = JSON.parse(document.getElementById('proj-values').textContent || '[]');
-            const capitalLine = JSON.parse(document.getElementById('proj-capital-line').textContent || '[]');
-            const initialCapitalLine = JSON.parse(document.getElementById('proj-initial-capital-line').textContent || '[]');
-            const remainingGrowingLine = JSON.parse(document.getElementById('proj-remaining-growing').textContent || '[]');
-            const pctx = document.getElementById('projectionChart').getContext('2d');
-            if (!plabels.length) { return; }
-            const payoffLabel = JSON.parse(document.getElementById('proj-payoff-label').textContent || 'null');
-            const payoffFlowLabel = JSON.parse(document.getElementById('proj-payoff-flow').textContent || 'null');
-            const payoffMonths = JSON.parse(document.getElementById('proj-payoff-months').textContent || 'null');
-            const payoffFlowMonths = JSON.parse(document.getElementById('proj-payoff-flow-months').textContent || 'null');
-            new Chart(pctx, {
+            const labels = JSON.parse(document.getElementById('proj-labels').textContent || '[]');
+            const flowStep = JSON.parse(document.getElementById('proj-monthly-flow-step-raw').textContent || '[]');
+            if (!labels.length || !flowStep.length) { return; }
+            // Zero-start cumulative series
+            const cumulativeFlow = [];
+            let acc = 0;
+            for (let i = 0; i < flowStep.length; i++) {
+                cumulativeFlow.push(acc);
+                acc += Number(flowStep[i] || 0);
+            }
+            // Build expenses stepwise (5% yearly)
+            const baseExpenses = Number(JSON.parse(document.getElementById('prop-monthly-expenses').textContent || '0'));
+            const expensesStep = [];
+            for (let i = 0; i < labels.length; i++) {
+                const years = Math.floor(i / 12);
+                const factor = Math.pow(1 + 0.05, years);
+                expensesStep.push(baseExpenses * factor);
+            }
+            // Zero-start cumulative income with 6% annual compounded monthly (bank growth)
+            const incomeStep = JSON.parse(document.getElementById('proj-monthly-flow-step').textContent || '[]');
+            const cumulativeIncome = [];
+            let accInc = 0;
+            const incomeMonthlyRate = 0.06 / 12;
+            for (let i = 0; i < incomeStep.length; i++) {
+                cumulativeIncome.push(accInc);
+                accInc = accInc * (1 + incomeMonthlyRate) + Number(incomeStep[i] || 0);
+            }
+            // Zero-start cumulative expenses
+            const cumulativeExpenses = [];
+            let accExp = 0;
+            for (let i = 0; i < labels.length; i++) {
+                cumulativeExpenses.push(accExp);
+                accExp += Number(expensesStep[i] || 0);
+            }
+            // Cost of money: 6%/yr on initial capital, cumulative (zero-start)
+            const initialCapitalBM = JSON.parse(document.getElementById('prop-initial-capital').textContent || '0');
+            const monthlyCostBM = initialCapitalBM * (0.06 / 12);
+            const costOfMoneyCumulativeBM = [];
+            for (let i = 0; i < labels.length; i++) {
+                costOfMoneyCumulativeBM.push(monthlyCostBM * i);
+            }
+            // Static capital value line
+            const capitalFlatBM = [];
+            for (let i = 0; i < labels.length; i++) { capitalFlatBM.push(initialCapitalBM); }
+            const ctx = document.getElementById('businessModelChart').getContext('2d');
+            new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: plabels,
+                    labels: labels,
                     datasets: [
                         {
-                            label: 'Cumulative Flow',
-                            data: pvalues,
-                            borderColor: 'rgba(25, 135, 84, 1)',
-                            backgroundColor: 'rgba(25, 135, 84, 0.2)',
+                            label: 'Rental Income',
+                            data: cumulativeFlow,
+                            borderColor: 'rgba(13, 110, 253, 1)',
+                            backgroundColor: 'rgba(13, 110, 253, 0.15)',
                             tension: 0.2,
-                            fill: true
-                        },
-                        {
-                            label: 'Capital',
-                            data: capitalLine,
-                            borderColor: 'rgba(220, 53, 69, 1)',
-                            backgroundColor: 'rgba(220, 53, 69, 0.2)',
-                            tension: 0,
                             fill: false
                         },
                         {
-                            label: 'Initial Capital',
-                            data: initialCapitalLine,
+                            label: 'Expenses',
+                            data: cumulativeExpenses,
+                            borderColor: 'rgba(220, 53, 69, 0.9)',
+                            backgroundColor: 'rgba(220, 53, 69, 0.15)',
+                            tension: 0.2,
+                            fill: false
+                        },
+                        {
+                            label: 'Capital Value',
+                            data: capitalFlatBM,
                             borderColor: 'rgba(108, 117, 125, 1)',
-                            backgroundColor: 'rgba(108, 117, 125, 0.2)',
+                            backgroundColor: 'rgba(108, 117, 125, 0.15)',
                             borderDash: [6, 6],
                             tension: 0,
                             fill: false
                         },
                         {
-                            label: 'Flow + Appreciation (Coverage)',
-                            data: remainingGrowingLine,
-                            borderColor: 'rgba(255, 159, 64, 1)',
-                            backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                            label: 'Cost of money',
+                            data: costOfMoneyCumulativeBM,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.15)',
                             tension: 0.2,
                             fill: false
-                        }
+                        },
+                 
+                        {
+                            label: 'Appreciation',
+                            data: (function(){
+                                const initialCapital = Number(JSON.parse(document.getElementById('prop-initial-capital').textContent || '0'));
+                                const appRate = Number(JSON.parse(document.getElementById('app-rate').textContent || '5')) / 100;
+                                const capMonthlyRate = Math.pow(1 + appRate, 1/12) - 1; // compounded monthly
+                                const arr = [];
+                                for (let i = 0; i < labels.length; i++) {
+                                    const months = i;
+                                    const capValue = initialCapital * Math.pow(1 + capMonthlyRate, months);
+                                    const appreciationOnly = capValue - initialCapital; // interest-only (zero-start)
+                                    arr.push(appreciationOnly);
+                                }
+                                return arr;
+                            })(),
+                            borderColor: 'rgba(111, 66, 193, 1)',
+                            backgroundColor: 'rgba(111, 66, 193, 0.15)',
+                            tension: 0.2,
+                            fill: false
+                        },
+                        {
+                            label: 'Income',
+                            data: cumulativeIncome,
+                            borderColor: 'rgba(255, 193, 7, 1)',
+                            backgroundColor: 'rgba(255, 193, 7, 0.15)',
+                            tension: 0.2,
+                            fill: false
+                        },
+                        {
+                            label: 'Total Income (income + appreciation − cost of money)',
+                            data: (function(){
+                                const inc = cumulativeIncome;
+                                const initialCapital = Number(JSON.parse(document.getElementById('prop-initial-capital').textContent || '0'));
+                                const appRate = Number(JSON.parse(document.getElementById('app-rate').textContent || '5')) / 100;
+                                const capMonthlyRate = Math.pow(1 + appRate, 1/12) - 1;
+                                const appreciationCum = [];
+                                for (let i = 0; i < labels.length; i++) {
+                                    const months = i;
+                                    const capValue = initialCapital * Math.pow(1 + capMonthlyRate, months);
+                                    appreciationCum.push(capValue - initialCapital);
+                                }
+                                const costArray = (function(){
+                                    const initialCapitalBM = JSON.parse(document.getElementById('prop-initial-capital').textContent || '0');
+                                    const monthlyCostBM = initialCapitalBM * (0.06 / 12);
+                                    const arr = []; for (let i=0;i<labels.length;i++){ arr.push(monthlyCostBM * i); } return arr;
+                                })();
+                                const total = [];
+                                for (let i = 0; i < labels.length; i++) {
+                                    total.push((inc[i] || 0) + (appreciationCum[i] || 0) - (costArray[i] || 0));
+                                }
+                                return total;
+                            })(),
+                            borderColor: 'rgba(25, 135, 84, 1)',
+                            backgroundColor: 'rgba(25, 135, 84, 0.15)',
+                       
+                            tension: 0.2,
+                            fill: true
+                        },
+
                     ]
                 },
                 options: (function(){
-                    const opts = {
-                        responsive: true,
-                        scales: { y: { beginAtZero: true } }
-                    };
-                    if (payoffLabel || payoffFlowLabel) {
-                        opts.plugins = opts.plugins || {};
-                        opts.plugins.annotation = {
-                            annotations: {
-                                
-                            }
-                        };
-                        if (payoffLabel) {
-                            const payoffContent = payoffMonths ? `Payoff (Flow + Appreciation): ${payoffLabel} (${payoffMonths} months)` : `Payoff (Flow + Appreciation): ${payoffLabel}`;
-                            opts.plugins.annotation.annotations.payoff = {
-                                type: 'line',
-                                scaleID: 'x',
-                                value: payoffLabel,
-                                borderColor: 'rgba(33, 37, 41, 0.7)',
-                                borderDash: [6, 4],
-                                borderWidth: 2,
-                                label: {
-                                    display: true,
-                                    content: payoffContent,
-                                    position: 'start',
-                                    color: '#212529',
-                                    backgroundColor: 'rgba(255,255,255,0.8)',
-                                    padding: 4
-                                }
-                            };
+                    const opts = { responsive: true, scales: { y: { beginAtZero: true } } };
+                    // Find first label where total income >= capital
+                    const total = (function(){
+                        const inc = cumulativeIncome;
+                        const initialCapital = Number(JSON.parse(document.getElementById('prop-initial-capital').textContent || '0'));
+                        const appRate = Number(JSON.parse(document.getElementById('app-rate').textContent || '5')) / 100;
+                        const capMonthlyRate = Math.pow(1 + appRate, 1/12) - 1;
+                        const appreciationCum = [];
+                        for (let i = 0; i < labels.length; i++) {
+                            const months = i;
+                            const capValue = initialCapital * Math.pow(1 + capMonthlyRate, months);
+                            appreciationCum.push(capValue - initialCapital);
                         }
-                        if (payoffFlowLabel) {
-                            const payoffFlowContent = payoffFlowMonths ? `Payoff (Flow Only): ${payoffFlowLabel} (${payoffFlowMonths} months)` : `Payoff (Flow Only): ${payoffFlowLabel}`;
-                            opts.plugins.annotation.annotations.payoffFlow = {
-                                type: 'line',
-                                scaleID: 'x',
-                                value: payoffFlowLabel,
-                                borderColor: 'rgba(13, 110, 253, 0.8)',
-                                borderDash: [4, 4],
-                                borderWidth: 2,
-                                label: {
-                                    display: true,
-                                    content: payoffFlowContent,
-                                    position: 'center',
-                                    color: '#212529',
-                                    backgroundColor: 'rgba(255,255,255,0.8)',
-                                    padding: 4
-                                }
-                            };
-                        }
+                        const costArray = (function(){
+                            const initialCapitalBM = JSON.parse(document.getElementById('prop-initial-capital').textContent || '0');
+                            const monthlyCostBM = initialCapitalBM * (0.06 / 12);
+                            const arr = []; for (let i=0;i<labels.length;i++){ arr.push(monthlyCostBM * i); } return arr;
+                        })();
+                        const out = [];
+                        for (let i=0;i<labels.length;i++){ out.push((inc[i]||0) + (appreciationCum[i]||0) - (costArray[i]||0)); }
+                        return out;
+                    })();
+                    let cross = null; let crossMonths = null;
+                    for (let i=0;i<labels.length;i++){
+                        if ((total[i]||0) >= (initialCapitalBM||0)) { cross = labels[i]; crossMonths = i; break; }
+                    }
+                    if (cross) {
+                        opts.plugins = opts.plugins || {}; opts.plugins.annotation = { annotations: {
+                            netCross: { type: 'line', scaleID: 'x', value: cross, borderColor: 'rgba(25,135,84,0.9)', borderDash: [6,4], borderWidth: 2,
+                                label: { display: true, content: `Payoff Date: ${cross} (${crossMonths} months)`, position: 'start', backgroundColor: 'rgba(255,255,255,0.85)', color: '#212529', padding: 4 } }
+                        } };
                     }
                     return opts;
                 })()
             });
         })();
-    })();
 </script>
 {% endblock %}
 

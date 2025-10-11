@@ -812,6 +812,9 @@ def rental_property_earnings(request, id):
 	
 	capital = prop.capital_value or Decimal("0")
 	monthly_flow = prop.flow_value or Decimal("0")
+	# Use income (flow - expenses) for flow-only charts
+	monthly_income = prop.income or Decimal("0")
+	monthly_expenses_dec = prop.total_expenses or Decimal("0")
 	# Growth rate (percent) can be overridden via ?rate= on the query string; defaults to 5%
 	try:
 		rate_percent = Decimal(request.GET.get("rate", "5").strip())
@@ -820,6 +823,28 @@ def rental_property_earnings(request, id):
 	if rate_percent < 0:
 		rate_percent = Decimal("0")
 	growth_base = Decimal("1") + (rate_percent / Decimal("100"))
+
+	# Appreciation rate (percent) for asset growth (?app=), defaults to 5%
+	try:
+		appreciation_rate_percent = Decimal(request.GET.get("app", "5").strip())
+	except Exception:
+		appreciation_rate_percent = Decimal("5")
+	if appreciation_rate_percent < 0:
+		appreciation_rate_percent = Decimal("0")
+
+	# Projection horizon in years (?horizon=), supports decimals (e.g., 2.5)
+	# Default 10, clamped to [0.5, 50], converted to months (int)
+	try:
+		horizon_years_raw = (request.GET.get("horizon", "10") or "10").strip()
+		horizon_years_dec = Decimal(horizon_years_raw)
+	except Exception:
+		horizon_years_dec = Decimal("10")
+	if horizon_years_dec < Decimal("0.5"):
+		horizon_years_dec = Decimal("0.5")
+	if horizon_years_dec > Decimal("50"):
+		horizon_years_dec = Decimal("50")
+	months_cap = min(int((horizon_years_dec * Decimal("12")).to_integral_value(rounding='ROUND_HALF_UP')), 600)
+	horizon_years = float(horizon_years_dec)
 	months_to_payoff = None  # displayed months-to-payoff (will use growing payoff)
 	proj_labels = []
 	proj_values = []  # cumulative
@@ -827,6 +852,7 @@ def rental_property_earnings(request, id):
 	proj_remaining_initial_capital_line = []
 	proj_remaining_adjusted_line = []  # remaining considering appreciation (will be removed)
 	proj_monthly_flow_exp_line = []  # monthly flow with smooth exponential growth
+	proj_monthly_flow_step_line = []  # monthly flow with 5% stepwise yearly increase
 	proj_remaining_growing_capital_line = []  # remaining vs initial considering appreciation
 	projected_payoff_date = None
 	payoff_growing_label = None
@@ -834,38 +860,76 @@ def rental_property_earnings(request, id):
 	months_to_payoff_flow = None
 	months_to_payoff_growing = None
 	
+	# Always compute monthly income series by growing FLOW and subtracting constant EXPENSES
+	if True:
+		start = date.today().replace(day=1)
+		i = 0
+		max_months = months_cap  # horizon-based safety cap
+		flow_annual_growth = float(growth_base)  # stepwise annual increase
+		while i < max_months:
+			if i >= max_months:
+				break
+			years_elapsed = i // 12
+			flow_factor = flow_annual_growth ** years_elapsed
+			grown_flow = (monthly_flow * Decimal(str(flow_factor))).quantize(Decimal("0.01"))
+			month_flow = (grown_flow - monthly_expenses_dec).quantize(Decimal("0.01"))
+			# compute label
+			m_index = (start.month - 1 + i)
+			year = start.year + (m_index // 12)
+			month = (m_index % 12) + 1
+			label = f"{year:04d}-{month:02d}"
+			proj_labels.append(label)
+			proj_monthly_flow_step_line.append(float(month_flow))
+			i += 1
+
+	# Also compute a RAW FLOW series (not income) using monthly_flow, regardless of income
+	proj_monthly_flow_step_line_raw: list[float] = []
+	if monthly_flow > 0:
+		start = date.today().replace(day=1)
+		i = 0
+		max_months = months_cap
+		flow_annual_growth = float(growth_base)  # stepwise annual increase
+		while i < max_months:
+			if i >= max_months:
+				break
+			years_elapsed = i // 12
+			flow_factor = flow_annual_growth ** years_elapsed
+			month_flow_val = (monthly_flow * Decimal(str(flow_factor))).quantize(Decimal("0.01"))
+			# compute/ensure label
+			m_index = (start.month - 1 + i)
+			year = start.year + (m_index // 12)
+			month = (m_index % 12) + 1
+			label = f"{year:04d}-{month:02d}"
+			if len(proj_labels) <= i:
+				proj_labels.append(label)
+			proj_monthly_flow_step_line_raw.append(float(month_flow_val))
+			i += 1
+
+	# Compute full projection only if we also have capital
 	if monthly_flow > 0 and capital > 0:
-		# Build labels and cumulative values month-by-month
-		# Flow grows by 5% once per year (stepwise), Capital grows by 5% once per year
 		start = date.today().replace(day=1)
 		cumulative = Decimal("0")
 		i = 0
-		max_months = 600  # 50 years safety cap
-		flow_annual_growth = float(growth_base)  # stepwise annual increase
-		capital_annual_growth = float(growth_base)  # monthly compounding base
+		max_months = months_cap
+		flow_annual_growth = float(growth_base)
+		capital_annual_growth = float(growth_base)
 		while i < max_months:
-			# Cap projection to 10 years (120 months)
-			if i >= 180:
+			if i >= max_months:
 				break
 			years_elapsed = i // 12
 			flow_factor = flow_annual_growth ** years_elapsed
 			cap_factor = capital_annual_growth ** (i / 12.0)
 			month_flow = (monthly_flow * Decimal(str(flow_factor))).quantize(Decimal("0.01"))
-			# Exponential monthly flow (smooth compounding at 5% annually)
 			flow_factor_exp = Decimal(str((float(growth_base)) ** (i / 12.0)))
 			month_flow_exp = (monthly_flow * flow_factor_exp).quantize(Decimal("0.01"))
 			capital_current = (capital * Decimal(str(cap_factor))).quantize(Decimal("0.01"))
-			
-			# compute month i from start
 			m_index = (start.month - 1 + i)
 			year = start.year + (m_index // 12)
 			month = (m_index % 12) + 1
-			if year > 2040:
-				break
 			label = f"{year:04d}-{month:02d}"
-			
 			cumulative += month_flow
-			proj_labels.append(label)
+			if len(proj_labels) <= i:
+				proj_labels.append(label)
 			proj_values.append(float(cumulative))
 			proj_capital_line.append(float(capital_current))
 			proj_monthly_flow_exp_line.append(float(month_flow_exp))
@@ -886,12 +950,10 @@ def rental_property_earnings(request, id):
 			if remaining_adjusted < 0:
 				remaining_adjusted = Decimal("0")
 			proj_remaining_adjusted_line.append(float(remaining_adjusted))
-			
 			# Capture payoff when cumulative flow meets/exceeds INITIAL capital (purchase value)
 			if payoff_flow_label is None and cumulative >= capital:
 				payoff_flow_label = label
 				months_to_payoff_flow = len(proj_labels)
-			
 			if payoff_growing_label is None and (capital - cumulative - appreciation) <= 0:
 				payoff_growing_label = label
 				months_to_payoff_growing = len(proj_labels)
@@ -920,6 +982,10 @@ def rental_property_earnings(request, id):
 		# Projection context
 		"capital": float(capital),
 		"monthly_flow": float(monthly_flow),
+		"monthly_expenses": float(prop.total_expenses or Decimal("0")),
+		"appreciation_rate_percent": float(appreciation_rate_percent),
+		"appreciation_monthly": float(prop.appreciation_monthly or Decimal("0")),
+		"total_income_monthly": float(prop.total_income or Decimal("0")),
 		"months_to_payoff": months_to_payoff,
 		"projected_payoff_date": projected_payoff_date,
 		"growth_rate_percent": float(rate_percent),
@@ -936,7 +1002,10 @@ def rental_property_earnings(request, id):
 		"proj_initial_capital_line": proj_initial_capital_line,
 		"proj_remaining_initial_capital_line": proj_remaining_initial_capital_line,
 		"proj_monthly_flow_exp_line": proj_monthly_flow_exp_line,
+		"proj_monthly_flow_step_line_raw": proj_monthly_flow_step_line_raw,
+		"proj_monthly_flow_step_line": proj_monthly_flow_step_line,
 		"proj_remaining_growing_capital_line": proj_remaining_growing_capital_line,
 		"payoff_growing_label": payoff_growing_label,
 		"payoff_flow_label": payoff_flow_label,
+		"horizon_years": horizon_years,
 	})

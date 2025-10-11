@@ -33,12 +33,15 @@
                 <div class="col-md-4"><strong>Rates & Taxes:</strong> {{ property.rates_taxes }}</div>
                 <div class="col-md-4"><strong>Water & Electricity:</strong> {{ property.water_electricity }}</div>
                 <div class="col-md-4"><strong>Internet:</strong> {{ property.internet }}</div>
+                <div class="col-md-4"><strong>Cost of Money (monthly @ 6%/yr):</strong> {{ property.cost_of_money_monthly }}</div>
             </div>
 
             <div class="row mt-2">
                 <div class="col-md-12 text-info"><strong>Rental Income:</strong> {{ property.flow_value }}</div>
                 <div class="col-md-12 text-danger"><strong>Total Expenses:</strong> {{ property.total_expenses }}</div>
+                <div class="col-md-12 text-warning"><strong>Appreciation (monthly @ 5%/yr):</strong> {{ property.appreciation_monthly }}</div>
                 <div class="col-md-12 fw-bold  text-success"><strong>Income:</strong> {{ property.income }}</div>
+                <div class="col-md-12 fw-bold  text-primary"><strong>Total Income (income + appreciation):</strong> {{ property.total_income }}</div>
             </div>
         </div>
     </div>

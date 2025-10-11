@@ -20,3 +20,4 @@ urlpatterns = [
 	path("search/", global_search, name="global_search"),
 	path("uml/", uml_view, name="uml_view"),
 ]
+ 

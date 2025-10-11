@@ -21,7 +21,23 @@
     <!-- Add HTMX via CDN -->
     <script src="https://unpkg.com/htmx.org@1.9.5"></script>
     <script src="https://unpkg.com/hyperscript.org@0.9.7"></script>
-    
+
+    <style>
+        /* Enlarge dropdown caret arrows */
+        .navbar .dropdown-toggle::after {
+            border-top-width: .45em;
+            border-right-width: .45em;
+            border-left-width: .45em;
+            margin-left: .2rem; /* tighter to label */
+            vertical-align: .1em;
+        }
+        .navbar .dropdown-toggle-split::after {
+            border-top-width: .55em;
+            border-right-width: .55em;
+            border-left-width: .55em;
+        }
+    </style>
+
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -30,11 +46,66 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-success sticky-top shadow-sm">
     <div class="container-fluid">
         <div class="d-flex align-items-center">
-            <button class="btn btn-outline-light btn-sm me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
-                <i class="bi bi-list"></i>
-            </button>
+            <a class="btn btn-outline-light btn-sm me-2" href="/" aria-label="Home">
+                <i class="bi bi-house-door"></i>
+            </a>
         </div>
-    
+
+        <!-- Global dropdowns -->
+        <ul class="navbar-nav ">
+            <li class=" mx-1 nav-item dropdown d-flex align-items-center">
+                <a class="nav-link" href="/money/">MyMoney</a>
+                <a class="nav-link dropdown-toggle dropdown-toggle-split px-0" href="#" id="navbarDropdownMyMoney" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle MyMoney menu"></a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMyMoney">
+                    <li><a class="dropdown-item" href="/expense/">Expenses</a></li>
+                    <li><a class="dropdown-item" href="/asset/">Crypto</a></li>
+                    <li><a class="dropdown-item" href="/credit/">Credit</a></li>
+                    <li><a class="dropdown-item" href="/income/">Income</a></li>
+                    <li><a class="dropdown-item" href="/sellable/">Sellable</a></li>
+                    <li><a class="dropdown-item" href="/money/">Stats</a></li>
+                </ul>
+            </li>
+            <li class="mx-1 nav-item dropdown d-flex align-items-center">
+                <a class="nav-link" href="/homes/">HorstenHomes</a>
+                <a class="nav-link dropdown-toggle dropdown-toggle-split px-0" href="#" id="navbarDropdownHomes" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle HorstenHomes menu"></a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownHomes">
+                    <li><a class="dropdown-item" href="/accounts/">Accounts</a></li>
+                    <li><a class="dropdown-item" href="/rental/">Properties</a></li>
+                    <li><a class="dropdown-item" href="/agents/">Agents</a></li>
+                </ul>
+            </li>
+
+            <li class="mx-1 nav-item dropdown d-flex align-items-center">
+                <a class="nav-link" href="#">Productivity</a>
+                <a class="nav-link dropdown-toggle dropdown-toggle-split px-0" href="#" id="navbarDropdownProductivity" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle Productivity menu"></a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownProductivity">
+                    <li><a class="dropdown-item" href="/todo/">ToDo</a></li>
+                    <li><a class="dropdown-item" href="/document/">Notes</a></li>
+                    <li><a class="dropdown-item" href="/folder/">Folders</a></li>
+                    <li><a class="dropdown-item" href="/idea/">Ideas</a></li>
+                    <li><a class="dropdown-item" href="/reminders/calendar/">Calendar</a></li>
+                    <li><a class="dropdown-item" href="/time/">Time</a></li>
+                </ul>
+            </li>
+            <li class="mx-1 nav-item dropdown d-flex align-items-center">
+                <a class="nav-link" href="#">Health</a>
+                <a class="nav-link dropdown-toggle dropdown-toggle-split px-0" href="#" id="navbarDropdownHealth" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle Health menu"></a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownHealth">
+                    <li><a class="dropdown-item" href="/weight/">Weight</a></li>
+                </ul>
+            </li>
+            <li class="mx-1 nav-item dropdown d-flex align-items-center">
+                <a class="nav-link" href="#">Tools</a>
+                <a class="nav-link dropdown-toggle dropdown-toggle-split px-0" href="#" id="navbarDropdownTools" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle Tools menu"></a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownTools">
+                    <li><a class="dropdown-item" href="/pen_tester/">Pen Test</a></li>
+                    <li><a class="dropdown-item" href="/cameras/">Cameras</a></li>
+                    <li><a class="dropdown-item" href="/monitoring/">Monitoring</a></li>
+                </ul>
+            </li>
+            
+        </ul>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -42,36 +113,33 @@
 
         <div class="collapse navbar-collapse portal-mymoney" id="navbarNav">
             <ul class="navbar-nav">
-
-                <li class="nav-item"><a class="nav-link active" href="/weather/">Weather</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/todo/">ToDo</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/document/">Notes</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/folder/">Folders</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/idea/">Ideas</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/weight/">Weight</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/reminders/calendar/">Calendar</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/time/">Time</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/pen_tester/">Pen Test</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/cameras/">Cameras</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/monitoring/">Monitoring</a></li>
-
-                
-            
             </ul>
         </div>
-    
 
-       
+        
+
 
         <form class="d-flex" method="get" action="{% url 'global_search' %}">
-            <input name="q" class="form-control form-control-sm  me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-danger btn-sm border-0 border-opacity-0 me-5 " type="submit">Search</button>
+            <input name="q" class="form-control form-control-sm  " type="search" placeholder="Global Search" aria-label="Search">
+            <button class="btn btn-danger btn-sm border-0 border-opacity-0 me-5 px-2 " type="submit" aria-label="Search">
+                <i class="bi bi-search"></i>
+            </button>
         </form>
-        <a class="nav-link active text-black mx-2" href="/assistant/">Ask</a>
-        <a class="nav-link active text-black mx-2" href="/logs/">Logs</a>
-        <a class="nav-link active text-black mx-2" href="/metrics/">Metrics</a>
-        <a class="nav-link active text-black mx-2" href="/system/">System</a>
+        <a class="btn btn-outline-danger btn-sm nav-link active text-black  m-2 px-2" href="/assistant/">Ask Me!</a>
+        <a class="m-0 px-2 fs-3" href="/weather/" title="Weather" aria-label="Weather">🌤️</a>
         <a class="nav-link active text-black mx-2" href="/pricing">Pricing</a>
+        <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSystemRight" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    System
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownSystemRight">
+                    <li><a class="dropdown-item" href="/metrics/">Metrics</a></li>
+                    <li><a class="dropdown-item" href="/logs/">Logs</a></li>
+                    <li><a class="dropdown-item" href="/system/">System</a></li>
+                </ul>
+            </li>
+        </ul>
         <div class="text-white mx-4">
             {% if user.is_authenticated %}
                 <form method="POST" action="{% url 'logout' %}">
@@ -84,47 +152,7 @@
     </div>
 </nav>
 
-<!-- Sidebar Offcanvas -->
-<style>
-    /* Sidebar theming using custom palette ($secondary/#01507F, $primary/#ed5e1d) */
-    .sidebar-custom.offcanvas { background-color: #012b36; color: #fff; }
-    .sidebar-custom .list-group-item { color: #fff; }
-    .sidebar-custom .list-group-item:hover { background-color: rgba(255,255,255,0.08); color: #fff; }
-    .sidebar-custom .offcanvas-header { border-color: rgba(255,255,255,0.15) !important; }
-    .sidebar-custom .offcanvas-footer { border-color: rgba(255,255,255,0.15) !important; }
-    .sidebar-custom .text-secondary { color: rgba(255,255,255,0.7) !important; }
-    .sidebar-custom .bi { color: #fff; }
-    .sidebar-custom .list-group-item .bi { opacity: 0.95; }
-    .sidebar-custom .list-group-item.active, .sidebar-custom .list-group-item:active { background-color: rgba(237,94,29,0.18); }
-    .sidebar-custom .list-group-item.active span, .sidebar-custom .list-group-item:active span { color: #fff; }
-    .sidebar-custom .list-group-item { border-left: 4px solid transparent; }
-    .sidebar-custom .list-group-item.active { border-left-color: #ed5e1d; }
-    .sidebar-custom a { text-decoration: none; }
-    .sidebar-custom .offcanvas-title { color: #fff; }
-    .sidebar-custom .btn-close-white { filter: invert(1); }
-</style>
-<div class="offcanvas offcanvas-start sidebar-custom" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel" style="--bs-offcanvas-width: 180px;">
-    <div class="offcanvas-header ">
-        <h5 class="offcanvas-title" id="sidebarMenuLabel">Navigation</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body p-0">
-        <div class="list-group list-group-flush">
-            <a class="list-group-item list-group-item-action bg-transparent d-flex align-items-center py-3" href="/money/" onclick="setPortal('mymoney')" id="portalLinkMyMoney">
-                <i class="bi bi-cash-stack fs-4 me-3"></i>
-                <span>MyMoney</span>
-            </a>
-            <a class="list-group-item list-group-item-action bg-transparent d-flex align-items-center py-3" href="/homes/" onclick="setPortal('homes')" id="portalLinkHomes">
-                <i class="bi bi-house-door fs-4 me-3"></i>
-                <span>Horsten Homes</span>
-            </a>
-        </div>
-    </div>
-    <div class="offcanvas-footer small text-center py-2">
-        <span class="text-secondary">v{{ VERSION.version }}</span>
-    </div>
-    
-</div>
+<!-- Sidebar removed -->
 
 <!-- Main Content Area -->
 <main class="{% block main_class %}container{% endblock %} mt-4 flex-grow-1">
@@ -143,7 +171,7 @@
             <p class="mb-0">More questions? Let us help.</p>
             <a href="/contact/" class="text-info text-decoration-none">Contact us</a>
         </div>
-        
+
     </div>
 
 </footer>
@@ -156,10 +184,12 @@
         document.querySelectorAll('.portal-mymoney').forEach(el => el.classList.toggle('d-none', portal !== 'mymoney'));
         document.querySelectorAll('.portal-homes').forEach(el => el.classList.toggle('d-none', portal !== 'homes'));
     }
+
     function setPortal(portal) {
         localStorage.setItem('active_portal', portal);
         applyPortal();
     }
+
     function toggleAudit(id) {
         const shortDiv = document.getElementById('short-audit-' + id);
         const fullDiv = document.getElementById('full-audit-' + id);
@@ -201,13 +231,13 @@
         }
     }
 
-    
+
 </script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         applyPortal();
-        
+
         document.addEventListener("click", function (e) {
             if (e.target.matches(".ajax-page")) {
                 e.preventDefault();

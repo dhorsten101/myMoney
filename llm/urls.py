@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .views import assistant_view
+from llm.views import assistant_view
 
 urlpatterns = [
-	path("assistant/", assistant_view, name="assistant"),
+	path("assistant/", assistant_view(), name="assistant"),
 ]

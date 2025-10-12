@@ -1,70 +1,59 @@
-from django.core.management import call_command
-from django.shortcuts import render
-
-from llm.llm_service import Assistant
-from llm.models import Feedback
-
-assistant = None
+from decouple import config
+from langchain_community.vectorstores import FAISS
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_ollama import OllamaLLM
+from openai import OpenAI
 
 
-def assistant_view(request):
-	global assistant
-	question = answer = source = None
-	status_message = None
-	feedback_given = False
-	local_answer = openai_answer = None
+class Assistant:
+	def __init__(self):
+		# Initialize embeddings and vector store
+		embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-MiniLM-L3-v2")
+		self.vectorstore = FAISS.load_local("local_index", embedding, allow_dangerous_deserialization=True)
+		
+		# Local LLM via Ollama (make sure this model exists: ollama list)
+		self.local_llm = OllamaLLM(model="llama3.1:latest")
+		
+		# OpenAI setup
+		api_key = config("OPENAI_API_KEY", default=None)
+		self.client = OpenAI(api_key=api_key) if api_key else None
 	
-	if request.method == "POST":
-		# 🔹 Rebuild vector index
-		if "rebuild_index" in request.POST:
-			call_command("build_index")
-			status_message = "✅ Index successfully rebuilt."
-		
-		# 🔹 Handle feedback submission
-		elif "submit_feedback" in request.POST:
-			question = request.POST.get("question")
-			answer = request.POST.get("answer")
-			source = request.POST.get("source", "unknown")
-			is_helpful = request.POST.get("is_helpful") == "true"
-			Feedback.objects.create(
-				question=question,
-				answer=answer,
-				source=source,
-				is_helpful=is_helpful,
-			)
-			feedback_given = True
-			status_message = "✅ Feedback submitted. Thanks!"
-		
-		# 🔹 Handle question submission
-		elif "question" in request.POST:
-			question = request.POST.get("question")
-			engine = request.POST.get("engine", "local")
+	def ask_local(self, question: str) -> str:
+		"""Ask a question to the local Ollama LLM using context from the FAISS vectorstore."""
+		try:
+			docs = self.vectorstore.similarity_search(question, k=5)
+			context = "\n\n".join(doc.page_content for doc in docs)
 			
-			if question:
-				try:
-					if assistant is None:
-						assistant = Assistant()
-					
-					if engine == "openai":
-						answer = assistant.ask_openai(question)
-						source = "openai"
-					else:
-						answer = assistant.ask_local(question)
-						source = "local"
-				
-				except Exception as e:
-					status_message = f"❌ Assistant init failed: {e}"
+			prompt = f"""
+You are a helpful assistant trained on a Django app's models and codebase.
+Use the context below to answer the developer's question.
+
+Context:
+{context}
+
+Question:
+{question}
+"""
+			response = self.local_llm.invoke(prompt).strip()
+			return response
+		
+		except Exception as e:
+			return f"❌ Local LLM failed: {e}"
 	
-	return render(
-		request,
-		"assistant/assistant.html",
-		{
-			"question": question,
-			"answer": answer,
-			"source": source,
-			"local_answer": local_answer,
-			"openai_answer": openai_answer,
-			"status_message": status_message,
-			"feedback_given": feedback_given,
-		},
-	)
+	def ask_openai(self, question: str) -> str:
+		"""Ask a question using the OpenAI API (if configured)."""
+		if not self.client:
+			return "❌ OpenAI API key not configured."
+		
+		try:
+			response = self.client.chat.completions.create(
+				model="gpt-3.5-turbo",
+				messages=[
+					{"role": "system", "content": "You are a Django developer assistant."},
+					{"role": "user", "content": question},
+				],
+			)
+			return response.choices[0].message.content.strip()
+		
+		except Exception as e:
+			return f"❌ OpenAI failed: {e}"

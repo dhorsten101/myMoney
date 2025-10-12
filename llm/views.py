@@ -9,7 +9,7 @@ assistant = None
 
 def assistant_view(request):
 	global assistant
-	question = answer = source = None
+    question = answer = source = None
 	status_message = None
 	feedback_given = False
 	local_answer = openai_answer = None
@@ -37,16 +37,19 @@ def assistant_view(request):
 			question = request.POST.get("question")
 			engine = request.POST.get("engine", "local")
 			
-			if question:
-				if assistant is None:
-					assistant = Assistant()
-				
-				if engine == "openai":
-					answer = assistant.ask_openai(question)
-					source = "openai"
-				else:
-					answer = assistant.ask_local(question)
-					source = "local"
+            if question:
+                try:
+                    if assistant is None:
+                        assistant = Assistant()
+                    
+                    if engine == "openai":
+                        answer = assistant.ask_openai(question)
+                        source = "openai"
+                    else:
+                        answer = assistant.ask_local(question)
+                        source = "local"
+                except Exception as e:
+                    status_message = f"❌ Assistant init failed: {e}"
 	
 	return render(request, "assistant/assistant.html", {
 		"question": question,

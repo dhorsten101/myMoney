@@ -43,8 +43,8 @@ class Command(BaseCommand):
 					except Exception as e:
 						print(f"❌ Could not read {path}: {e}")
 		
-		# Step 3: Split code into chunks
-		splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+		# Step 3: Split code into chunks (use larger chunks to avoid artificial limits)
+		splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
 		split_docs = splitter.split_documents(code_docs)
 		texts.extend(split_docs)
 		

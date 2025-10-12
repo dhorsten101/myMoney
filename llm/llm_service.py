@@ -6,16 +6,33 @@ from openai import OpenAI
 
 
 class Assistant:
-	def __init__(self):
-		embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-MiniLM-L3-v2")
-		self.vectorstore = FAISS.load_local("local_index", embedding, allow_dangerous_deserialization=True)
-		self.local_llm = OllamaLLM(model="llama3")
-		api_key = config("OPENAI_API_KEY")
-		self.client = OpenAI(api_key=api_key) if api_key else None
+    def __init__(self):
+        self.embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-MiniLM-L3-v2")
+        self.vectorstore = None
+        self.local_llm = None
+        api_key = config("OPENAI_API_KEY")
+        self.client = OpenAI(api_key=api_key) if api_key else None
+
+    def _ensure_index(self):
+        if self.vectorstore is None:
+            try:
+                self.vectorstore = FAISS.load_local("local_index", self.embedding, allow_dangerous_deserialization=True)
+            except Exception as e:
+                raise RuntimeError(f"Vector index not available. Rebuild it from the Assistant page. Details: {e}")
+
+    def _ensure_local_llm(self):
+        if self.local_llm is None:
+            try:
+                self.local_llm = OllamaLLM(model="llama3")
+            except Exception as e:
+                raise RuntimeError(f"Local LLM not available. Ensure Ollama is running and model is pulled. Details: {e}")
 	
-	def ask_local(self, question):
-		try:
-			docs = self.vectorstore.similarity_search(question, k=5)
+    def ask_local(self, question, k: int = 10):
+        try:
+            self._ensure_index()
+            self._ensure_local_llm()
+            # Retrieve more documents by default to avoid tight caps
+            docs = self.vectorstore.similarity_search(question, k=k)
 			context = "\n\n".join(doc.page_content for doc in docs)
 			
 			prompt = f"""You are a helpful assistant trained on a Django app's models and codebase.
@@ -27,7 +44,7 @@ class Assistant:
 	Question:
 	{question}
 	"""
-			response = self.local_llm.invoke(prompt).strip()
+            response = self.local_llm.invoke(prompt).strip()
 			return response
 		except Exception as e:
 			return f"❌ Local LLM failed: {e}"

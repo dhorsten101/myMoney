@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path, include
 
 urlpatterns = [
@@ -32,3 +33,7 @@ urlpatterns = [
 				  path('ckeditor5/', include('django_ckeditor_5.urls')),
 			  
 			  ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Serve static files (including Django admin assets) in development
+urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

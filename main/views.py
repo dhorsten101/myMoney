@@ -28,6 +28,16 @@ from worth.models import Worth
 logger = logging.getLogger('django')  # uses the 'django' logger from settings
 
 
+# Home view
+def home(request):
+	quote = None
+	try:
+		quote = Quote.objects.order_by('-id').first()
+	except Exception:
+		quote = None
+	return render(request, "home.html", {"quote": quote})
+
+
 # Register view
 def register(request):
 	if request.method == "POST":

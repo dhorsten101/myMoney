@@ -38,18 +38,15 @@ def assistant_view(request):
 			engine = request.POST.get("engine", "local")
 			
             if question:
-                try:
-                    if assistant is None:
-                        assistant = Assistant()
-                    
-                    if engine == "openai":
-                        answer = assistant.ask_openai(question)
-                        source = "openai"
-                    else:
-                        answer = assistant.ask_local(question)
-                        source = "local"
-                except Exception as e:
-                    status_message = f"❌ Assistant init failed: {e}"
+                if assistant is None:
+                    assistant = Assistant()
+                
+                if engine == "openai":
+                    answer = assistant.ask_openai(question)
+                    source = "openai"
+                else:
+                    answer = assistant.ask_local(question)
+                    source = "local"
 	
 	return render(request, "assistant/assistant.html", {
 		"question": question,

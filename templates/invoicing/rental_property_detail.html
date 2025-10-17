@@ -68,6 +68,17 @@
             const labels = JSON.parse(elLabels.textContent || '[]');
             const income = elIncome ? JSON.parse(elIncome.textContent || '[]') : [];
             const expenses = elExpenses ? JSON.parse(elExpenses.textContent || '[]') : [];
+            // Build cumulative series (life-to-date)
+            function toCumulative(arr) {
+                let running = 0;
+                return (arr || []).map(v => {
+                    const n = Number(v) || 0;
+                    running += n;
+                    return running;
+                });
+            }
+            const cumIncome = toCumulative(income);
+            const cumExpenses = toCumulative(expenses);
             if (!Array.isArray(labels) || labels.length === 0) return;
             const ctx = document.getElementById('propIncomeExpenseChart').getContext('2d');
             new Chart(ctx, {
@@ -76,16 +87,16 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Income (paid invoices)',
-                            data: income,
+                            label: 'Cumulative Income (paid)',
+                            data: cumIncome,
                             borderColor: 'rgba(25, 135, 84, 1)',
                             backgroundColor: 'rgba(25, 135, 84, 0.15)',
                             tension: 0.2,
                             fill: true,
                         },
                         {
-                            label: 'Expenses',
-                            data: expenses,
+                            label: 'Cumulative Expenses',
+                            data: cumExpenses,
                             borderColor: 'rgba(220, 53, 69, 1)',
                             backgroundColor: 'rgba(220, 53, 69, 0.15)',
                             tension: 0.2,

@@ -50,7 +50,6 @@
             <thead class="table-light">
                 <tr>
                     <th>#</th>
-                    <th>Customer</th>
                     <th>Property</th>
                     <th>Issue Date</th>
                     <th>Due Date</th>
@@ -64,7 +63,6 @@
             {% for inv in invoices %}
                 <tr>
                     <td><a href="{% url 'invoice_detail' inv.id %}">{{ inv.number }}</a></td>
-                    <td>{{ inv.customer_name }}</td>
                     <td>
                         {% if inv.rental_property %}
                             <a href="{% url 'rental_property_detail' inv.rental_property.id %}">{{ inv.rental_property.name }}</a>

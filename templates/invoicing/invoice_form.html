@@ -11,14 +11,7 @@
         <form method="post">
             {% csrf_token %}
             <div class="row g-3">
-                <div class="col-md-4">
-                    <label for="{{ form.customer_name.id_for_label }}" class="form-label">{{ form.customer_name.label }}</label>
-                    {{ form.customer_name|add_class:"form-control" }}
-                </div>
-                <div class="col-md-4">
-                    <label for="{{ form.customer_email.id_for_label }}" class="form-label">{{ form.customer_email.label }}</label>
-                    {{ form.customer_email|add_class:"form-control" }}
-                </div>
+                <!-- Customer fields removed: customer is the rental property -->
 
                 <div class="col-md-4">
                     <label for="{{ form.issue_date.id_for_label }}" class="form-label">{{ form.issue_date.label }}</label>

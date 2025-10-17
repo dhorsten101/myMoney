@@ -92,7 +92,9 @@ class Invoice(models.Model):
 	updated_at = models.DateTimeField(auto_now=True)
 	
 	def __str__(self):
-		return f"Invoice {self.number} - {self.customer_name}"
+		if self.rental_property:
+			return f"Invoice {self.number} - {self.rental_property.name}"
+		return f"Invoice {self.number}"
 	
 	def save(self, *args, **kwargs):
 		# Auto-assign sequential invoice number starting at 1

@@ -5,9 +5,9 @@ from invoicing.models import Invoice, RentalProperty, RentalPropertyPipeline, Re
 
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
-	list_display = ("number", "customer_name", "issue_date", "due_date", "status", "total")
+	list_display = ("number", "rental_property", "issue_date", "due_date", "status", "total")
 	list_filter = ("status", "issue_date", "due_date")
-	search_fields = ("number", "customer_name", "customer_email")
+	search_fields = ("number", "rental_property__name")
 
 
 @admin.register(RentalProperty)

@@ -16,8 +16,13 @@
         <div class="row">
             <div class="col-md-6">
                 <p><strong>Invoice #:</strong> {{ invoice.number }}</p>
-                <p><strong>Customer:</strong> {{ invoice.customer_name }}</p>
-                <p><strong>Email:</strong> {{ invoice.customer_email }}</p>
+                <p><strong>Property:</strong>
+                    {% if invoice.rental_property %}
+                        <a href="{% url 'rental_property_detail' invoice.rental_property.id %}">{{ invoice.rental_property.name }}</a>
+                    {% else %}
+                        <span class="text-muted">—</span>
+                    {% endif %}
+                </p>
             </div>
             <div class="col-md-6">
                 <p><strong>Issue Date:</strong> {{ invoice.issue_date }}</p>

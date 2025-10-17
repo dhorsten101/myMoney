@@ -7,8 +7,6 @@ class InvoiceForm(forms.ModelForm):
 	class Meta:
 		model = Invoice
 		fields = [
-			"customer_name",
-			"customer_email",
 			"issue_date",
 			"due_date",
 			"status",
@@ -39,6 +37,15 @@ class InvoiceForm(forms.ModelForm):
 			net = total / 1.15
 		"""
 		instance = super().save(commit=False)
+		# Auto-set customer fields from rental property selection
+		try:
+			prop = instance.rental_property
+			if prop and (not instance.customer_name):
+				instance.customer_name = prop.name
+			# Always clear email since we no longer capture it
+			instance.customer_email = ""
+		except Exception:
+			pass
 		try:
 			from decimal import Decimal, ROUND_HALF_UP
 			entered_total = self.cleaned_data.get("total") or Decimal("0")

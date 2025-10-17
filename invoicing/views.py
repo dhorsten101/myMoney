@@ -167,14 +167,22 @@ def invoice_detail(request, id):
 
 @login_required
 def invoice_create(request):
-	if request.method == "POST":
-		form = InvoiceForm(request.POST)
-		if form.is_valid():
-			invoice = form.save()
-			return redirect("invoice_detail", id=invoice.id)
-	else:
-		form = InvoiceForm()
-	return render(request, "invoicing/invoice_form.html", {"form": form})
+    if request.method == "POST":
+        form = InvoiceForm(request.POST)
+        if form.is_valid():
+            invoice = form.save()
+            return redirect("invoice_detail", id=invoice.id)
+    else:
+        # Optional preselect rental property via ?rental_property=<id>
+        rental_property_id = (request.GET.get("rental_property") or "").strip()
+        initial = {}
+        if rental_property_id.isdigit():
+            try:
+                initial["rental_property"] = RentalProperty.objects.get(id=int(rental_property_id))
+            except RentalProperty.DoesNotExist:
+                pass
+        form = InvoiceForm(initial=initial)
+    return render(request, "invoicing/invoice_form.html", {"form": form})
 
 
 @login_required
@@ -242,6 +250,29 @@ def expense_list(request):
 	else:
 		form = MonthlyExpenseForm()
 	return render(request, "invoicing/expense_list.html", {"expenses": expenses, "form": form})
+
+
+@login_required
+def expense_create(request):
+    if request.method == "POST":
+        form = MonthlyExpenseForm(request.POST)
+        if form.is_valid():
+            expense = form.save()
+            # If the expense is linked to a property, consider redirecting back there
+            if expense.property_id:
+                return redirect("rental_property_detail", id=expense.property_id)
+            return redirect("expense_list")
+    else:
+        # Optional preselect property via ?property=<id>
+        prop_id = (request.GET.get("property") or "").strip()
+        initial = {}
+        if prop_id.isdigit():
+            try:
+                initial["property"] = RentalProperty.objects.get(id=int(prop_id))
+            except RentalProperty.DoesNotExist:
+                pass
+        form = MonthlyExpenseForm(initial=initial)
+    return render(request, "invoicing/expense_form.html", {"form": form})
 
 
 @login_required
@@ -729,7 +760,76 @@ def rental_property_list(request):
 def rental_property_detail(request, id):
     prop = get_object_or_404(RentalProperty, id=id)
     image_form = RentalPropertyImageForm()
-    return render(request, "invoicing/rental_property_detail.html", {"property": prop, "image_form": image_form})
+    # Build life-to-date monthly series for income (paid invoices) and expenses for this property
+    # Use issue_date for invoices and date for expenses, grouped by month
+    from datetime import date
+    # Determine range from first month seen in either series to current month
+    first_inv = (
+        Invoice.objects
+        .filter(status=Invoice.STATUS_PAID, rental_property=prop)
+        .order_by("issue_date")
+        .values_list("issue_date", flat=True)
+        .first()
+    )
+    first_exp = (
+        MonthlyExpense.objects
+        .filter(property=prop)
+        .order_by("date")
+        .values_list("date", flat=True)
+        .first()
+    )
+    if first_inv or first_exp:
+        start_date = min([d for d in [first_inv, first_exp] if d is not None]).replace(day=1)
+    else:
+        start_date = date.today().replace(day=1)
+
+    # Build month keys from start_date to current month
+    month_keys = []
+    cursor = start_date
+    today = date.today().replace(day=1)
+    while cursor <= today:
+        month_keys.append(cursor)
+        # increment month
+        if cursor.month == 12:
+            cursor = cursor.replace(year=cursor.year + 1, month=1)
+        else:
+            cursor = cursor.replace(month=cursor.month + 1)
+
+    # Aggregate paid invoices by month for this property
+    inv_qs = (
+        Invoice.objects
+        .filter(status=Invoice.STATUS_PAID, rental_property=prop)
+        .annotate(month=TruncMonth("issue_date"))
+        .values("month")
+        .annotate(total=Sum("total"))
+    )
+    inv_map = { (m["month"].date() if hasattr(m["month"], "date") else m["month"]): float(m["total"]) for m in inv_qs }
+
+    # Aggregate expenses by month for this property
+    exp_qs = (
+        MonthlyExpense.objects
+        .filter(property=prop)
+        .annotate(month=TruncMonth("date"))
+        .values("month")
+        .annotate(total=Sum("amount"))
+    )
+    exp_map = { (m["month"].date() if hasattr(m["month"], "date") else m["month"]): float(m["total"]) for m in exp_qs }
+
+    month_labels = [m.strftime("%Y-%m") for m in month_keys]
+    income_series = [inv_map.get(m, 0.0) for m in month_keys]
+    expense_series = [exp_map.get(m, 0.0) for m in month_keys]
+
+    # Linked expenses ordered by most recent
+    linked_expenses = prop.monthly_expenses.order_by("-date", "-id")
+
+    return render(request, "invoicing/rental_property_detail.html", {
+        "property": prop,
+        "image_form": image_form,
+        "month_labels": month_labels,
+        "income_series": income_series,
+        "expense_series": expense_series,
+        "linked_expenses": linked_expenses,
+    })
 
 
 @login_required

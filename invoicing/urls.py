@@ -31,6 +31,7 @@ urlpatterns = [
     path("rental/preview-images/", views.preview_images_from_url, name="preview_images_from_url"),
     # Expenses
     path("expenses/", views.expense_list, name="expense_list"),
+    path("expenses/new/", views.expense_create, name="expense_create"),
     path("expenses/monthly/", views.expense_monthly_totals, name="expense_monthly_totals"),
     path("expenses/<int:id>/edit/", views.expense_update, name="expense_update"),
     path("expenses/<int:id>/delete/", views.expense_delete, name="expense_delete"),

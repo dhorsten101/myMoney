@@ -15,7 +15,7 @@
 
 
 
-    <div class="card shadow-sm mb-3">
+    <!-- <div class="card shadow-sm mb-3">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">Aggregated Projection (All Properties)</h5>
@@ -49,9 +49,46 @@
             </div>
             <canvas id="aggProjectionChart" height="180"></canvas>
         </div>
+    </div> -->
+
+    <div class="row g-3 mb-3">
+        <h5 class="text-muted mb-1">Totals for Year 2025</h5>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Initial Asset Value</h6>
+                    <div class="display-6">{{ total_rental_capital|floatformat:2 }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Rental Income</h6>
+                    <div class="display-6 text-success">{{ total_rental_income|floatformat:2 }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Rental Expenses</h6>
+                    <div class="display-6 text-danger">{{ total_rental_expenses|floatformat:2 }}</div>
+                </div>
+            </div>
+        </div> -->
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Net Income</h6>
+                    <div class="display-6 {% if total_rental_net >= 0 %}text-success{% else %}text-danger{% endif %}">{{ total_rental_net|floatformat:2 }}</div>
+                </div>
+            </div>
+        </div>
     </div>
 
-<div class="card shadow-sm mb-3">
+<!-- <div class="card shadow-sm mb-3">
     <div class="card-body">
         <h5 class="card-title mb-3">Monthly Paid Totals</h5>
         <canvas id="aggEarningsChart" height="60"></canvas>
@@ -85,59 +122,34 @@
             </tfoot>
         </table>
     </div>
-</div>
+</div> -->
 
+    {# Provide data as JSON for JS to read #}
+    {{ agg_labels|default:'[]'|json_script:'agg-labels' }}
+    {{ agg_cumulative|default:'[]'|json_script:'agg-cumulative' }}
+    {{ agg_capital_line|default:'[]'|json_script:'agg-capital' }}
+    {{ agg_initial_capital_line|default:'[]'|json_script:'agg-initial-capital' }}
+    {{ agg_coverage_line|default:'[]'|json_script:'agg-coverage' }}
     {# Provide payoff markers as safe JSON for JS to read #}
     {{ payoff_flow_label_all|json_script:'agg-payoff-flow' }}
     {{ payoff_growing_label_all|json_script:'agg-payoff-grow' }}
     {{ months_to_payoff_flow_all|json_script:'agg-payoff-flow-months' }}
     {{ months_to_payoff_growing_all|json_script:'agg-payoff-grow-months' }}
 
-    
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
     <script>
         (function(){
-            // Ensure annotation plugin is registered
-            if (window['chartjs-plugin-annotation']) {
-                try { Chart.register(window['chartjs-plugin-annotation']); } catch (e) {}
-            }
-            const histLabels = JSON.parse(document.getElementById('hist-labels').textContent || '[]');
-            const histValues = JSON.parse(document.getElementById('hist-values').textContent || '[]');
-            if (histLabels.length) {
-                const ctx = document.getElementById('earningsChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: histLabels,
-                        datasets: [{
-                            label: 'Paid Total',
-                            data: histValues,
-                            borderColor: 'rgba(13, 110, 253, 1)',
-                            backgroundColor: 'rgba(13, 110, 253, 0.2)',
-                            tension: 0.2,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: { beginAtZero: true }
-                        }
-                    }
-                });
-            }
-        })();
-    </script>
-    <script>
-        (function(){
-            const labels = {{ agg_labels|default:'[]'|safe }};
-            const cumulative = {{ agg_cumulative|default:'[]'|safe }};
-            const ctx = document.getElementById('aggEarningsChart').getContext('2d');
-            new Chart(ctx, {
+            const elLabelsAgg = document.getElementById('agg-labels');
+            const elCumAgg = document.getElementById('agg-cumulative');
+            if (!elLabelsAgg || !elCumAgg) return;
+            const labelsAgg = JSON.parse(elLabelsAgg.textContent || '[]');
+            const cumulativeAgg = JSON.parse(elCumAgg.textContent || '[]');
+            const ctxAggEarn = document.getElementById('aggEarningsChart').getContext('2d');
+            new Chart(ctxAggEarn, {
                 type: 'line',
                 data: {
-                    labels: labels,
-                    datasets: [{label: 'Paid Total', data: cumulative, borderColor: 'rgba(13, 110, 253, 1)', backgroundColor: 'rgba(13, 110, 253, 0.2)', tension: 0.2, fill: true}]
+                    labels: labelsAgg,
+                    datasets: [{label: 'Paid Total', data: cumulativeAgg, borderColor: 'rgba(13, 110, 253, 1)', backgroundColor: 'rgba(13, 110, 253, 0.2)', tension: 0.2, fill: true}]
                 }
             });
         })();
@@ -145,11 +157,17 @@
 
     <script>
         (function () {
-            const labels = {{ agg_labels|default:'[]'|safe }};
-            const cumulative = {{ agg_cumulative|default:'[]'|safe }};
-            const capitalLine = {{ agg_capital_line|default:'[]'|safe }};
-            const initialCapital = {{ agg_initial_capital_line|default:'[]'|safe }};
-            const coverage = {{ agg_coverage_line|default:'[]'|safe }};
+            const elLabelsAgg = document.getElementById('agg-labels');
+            const elCumAgg = document.getElementById('agg-cumulative');
+            const elCapital = document.getElementById('agg-capital');
+            const elInitial = document.getElementById('agg-initial-capital');
+            const elCoverage = document.getElementById('agg-coverage');
+            if (!elLabelsAgg) return;
+            const labelsAgg = JSON.parse(elLabelsAgg.textContent || '[]');
+            const cumulativeAgg = elCumAgg ? JSON.parse(elCumAgg.textContent || '[]') : [];
+            const capitalLineAgg = elCapital ? JSON.parse(elCapital.textContent || '[]') : [];
+            const initialCapitalAgg = elInitial ? JSON.parse(elInitial.textContent || '[]') : [];
+            const coverageAgg = elCoverage ? JSON.parse(elCoverage.textContent || '[]') : [];
             const elPayoffFlow = document.getElementById('agg-payoff-flow');
             const elPayoffGrow = document.getElementById('agg-payoff-grow');
             const elPayoffFlowMonths = document.getElementById('agg-payoff-flow-months');
@@ -158,18 +176,18 @@
             const payoffGrow = elPayoffGrow ? JSON.parse(elPayoffGrow.textContent) : null;
             const payoffFlowMonths = elPayoffFlowMonths ? JSON.parse(elPayoffFlowMonths.textContent) : null;
             const payoffGrowMonths = elPayoffGrowMonths ? JSON.parse(elPayoffGrowMonths.textContent) : null;
-            if (!labels.length) return;
+            if (!labelsAgg.length) return;
 
-            const ctx = document.getElementById('aggProjectionChart').getContext('2d');
-            new Chart(ctx, {
+            const ctxAggProj = document.getElementById('aggProjectionChart').getContext('2d');
+            new Chart(ctxAggProj, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: labelsAgg,
                     datasets: [
-                        {label: 'Cumulative Flow (All)', data: cumulative, borderColor: 'rgba(25,135,84,1)', backgroundColor: 'rgba(25,135,84,0.2)', tension: 0.2, fill: true},
-                        {label: 'Capital (All)', data: capitalLine, borderColor: 'rgba(220,53,69,1)', backgroundColor: 'rgba(220,53,69,0.2)', tension: 0, fill: false},
-                        {label: 'Initial Capital (All)', data: initialCapital, borderColor: 'rgba(108,117,125,1)', backgroundColor: 'rgba(108,117,125,0.2)', borderDash: [6, 6], tension: 0, fill: false},
-                        {label: 'Flow + Appreciation (Coverage, All)', data: coverage, borderColor: 'rgba(255,159,64,1)', backgroundColor: 'rgba(255,159,64,0.2)', tension: 0.2, fill: false},
+                        {label: 'Cumulative Flow (All)', data: cumulativeAgg, borderColor: 'rgba(25,135,84,1)', backgroundColor: 'rgba(25,135,84,0.2)', tension: 0.2, fill: true},
+                        {label: 'Capital (All)', data: capitalLineAgg, borderColor: 'rgba(220,53,69,1)', backgroundColor: 'rgba(220,53,69,0.2)', tension: 0, fill: false},
+                        {label: 'Initial Capital (All)', data: initialCapitalAgg, borderColor: 'rgba(108,117,125,1)', backgroundColor: 'rgba(108,117,125,0.2)', borderDash: [6, 6], tension: 0, fill: false},
+                        {label: 'Flow + Appreciation (Coverage, All)', data: coverageAgg, borderColor: 'rgba(255,159,64,1)', backgroundColor: 'rgba(255,159,64,0.2)', tension: 0.2, fill: false},
                     ]
                 },
                 options: {

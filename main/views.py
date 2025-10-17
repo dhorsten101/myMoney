@@ -10,6 +10,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 from api.models import Quote
 from credits.models import Credit
@@ -138,3 +139,10 @@ def global_search(request):
 
 def uml_view(request):
 	return render(request, 'uml_view.html', {})
+
+
+def home(request):
+    # Optional context: show quote if available
+    from api.models import Quote
+    quote = Quote.objects.order_by('-id').first()
+    return render(request, 'home.html', {"quote": quote})

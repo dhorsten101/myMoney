@@ -339,6 +339,22 @@ def homes_dashboard(request):
 	from datetime import date
 	capital_sum = RentalProperty.objects.aggregate(Sum("capital_value")).get("capital_value__sum") or Decimal("0")
 	flow_sum = RentalProperty.objects.aggregate(Sum("flow_value")).get("flow_value__sum") or Decimal("0")
+	# Totals scoped to rental properties only
+	rental_income_total = (
+		Invoice.objects
+		.filter(status=Invoice.STATUS_PAID, rental_property__isnull=False)
+		.aggregate(Sum("total"))
+		.get("total__sum") or Decimal("0.00")
+	)
+	rental_expenses_total = (
+		MonthlyExpense.objects
+		.filter(property__isnull=False)
+		.aggregate(Sum("amount"))
+		.get("amount__sum") or Decimal("0.00")
+	)
+
+	# Net = Income - Expenses
+	rental_net_total = (rental_income_total or Decimal("0.00")) - (rental_expenses_total or Decimal("0.00"))
 	
 	# Growth rate from query param (defaults to 5%)
 	try:
@@ -404,6 +420,10 @@ def homes_dashboard(request):
 		"recent": recent,
 		"rental_labels": rental_labels,
 		"rental_totals": rental_totals,
+		"total_rental_capital": float(capital_sum),
+		"total_rental_income": rental_income_total,
+		"total_rental_expenses": rental_expenses_total,
+		"total_rental_net": rental_net_total,
 		# Aggregated projection context
 		"agg_labels": agg_labels,
 		"agg_cumulative": agg_cumulative,
@@ -513,6 +533,7 @@ def money_dashboard(request):
 		"recent": recent,
 		"rental_labels": rental_labels,
 		"rental_totals": rental_totals,
+		"total_rental_capital": float(capital_sum),
 		"agg_labels": agg_labels,
 		"agg_cumulative": agg_cumulative,
 		"agg_capital_line": agg_capital_line,

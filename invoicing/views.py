@@ -10,8 +10,8 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 
-from invoicing.forms import InvoiceForm, RentalPropertyForm, RentalPropertyImageForm, RentalPropertyPipelineForm, MonthlyExpenseForm, RentalAgentForm, EstateAgentForm, ManagingAgentForm, RentalPropertyPipelineImageForm
-from invoicing.models import Invoice, RentalProperty, RentalPropertyPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, RentalPropertyPipelineImage
+from invoicing.forms import InvoiceForm, PropertyForm, RentalPropertyForm, RentalPropertyImageForm, RentalPropertyPipelineForm, MonthlyExpenseForm, RentalAgentForm, EstateAgentForm, ManagingAgentForm, RentalPropertyPipelineImageForm
+from invoicing.models import Invoice, Property, RentalProperty, RentalPropertyPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, RentalPropertyPipelineImage
 
 
 @login_required
@@ -775,6 +775,57 @@ def rental_property_list(request):
 		"properties": props,
 		"totals": totals,
 	})
+
+
+# Property CRUD (group of rental properties)
+@login_required
+def property_list(request):
+	items = (
+		Property.objects
+		.order_by("name")
+	)
+	return render(request, "invoicing/property_list.html", {"items": items})
+
+
+@login_required
+def property_detail(request, id):
+	item = get_object_or_404(Property, id=id)
+	rental_props = item.rental_properties.order_by("name")
+	return render(request, "invoicing/property_detail.html", {"item": item, "rental_properties": rental_props})
+
+
+@login_required
+def property_create(request):
+	if request.method == "POST":
+		form = PropertyForm(request.POST)
+		if form.is_valid():
+			item = form.save()
+			return redirect("property_detail", id=item.id)
+	else:
+		form = PropertyForm()
+	return render(request, "invoicing/property_form.html", {"form": form})
+
+
+@login_required
+def property_update(request, id):
+	item = get_object_or_404(Property, id=id)
+	if request.method == "POST":
+		form = PropertyForm(request.POST, instance=item)
+		if form.is_valid():
+			item = form.save()
+			return redirect("property_detail", id=item.id)
+	else:
+		form = PropertyForm(instance=item)
+	return render(request, "invoicing/property_form.html", {"form": form, "item": item})
+
+
+@login_required
+def property_delete(request, id):
+	item = get_object_or_404(Property, id=id)
+	if request.method == "POST":
+		item.delete()
+		return redirect("property_list")
+	return render(request, "invoicing/property_confirm_delete.html", {"item": item})
 
 
 @login_required

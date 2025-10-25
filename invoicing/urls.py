@@ -55,6 +55,13 @@ urlpatterns = [
     path("managing-agents/<int:id>/", views.managing_agent_detail, name="managing_agent_detail"),
     path("managing-agents/<int:id>/edit/", views.managing_agent_update, name="managing_agent_update"),
     path("managing-agents/<int:id>/delete/", views.managing_agent_delete, name="managing_agent_delete"),
+
+    # Property groups (top-level properties)
+    path("property/", views.property_list, name="property_list"),
+    path("property/new/", views.property_create, name="property_create"),
+    path("property/<int:id>/", views.property_detail, name="property_detail"),
+    path("property/<int:id>/edit/", views.property_update, name="property_update"),
+    path("property/<int:id>/delete/", views.property_delete, name="property_delete"),
 ]
 
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from invoicing.models import Invoice, RentalProperty, RentalPropertyPipeline, RentalAgent, EstateAgent, ManagingAgent
+from invoicing.models import Invoice, Property, RentalProperty, RentalPropertyPipeline, RentalAgent, EstateAgent, ManagingAgent
 
 
 @admin.register(Invoice)
@@ -35,3 +35,9 @@ class RentalPropertyPipelineAdmin(admin.ModelAdmin):
 	list_display = ("title", "url", "status", "created_at")
 	list_filter = ("status",)
 	search_fields = ("title", "url")
+
+
+@admin.register(Property)
+class PropertyAdmin(admin.ModelAdmin):
+	list_display = ("name", "created_at")
+	search_fields = ("name",)

@@ -3,10 +3,21 @@ from decimal import Decimal, ROUND_HALF_UP
 from django.db import models, transaction
 
 
+class Property(models.Model):
+	name = models.CharField(max_length=200)
+	description = models.TextField(blank=True)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
+	def __str__(self):
+		return self.name
+
+
 class RentalProperty(models.Model):
 	name = models.CharField(max_length=200)
 	address = models.CharField(max_length=255)
 	website = models.URLField(blank=True)
+	property_group = models.ForeignKey('Property', null=True, blank=True, on_delete=models.SET_NULL, related_name='rental_properties')
 	capital_value = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 	flow_value = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 	levies = models.DecimalField(max_digits=12, decimal_places=2, default=0)

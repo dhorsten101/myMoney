@@ -1,6 +1,6 @@
 from django import forms
 
-from invoicing.models import Invoice, RentalProperty, RentalPropertyImage, RentalPropertyPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, RentalPropertyPipelineImage
+from invoicing.models import Invoice, Property, RentalProperty, RentalPropertyImage, RentalPropertyPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, RentalPropertyPipelineImage
 
 
 class InvoiceForm(forms.ModelForm):
@@ -72,6 +72,7 @@ class RentalPropertyForm(forms.ModelForm):
 			"name",
 			"address",
 			"website",
+			"property_group",
 			"capital_value",
 			"flow_value",
 			"levies",
@@ -86,6 +87,7 @@ class RentalPropertyForm(forms.ModelForm):
 			"name": forms.TextInput(attrs={"class": "form-control"}),
 			"address": forms.TextInput(attrs={"class": "form-control"}),
 			"website": forms.URLInput(attrs={"class": "form-control", "placeholder": "https://..."}),
+			"property_group": forms.Select(attrs={"class": "form-select"}),
 			"capital_value": forms.NumberInput(attrs={"class": "form-control"}),
 			"flow_value": forms.NumberInput(attrs={"class": "form-control"}),
 			"levies": forms.NumberInput(attrs={"class": "form-control"}),
@@ -95,6 +97,16 @@ class RentalPropertyForm(forms.ModelForm):
 			"agent": forms.Select(attrs={"class": "form-select"}),
 			"estate_agent": forms.Select(attrs={"class": "form-select"}),
 			"managing_agent": forms.Select(attrs={"class": "form-select"}),
+		}
+
+
+class PropertyForm(forms.ModelForm):
+	class Meta:
+		model = Property
+		fields = ["name", "description"]
+		widgets = {
+			"name": forms.TextInput(attrs={"class": "form-control"}),
+			"description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
 		}
 
 

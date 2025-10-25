@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.name }}{% endblock %}
+
+{% block content %}
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<h1 class="mb-0">{{ item.name }}</h1>
+		<div class="btn-group">
+			<a class="btn btn-outline-secondary" href="/property/">Back</a>
+			<a class="btn btn-primary" href="/property/{{ item.id }}/edit/">Edit</a>
+		</div>
+	</div>
+
+	{% if item.description %}
+	<div class="card shadow-sm mb-3">
+		<div class="card-body">
+			<p class="mb-0">{{ item.description }}</p>
+		</div>
+	</div>
+	{% endif %}
+
+	<div class="card shadow-sm">
+		<div class="card-body">
+			<h5 class="card-title">Rental Properties</h5>
+			<div class="table-responsive">
+				<table class="table table-striped table-hover mb-0">
+					<thead class="table-light">
+						<tr>
+							<th>Name</th>
+							<th>Address</th>
+							<th class="text-end">Capital</th>
+							<th class="text-end">Flow</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for rp in rental_properties %}
+						<tr>
+							<td><a href="/rental/{{ rp.id }}/">{{ rp.name }}</a></td>
+							<td>{{ rp.address }}</td>
+							<td class="text-end">{{ rp.capital_value }}</td>
+							<td class="text-end">{{ rp.flow_value }}</td>
+						</tr>
+					{% empty %}
+						<tr><td colspan="4" class="text-center text-muted">No rental properties linked.</td></tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+

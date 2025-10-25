@@ -1,6 +1,6 @@
 from django import forms
 
-from invoicing.models import Invoice, Property, RentalProperty, RentalPropertyImage, RentalPropertyPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, RentalPropertyPipelineImage
+from invoicing.models import Invoice, Property, Door, DoorImage, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, DoorPipelineImage
 
 
 class InvoiceForm(forms.ModelForm):
@@ -10,7 +10,7 @@ class InvoiceForm(forms.ModelForm):
 			"issue_date",
 			"due_date",
 			"status",
-			"rental_property",
+			"door",
 			"total",  # capture Gross Total (incl. VAT) directly
 			"notes",
 		]
@@ -37,11 +37,11 @@ class InvoiceForm(forms.ModelForm):
 			net = total / 1.15
 		"""
 		instance = super().save(commit=False)
-		# Auto-set customer fields from rental property selection
+		# Auto-set customer fields from door selection
 		try:
-			prop = instance.rental_property
-			if prop and (not instance.customer_name):
-				instance.customer_name = prop.name
+			door = instance.door
+			if door and (not instance.customer_name):
+				instance.customer_name = door.name
 			# Always clear email since we no longer capture it
 			instance.customer_email = ""
 		except Exception:
@@ -67,7 +67,7 @@ class InvoiceForm(forms.ModelForm):
 
 class RentalPropertyForm(forms.ModelForm):
 	class Meta:
-		model = RentalProperty
+		model = Door
 		fields = [
 			"name",
 			"address",
@@ -103,16 +103,17 @@ class RentalPropertyForm(forms.ModelForm):
 class PropertyForm(forms.ModelForm):
 	class Meta:
 		model = Property
-		fields = ["name", "description"]
+		fields = ["name", "address", "description"]
 		widgets = {
 			"name": forms.TextInput(attrs={"class": "form-control"}),
+			"address": forms.TextInput(attrs={"class": "form-control"}),
 			"description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
 		}
 
 
 class RentalPropertyImageForm(forms.ModelForm):
 	class Meta:
-		model = RentalPropertyImage
+		model = DoorImage
 		fields = ["image"]
 		widgets = {
 			"image": forms.ClearableFileInput(attrs={"class": "form-control"}),
@@ -121,7 +122,7 @@ class RentalPropertyImageForm(forms.ModelForm):
 
 class RentalPropertyPipelineImageForm(forms.ModelForm):
 	class Meta:
-		model = RentalPropertyPipelineImage
+		model = DoorPipelineImage
 		fields = ["image"]
 		widgets = {
 			"image": forms.ClearableFileInput(attrs={"class": "form-control"}),
@@ -130,7 +131,7 @@ class RentalPropertyPipelineImageForm(forms.ModelForm):
 
 class RentalPropertyPipelineForm(forms.ModelForm):
 	class Meta:
-		model = RentalPropertyPipeline
+		model = DoorPipeline
 		fields = ["url", "title", "notes", "price"]
 		widgets = {
 			"url": forms.URLInput(attrs={"class": "form-control", "placeholder": "https://..."}),
@@ -143,12 +144,12 @@ class RentalPropertyPipelineForm(forms.ModelForm):
 class MonthlyExpenseForm(forms.ModelForm):
 	class Meta:
 		model = MonthlyExpense
-		fields = ["date", "amount", "description", "property"]
+		fields = ["date", "amount", "description", "door"]
 		widgets = {
 			"date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
 			"amount": forms.NumberInput(attrs={"class": "form-control", "step": "0.01"}),
 			"description": forms.TextInput(attrs={"class": "form-control"}),
-			"property": forms.Select(attrs={"class": "form-select"}),
+			"door": forms.Select(attrs={"class": "form-select"}),
 		}
 
 
@@ -190,7 +191,7 @@ class ManagingAgentForm(forms.ModelForm):
 
 class RentalPropertyManagingAgentForm(forms.ModelForm):
 	class Meta:
-		model = RentalProperty
+		model = Door
 		fields = ["managing_agent"]
 		widgets = {
 			"managing_agent": forms.Select(attrs={"class": "form-select"}),

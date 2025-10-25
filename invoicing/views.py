@@ -11,7 +11,11 @@ import requests
 from bs4 import BeautifulSoup
 
 from invoicing.forms import InvoiceForm, PropertyForm, RentalPropertyForm, RentalPropertyImageForm, RentalPropertyPipelineForm, MonthlyExpenseForm, RentalAgentForm, EstateAgentForm, ManagingAgentForm, RentalPropertyPipelineImageForm
-from invoicing.models import Invoice, Property, RentalProperty, RentalPropertyPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, RentalPropertyPipelineImage
+from invoicing.models import Invoice, Property, Door, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, DoorPipelineImage
+from cryptos.models import CryptoStats
+from incomes.models import Income
+from worth.models import Worth
+from sellables.models import Sellable
 
 
 @login_required
@@ -173,13 +177,13 @@ def invoice_create(request):
             invoice = form.save()
             return redirect("invoice_detail", id=invoice.id)
     else:
-        # Optional preselect rental property via ?rental_property=<id>
-        rental_property_id = (request.GET.get("rental_property") or "").strip()
+        # Optional preselect door via ?door=<id>
+        rental_property_id = (request.GET.get("door") or "").strip()
         initial = {}
         if rental_property_id.isdigit():
             try:
-                initial["rental_property"] = RentalProperty.objects.get(id=int(rental_property_id))
-            except RentalProperty.DoesNotExist:
+                initial["door"] = Door.objects.get(id=int(rental_property_id))
+            except Door.DoesNotExist:
                 pass
         form = InvoiceForm(initial=initial)
     return render(request, "invoicing/invoice_form.html", {"form": form})
@@ -260,16 +264,16 @@ def expense_create(request):
             expense = form.save()
             # If the expense is linked to a property, consider redirecting back there
             if expense.property_id:
-                return redirect("rental_property_detail", id=expense.property_id)
+                return redirect("rental_property_detail", id=expense.door_id)
             return redirect("expense_list")
     else:
-        # Optional preselect property via ?property=<id>
-        prop_id = (request.GET.get("property") or "").strip()
+        # Optional preselect door via ?door=<id>
+        prop_id = (request.GET.get("door") or "").strip()
         initial = {}
         if prop_id.isdigit():
             try:
-                initial["property"] = RentalProperty.objects.get(id=int(prop_id))
-            except RentalProperty.DoesNotExist:
+                initial["door"] = Door.objects.get(id=int(prop_id))
+            except Door.DoesNotExist:
                 pass
         form = MonthlyExpenseForm(initial=initial)
     return render(request, "invoicing/expense_form.html", {"form": form})
@@ -318,6 +322,14 @@ def homes_dashboard(request):
 		total_unpaid=Sum("total", filter=~models.Q(status=Invoice.STATUS_PAID)),
 	)
 	totals = {k: v or Decimal("0.00") for k, v in totals.items()}
+
+	# Counts
+	total_properties_count = Property.objects.count()
+	total_doors_count = Door.objects.count()
+	total_agents_count = RentalAgent.objects.count()
+	total_pipelines_count = DoorPipeline.objects.count()
+	total_invoices_count = Invoice.objects.count()
+	total_expenses_count = MonthlyExpense.objects.count()
 	
 	# Recent invoices
 	recent = Invoice.objects.order_by("-issue_date", "-id")[:10]
@@ -326,7 +338,7 @@ def homes_dashboard(request):
 	from django.db.models.functions import TruncMonth
 	rental_monthly = (
 		Invoice.objects
-		.filter(status=Invoice.STATUS_PAID, rental_property__isnull=False)
+		.filter(status=Invoice.STATUS_PAID, door__isnull=False)
 		.annotate(month=TruncMonth("issue_date"))
 		.values("month")
 		.annotate(total=Sum("total"))
@@ -337,18 +349,18 @@ def homes_dashboard(request):
 	
 	# Aggregated projection across all rental properties (same rules as per-property earnings)
 	from datetime import date
-	capital_sum = RentalProperty.objects.aggregate(Sum("capital_value")).get("capital_value__sum") or Decimal("0")
-	flow_sum = RentalProperty.objects.aggregate(Sum("flow_value")).get("flow_value__sum") or Decimal("0")
+	capital_sum = Door.objects.aggregate(Sum("capital_value")).get("capital_value__sum") or Decimal("0")
+	flow_sum = Door.objects.aggregate(Sum("flow_value")).get("flow_value__sum") or Decimal("0")
 	# Totals scoped to rental properties only
 	rental_income_total = (
-		Invoice.objects
-		.filter(status=Invoice.STATUS_PAID, rental_property__isnull=False)
+        Invoice.objects
+        .filter(status=Invoice.STATUS_PAID, door__isnull=False)
 		.aggregate(Sum("total"))
 		.get("total__sum") or Decimal("0.00")
 	)
 	rental_expenses_total = (
 		MonthlyExpense.objects
-		.filter(property__isnull=False)
+		.filter(door__isnull=False)
 		.aggregate(Sum("amount"))
 		.get("amount__sum") or Decimal("0.00")
 	)
@@ -424,6 +436,12 @@ def homes_dashboard(request):
 		"total_rental_income": rental_income_total,
 		"total_rental_expenses": rental_expenses_total,
 		"total_rental_net": rental_net_total,
+		"total_properties_count": total_properties_count,
+		"total_doors_count": total_doors_count,
+		"total_agents_count": total_agents_count,
+		"total_pipelines_count": total_pipelines_count,
+		"total_invoices_count": total_invoices_count,
+		"total_expenses_count": total_expenses_count,
 		# Aggregated projection context
 		"agg_labels": agg_labels,
 		"agg_cumulative": agg_cumulative,
@@ -451,11 +469,11 @@ def money_dashboard(request):
 	# Recent invoices
 	recent = Invoice.objects.order_by("-issue_date", "-id")[:10]
 
-	# Rental properties totals by month (sum across all properties)
+	# Doors totals by month (sum across all doors)
 	from django.db.models.functions import TruncMonth
 	rental_monthly = (
 		Invoice.objects
-		.filter(status=Invoice.STATUS_PAID, rental_property__isnull=False)
+		.filter(status=Invoice.STATUS_PAID, door__isnull=False)
 		.annotate(month=TruncMonth("issue_date"))
 		.values("month")
 		.annotate(total=Sum("total"))
@@ -464,10 +482,10 @@ def money_dashboard(request):
 	rental_labels = [r["month"].strftime("%Y-%m") for r in rental_monthly]
 	rental_totals = [float(r["total"]) for r in rental_monthly]
 
-	# Aggregated projection across all rental properties (same rules as per-property earnings)
+	# Aggregated projection across all doors (same rules as per-door earnings)
 	from datetime import date
-	capital_sum = RentalProperty.objects.aggregate(Sum("capital_value")).get("capital_value__sum") or Decimal("0")
-	flow_sum = RentalProperty.objects.aggregate(Sum("flow_value")).get("flow_value__sum") or Decimal("0")
+	capital_sum = Door.objects.aggregate(Sum("capital_value")).get("capital_value__sum") or Decimal("0")
+	flow_sum = Door.objects.aggregate(Sum("flow_value")).get("flow_value__sum") or Decimal("0")
 
 	# Growth rate from query param (defaults to 5%)
 	try:
@@ -528,6 +546,21 @@ def money_dashboard(request):
 				months_to_payoff_growing_all = len(agg_labels)
 			i += 1
 
+	# Latest crypto total (if available)
+	crypto_total = None
+	try:
+		latest_crypto = CryptoStats.objects.order_by('-timestamp').first()
+		if latest_crypto:
+			crypto_total = float(latest_crypto.total_value)
+	except Exception:
+		crypto_total = None
+
+	# Other totals
+	income_total = Income.objects.aggregate(Sum('balance')).get('balance__sum') or 0
+	net_worth_total = Worth.objects.aggregate(Sum('real_value')).get('real_value__sum') or 0
+	sellable_total = Sellable.objects.aggregate(Sum('price')).get('price__sum') or 0
+	expenses_total_amount = MonthlyExpense.objects.aggregate(Sum('amount')).get('amount__sum') or 0
+
 	return render(request, "invoicing/money_dashboard.html", {
 		"totals": totals,
 		"recent": recent,
@@ -544,6 +577,11 @@ def money_dashboard(request):
 		"months_to_payoff_flow_all": months_to_payoff_flow_all,
 		"months_to_payoff_growing_all": months_to_payoff_growing_all,
 		"growth_rate_percent": float(rate_percent),
+		"crypto_total": crypto_total,
+		"income_total": float(income_total),
+		"net_worth_total": float(net_worth_total),
+		"sellable_total": float(sellable_total),
+		"expenses_total_amount": float(expenses_total_amount),
 	})
 
 
@@ -553,7 +591,7 @@ def rental_pipeline_list(request):
 	if status_filter not in {"interested", "sold", "not_interested"}:
 		status_filter = "interested"
 	items = (
-		RentalPropertyPipeline.objects
+		DoorPipeline.objects
 		.filter(status=status_filter)
 		.prefetch_related("images")
 		.order_by("-created_at")
@@ -569,9 +607,10 @@ def rental_pipeline_list(request):
 
 
 @login_required
+
 def rental_pipeline_update_status(request, id, status):
-	item = get_object_or_404(RentalPropertyPipeline, id=id)
-	if status in dict(RentalPropertyPipeline.STATUS_CHOICES).keys():
+	item = get_object_or_404(DoorPipeline, id=id)
+	if status in dict(DoorPipeline.STATUS_CHOICES).keys():
 		item.status = status
 		item.save()
 	return redirect("rental_pipeline_list")
@@ -579,7 +618,7 @@ def rental_pipeline_update_status(request, id, status):
 
 @login_required
 def rental_pipeline_edit(request, id):
-    item = get_object_or_404(RentalPropertyPipeline, id=id)
+    item = get_object_or_404(DoorPipeline, id=id)
     if request.method == "POST":
         form = RentalPropertyPipelineForm(request.POST, instance=item)
         if form.is_valid():
@@ -593,7 +632,7 @@ def rental_pipeline_edit(request, id):
 
 @login_required
 def rental_pipeline_detail(request, id):
-    item = get_object_or_404(RentalPropertyPipeline, id=id)
+    item = get_object_or_404(DoorPipeline, id=id)
     image_form = RentalPropertyPipelineImageForm()
     return render(request, "invoicing/rental_property_pipeline_detail.html", {"item": item, "image_form": image_form})
 
@@ -765,7 +804,7 @@ def preview_images_from_url(request):
 # RentalProperty CRUD
 @login_required
 def rental_property_list(request):
-	props = RentalProperty.objects.order_by("name")
+	props = Door.objects.order_by("name")
 	totals = props.aggregate(
 		total_capital=Sum("capital_value"),
 		total_flow=Sum("flow_value"),
@@ -830,7 +869,7 @@ def property_delete(request, id):
 
 @login_required
 def rental_property_detail(request, id):
-    prop = get_object_or_404(RentalProperty, id=id)
+    prop = get_object_or_404(Door, id=id)
     image_form = RentalPropertyImageForm()
     # Build life-to-date monthly series for income (paid invoices) and expenses for this property
     # Use issue_date for invoices and date for expenses, grouped by month
@@ -838,14 +877,14 @@ def rental_property_detail(request, id):
     # Determine range from first month seen in either series to current month
     first_inv = (
         Invoice.objects
-        .filter(status=Invoice.STATUS_PAID, rental_property=prop)
+        .filter(status=Invoice.STATUS_PAID, door=prop)
         .order_by("issue_date")
         .values_list("issue_date", flat=True)
         .first()
     )
     first_exp = (
         MonthlyExpense.objects
-        .filter(property=prop)
+        .filter(door=prop)
         .order_by("date")
         .values_list("date", flat=True)
         .first()
@@ -870,7 +909,7 @@ def rental_property_detail(request, id):
     # Aggregate paid invoices by month for this property
     inv_qs = (
         Invoice.objects
-        .filter(status=Invoice.STATUS_PAID, rental_property=prop)
+        .filter(status=Invoice.STATUS_PAID, door=prop)
         .annotate(month=TruncMonth("issue_date"))
         .values("month")
         .annotate(total=Sum("total"))
@@ -880,7 +919,7 @@ def rental_property_detail(request, id):
     # Aggregate expenses by month for this property
     exp_qs = (
         MonthlyExpense.objects
-        .filter(property=prop)
+        .filter(door=prop)
         .annotate(month=TruncMonth("date"))
         .values("month")
         .annotate(total=Sum("amount"))
@@ -906,19 +945,19 @@ def rental_property_detail(request, id):
 
 @login_required
 def rental_property_upload_image(request, id):
-	prop = get_object_or_404(RentalProperty, id=id)
+	prop = get_object_or_404(Door, id=id)
 	if request.method == "POST":
 		form = RentalPropertyImageForm(request.POST, request.FILES)
 		if form.is_valid():
 			img = form.save(commit=False)
-			img.property = prop
+			img.door = prop
 			img.save()
 	return redirect("rental_property_detail", id=prop.id)
 
 
 @login_required
 def rental_pipeline_upload_image(request, id):
-    item = get_object_or_404(RentalPropertyPipeline, id=id)
+    item = get_object_or_404(DoorPipeline, id=id)
     if request.method == "POST":
         form = RentalPropertyPipelineImageForm(request.POST, request.FILES)
         if form.is_valid():
@@ -942,7 +981,7 @@ def rental_property_create(request):
 
 @login_required
 def rental_property_update(request, id):
-	prop = get_object_or_404(RentalProperty, id=id)
+	prop = get_object_or_404(Door, id=id)
 	if request.method == "POST":
 		form = RentalPropertyForm(request.POST, instance=prop)
 		if form.is_valid():
@@ -955,7 +994,7 @@ def rental_property_update(request, id):
 
 @login_required
 def rental_property_delete(request, id):
-	prop = get_object_or_404(RentalProperty, id=id)
+	prop = get_object_or_404(Door, id=id)
 	if request.method == "POST":
 		prop.delete()
 		return redirect("rental_property_list")
@@ -964,11 +1003,11 @@ def rental_property_delete(request, id):
 
 @login_required
 def rental_property_earnings(request, id):
-	prop = get_object_or_404(RentalProperty, id=id)
+	prop = get_object_or_404(Door, id=id)
 	# Paid invoices linked to this property, grouped by month
 	qs = (
 		Invoice.objects
-		.filter(status=Invoice.STATUS_PAID, rental_property=prop)
+		.filter(status=Invoice.STATUS_PAID, door=prop)
 		.annotate(month=TruncMonth("issue_date"))
 		.values("month")
 		.annotate(total=Sum("total"))

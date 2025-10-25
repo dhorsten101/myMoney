@@ -64,8 +64,8 @@
                 <tr>
                     <td><a href="{% url 'invoice_detail' inv.id %}">{{ inv.number }}</a></td>
                     <td>
-                        {% if inv.rental_property %}
-                            <a href="{% url 'rental_property_detail' inv.rental_property.id %}">{{ inv.rental_property.name }}</a>
+                        {% if inv.door %}
+                            <a href="{% url 'rental_property_detail' inv.door.id %}">{{ inv.door.name }}</a>
                         {% else %}
                             <span class="text-muted">—</span>
                         {% endif %}

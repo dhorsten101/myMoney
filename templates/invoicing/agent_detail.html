@@ -3,6 +3,7 @@
 {% block title %}Agent{% endblock %}
 
 {% block content %}
+{% include "_includes/back_button.html" with fallback_url="{% url 'agent_list' %}" %}
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">{{ agent.name }}</h2>
     <div class="d-flex gap-2">

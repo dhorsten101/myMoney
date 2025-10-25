@@ -7,12 +7,13 @@
         <h2>{{ property.name }}</h2>
         <div>
             <a class="btn btn-outline-primary" href="{% url 'rental_property_update' property.id %}">Edit</a>
-            <a class="btn btn-outline-danger" href="{% url 'invoice_create' %}?rental_property={{ property.id }}">New Invoice</a>
-            <a class="btn btn-outline-info" href="{% url 'expense_create' %}?property={{ property.id }}">New Expense</a>
+            <a class="btn btn-outline-danger" href="{% url 'invoice_create' %}?door={{ property.id }}">New Invoice</a>
+            <a class="btn btn-outline-info" href="{% url 'expense_create' %}?door={{ property.id }}">New Expense</a>
             <a class="btn btn-outline-success" href="{% url 'rental_property_earnings' property.id %}">View Potentials</a>
             <a class="btn btn-outline-secondary" href="{% url 'rental_property_list' %}">Back</a>
         </div>
     </div>
+    {% include "_includes/back_button.html" with fallback_url=url 'rental_property_list' %}
 
     <div class="card shadow-sm mb-3">
         <div class="card-body">

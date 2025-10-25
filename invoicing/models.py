@@ -5,6 +5,7 @@ from django.db import models, transaction
 
 class Property(models.Model):
 	name = models.CharField(max_length=200)
+	address = models.CharField(max_length=255, blank=True)
 	description = models.TextField(blank=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
@@ -13,7 +14,7 @@ class Property(models.Model):
 		return self.name
 
 
-class RentalProperty(models.Model):
+class Door(models.Model):
 	name = models.CharField(max_length=200)
 	address = models.CharField(max_length=255)
 	website = models.URLField(blank=True)
@@ -85,8 +86,8 @@ class Invoice(models.Model):
 	due_date = models.DateField()
 	status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_DRAFT)
 	
-	rental_property = models.ForeignKey(
-		RentalProperty,
+	door = models.ForeignKey(
+		Door,
 		on_delete=models.SET_NULL,
 		null=True,
 		blank=True,
@@ -103,8 +104,8 @@ class Invoice(models.Model):
 	updated_at = models.DateTimeField(auto_now=True)
 	
 	def __str__(self):
-		if self.rental_property:
-			return f"Invoice {self.number} - {self.rental_property.name}"
+		if self.door:
+			return f"Invoice {self.number} - {self.door.name}"
 		return f"Invoice {self.number}"
 	
 	def save(self, *args, **kwargs):
@@ -137,16 +138,16 @@ class Invoice(models.Model):
 		super().save(*args, **kwargs)
 
 
-class RentalPropertyImage(models.Model):
-	property = models.ForeignKey(RentalProperty, related_name="images", on_delete=models.CASCADE)
+class DoorImage(models.Model):
+	door = models.ForeignKey(Door, related_name="images", on_delete=models.CASCADE)
 	image = models.ImageField(upload_to="rental_property_images/")
 	uploaded_at = models.DateTimeField(auto_now_add=True)
 	
 	def __str__(self):
-		return f"Image for {self.property.name}"
+		return f"Image for {self.door.name}"
 
 
-class RentalPropertyPipeline(models.Model):
+class DoorPipeline(models.Model):
 	STATUS_CHOICES = [
 		("interested", "Interested"),
 		("not_interested", "Not Interested"),
@@ -165,8 +166,8 @@ class RentalPropertyPipeline(models.Model):
 		return self.title or self.url
 
 
-class RentalPropertyPipelineImage(models.Model):
-	pipeline = models.ForeignKey(RentalPropertyPipeline, related_name="images", on_delete=models.CASCADE)
+class DoorPipelineImage(models.Model):
+	pipeline = models.ForeignKey(DoorPipeline, related_name="images", on_delete=models.CASCADE)
 	image = models.ImageField(upload_to="rental_property_images/")
 	uploaded_at = models.DateTimeField(auto_now_add=True)
 	
@@ -174,8 +175,9 @@ class RentalPropertyPipelineImage(models.Model):
 		return f"Image for pipeline {self.pipeline.id}"
 
 
+
 class MonthlyExpense(models.Model):
-	property = models.ForeignKey(RentalProperty, null=True, blank=True, on_delete=models.SET_NULL, related_name="monthly_expenses")
+	door = models.ForeignKey(Door, null=True, blank=True, on_delete=models.SET_NULL, related_name="monthly_expenses")
 	date = models.DateField()
 	amount = models.DecimalField(max_digits=12, decimal_places=2)
 	description = models.CharField(max_length=255)
@@ -183,8 +185,8 @@ class MonthlyExpense(models.Model):
 	updated_at = models.DateTimeField(auto_now=True)
 	
 	def __str__(self):
-		prop = f" for {self.property.name}" if self.property else ""
-		return f"Expense {self.date} - {self.amount}{prop}"
+		door = f" for {self.door.name}" if self.door else ""
+		return f"Expense {self.date} - {self.amount}{door}"
 
 
 class RentalAgent(models.Model):

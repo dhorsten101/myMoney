@@ -17,7 +17,6 @@ urlpatterns = [
     path("rental/", views.rental_property_list, name="rental_property_list"),
     path("rental/new/", views.rental_property_create, name="rental_property_create"),
     path("rental/<int:id>/", views.rental_property_detail, name="rental_property_detail"),
-    # Inline managing agent assignment could be posted to the same URL via POST
     path("rental/<int:id>/upload_image/", views.rental_property_upload_image, name="rental_property_upload_image"),
     path("rental/<int:id>/edit/", views.rental_property_update, name="rental_property_update"),
     path("rental/<int:id>/delete/", views.rental_property_delete, name="rental_property_delete"),

@@ -53,31 +53,15 @@
 
         <!-- Global dropdowns -->
         <ul class="navbar-nav ">
-            <li class=" mx-1 nav-item dropdown d-flex align-items-center">
-                <a class="nav-link" href="/money/">MyMoney</a>
-                <a class="nav-link dropdown-toggle dropdown-toggle-split px-0" href="#" id="navbarDropdownMyMoney" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle MyMoney menu"></a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMyMoney">
-                    <li><a class="dropdown-item" href="/expense/">Expenses</a></li>
-                    <li><a class="dropdown-item" href="/asset/">Crypto</a></li>
-                    <li><a class="dropdown-item" href="/credit/">Credit</a></li>
-                    <li><a class="dropdown-item" href="/income/">Income</a></li>
-                    <li><a class="dropdown-item" href="/sellable/">Sellable</a></li>
-                    <li><a class="dropdown-item" href="/money/">Stats</a></li>
-                </ul>
+            <li class=" mx-1 nav-item d-flex align-items-center">
+                <a class="nav-link" href="/money/" onclick="setPortal('mymoney')">MyMoney</a>
             </li>
-            <li class="mx-1 nav-item dropdown d-flex align-items-center">
-                <a class="nav-link" href="/homes/">HorstenHomes</a>
-                <a class="nav-link dropdown-toggle dropdown-toggle-split px-0" href="#" id="navbarDropdownHomes" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle HorstenHomes menu"></a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdownHomes">
-                    <li><a class="dropdown-item" href="/accounts/">Accounts</a></li>
-                    <li><a class="dropdown-item" href="/rental/">Properties</a></li>
-                    <li><a class="dropdown-item" href="/agents/">Agents</a></li>
-                </ul>
+            <li class="mx-1 nav-item d-flex align-items-center">
+                <a class="nav-link" href="/homes/" onclick="setPortal('homes')">HorstenHomes</a>
             </li>
 
             <li class="mx-1 nav-item dropdown d-flex align-items-center">
-                <a class="nav-link" href="#">Productivity</a>
-                <a class="nav-link dropdown-toggle dropdown-toggle-split px-0" href="#" id="navbarDropdownProductivity" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle Productivity menu"></a>
+                <a class="nav-link" href="#" id="navbarDropdownProductivity" role="button" data-bs-toggle="dropdown" aria-expanded="false">Productivity</a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownProductivity">
                     <li><a class="dropdown-item" href="/todo/">ToDo</a></li>
                     <li><a class="dropdown-item" href="/document/">Notes</a></li>
@@ -88,15 +72,13 @@
                 </ul>
             </li>
             <li class="mx-1 nav-item dropdown d-flex align-items-center">
-                <a class="nav-link" href="#">Health</a>
-                <a class="nav-link dropdown-toggle dropdown-toggle-split px-0" href="#" id="navbarDropdownHealth" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle Health menu"></a>
+                <a class="nav-link" href="#" id="navbarDropdownHealth" role="button" data-bs-toggle="dropdown" aria-expanded="false">Health</a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownHealth">
                     <li><a class="dropdown-item" href="/weight/">Weight</a></li>
                 </ul>
             </li>
             <li class="mx-1 nav-item dropdown d-flex align-items-center">
-                <a class="nav-link" href="#">Tools</a>
-                <a class="nav-link dropdown-toggle dropdown-toggle-split px-0" href="#" id="navbarDropdownTools" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Toggle Tools menu"></a>
+                <a class="nav-link" href="#" id="navbarDropdownTools" role="button" data-bs-toggle="dropdown" aria-expanded="false">Tools</a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownTools">
                     <li><a class="dropdown-item" href="/pen_tester/">Pen Test</a></li>
                     <li><a class="dropdown-item" href="/cameras/">Cameras</a></li>

@@ -14,13 +14,15 @@
 				<thead class="table-light">
 					<tr>
 						<th>Name</th>
-						<th class="text-end">Rental Properties</th>
+						<th>Address</th>
+						<th class="text-end">Doors</th>
 					</tr>
 				</thead>
 				<tbody>
 				{% for p in items %}
 					<tr>
 						<td><a href="/property/{{ p.id }}/">{{ p.name }}</a></td>
+						<td>{{ p.address }}</td>
 						<td class="text-end">{{ p.rental_properties.count }}</td>
 					</tr>
 				{% empty %}

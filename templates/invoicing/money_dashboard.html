@@ -7,18 +7,73 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1 class="mb-0">My Money Dashboard</h1>
         <div class="btn-group">
-            <a class="btn btn-outline-primary" href="/expense/">Expenses</a>
-            <a class="btn btn-outline-primary" href="/asset/">Crypto</a>
-            <a class="btn btn-outline-primary" href="/credit/">Credits</a>
-            <a class="btn btn-outline-primary" href="/income/">Income</a>
-            <a class="btn btn-outline-primary" href="/worth/">Net</a>
-            <a class="btn btn-outline-primary" href="/sellable/">Sellable</a>
+            <!-- <a class="btn btn-outline-primary" href="/expense/">Expenses</a> -->
+            <!-- <a class="btn btn-outline-primary" href="/credit/">Credits</a> -->
+      
             <a class="btn btn-outline-primary" href="/history_record/">Stats</a>
 
         </div>
     </div>
 
-    
+    <h5 class="text-muted mb-3">Totals</h5>
+
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-3">
+            <a href="/asset/" class="text-decoration-none d-block">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-1">Crypto</h6>
+                        <div class="display-6 text-success">{% if crypto_total is not None %}R {{ crypto_total|floatformat:2 }}{% else %}<span class="text-muted">—</span>{% endif %}</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="/income/" class="text-decoration-none d-block">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-1">Income</h6>
+                        <div class="display-6 text-success">R {{ income_total|floatformat:2 }}</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="/worth/" class="text-decoration-none d-block">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-1">Net Worth</h6>
+                        <div class="display-6 text-success">R {{ net_worth_total|floatformat:2 }}</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="/expense/" class="text-decoration-none d-block">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-1">Expenses</h6>
+                        <div class="display-6 text-success">R {{ expenses_total_amount|floatformat:2 }}</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-3">
+            <a href="/sellable/" class="text-decoration-none d-block">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-1">Sellables</h6>
+                        <div class="display-6 text-success">R {{ sellable_total|floatformat:2 }}</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
 {% endblock %}
 
 

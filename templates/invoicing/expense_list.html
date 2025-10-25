@@ -18,7 +18,7 @@
             <div class="col-md-2">{{ form.date }}</div>
             <div class="col-md-2">{{ form.amount }}</div>
             <div class="col-md-6">{{ form.description }}</div>
-            <div class="col-md-2">{{ form.property }}</div>
+            <div class="col-md-2">{{ form.door }}</div>
             <div class="col-12 mt-2"><button class="btn btn-success" type="submit">Add Expense</button></div>
         </form>
     </div>
@@ -42,7 +42,7 @@
                     <td>{{ e.date }}</td>
                     <td class="text-end">{{ e.amount }}</td>
                     <td>{{ e.description }}</td>
-                    <td>{% if e.property %}<a href="{% url 'rental_property_detail' e.property.id %}">{{ e.property.name }}</a>{% else %}<span class="text-muted">—</span>{% endif %}</td>
+                    <td>{% if e.door %}<a href="{% url 'rental_property_detail' e.door.id %}">{{ e.door.name }}</a>{% else %}<span class="text-muted">—</span>{% endif %}</td>
                     <td class="text-end">
                         <a class="btn btn-sm btn-outline-primary" href="{% url 'expense_update' e.id %}">Edit</a>
                         <a class="btn btn-sm btn-outline-danger" href="{% url 'expense_delete' e.id %}">Delete</a>

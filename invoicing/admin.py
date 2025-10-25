@@ -1,17 +1,17 @@
 from django.contrib import admin
 
-from invoicing.models import Invoice, Property, RentalProperty, RentalPropertyPipeline, RentalAgent, EstateAgent, ManagingAgent
+from invoicing.models import Invoice, Property, Door, DoorPipeline, RentalAgent, EstateAgent, ManagingAgent
 
 
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
-	list_display = ("number", "rental_property", "issue_date", "due_date", "status", "total")
+	list_display = ("number", "door", "issue_date", "due_date", "status", "total")
 	list_filter = ("status", "issue_date", "due_date")
-	search_fields = ("number", "rental_property__name")
+	search_fields = ("number", "door__name")
 
 
-@admin.register(RentalProperty)
-class RentalPropertyAdmin(admin.ModelAdmin):
+@admin.register(Door)
+class DoorAdmin(admin.ModelAdmin):
 	list_display = ("name", "address", "website", "capital_value", "flow_value", "total_expenses", "income", "cost_of_money_monthly", "appreciation_monthly", "total_income", "agent", "estate_agent", "managing_agent")
 	search_fields = ("name", "address")
 @admin.register(RentalAgent)
@@ -30,8 +30,8 @@ class ManagingAgentAdmin(admin.ModelAdmin):
 	search_fields = ("name", "email", "phone")
 
 
-@admin.register(RentalPropertyPipeline)
-class RentalPropertyPipelineAdmin(admin.ModelAdmin):
+@admin.register(DoorPipeline)
+class DoorPipelineAdmin(admin.ModelAdmin):
 	list_display = ("title", "url", "status", "created_at")
 	list_filter = ("status",)
 	search_fields = ("title", "url")

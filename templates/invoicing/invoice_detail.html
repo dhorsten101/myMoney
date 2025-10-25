@@ -3,6 +3,7 @@
 {% block title %}Invoice {{ invoice.number }}{% endblock %}
 
 {% block content %}
+{% include "_includes/back_button.html" with fallback_url="{% url 'invoice_list' %}" %}
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Invoice {{ invoice.number }}</h2>
     <div>
@@ -17,8 +18,8 @@
             <div class="col-md-6">
                 <p><strong>Invoice #:</strong> {{ invoice.number }}</p>
                 <p><strong>Property:</strong>
-                    {% if invoice.rental_property %}
-                        <a href="{% url 'rental_property_detail' invoice.rental_property.id %}">{{ invoice.rental_property.name }}</a>
+                    {% if invoice.door %}
+                        <a href="{% url 'rental_property_detail' invoice.door.id %}">{{ invoice.door.name }}</a>
                     {% else %}
                         <span class="text-muted">—</span>
                     {% endif %}

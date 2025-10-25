@@ -60,7 +60,7 @@ INSTALLED_APPS = [
 	"pen_tester",
 	"reminders",
 	"time_tracker",
-	"invoicing",
+	"horsten_homes",
 ]
 
 # CKEditor 5 config

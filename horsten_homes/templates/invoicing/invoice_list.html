@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Invoices{% endblock %}
+
+{% block content %}
+{% if chart_labels and chart_values %}
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        <h5 class="card-title mb-3">Paid This Month</h5>
+        <canvas id="invoiceMonthChart" height="80"></canvas>
+    </div>
+</div>
+<script>
+    (function(){
+        const ctx = document.getElementById('invoiceMonthChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ chart_labels|safe }},
+                datasets: [{
+                    label: 'Paid Total',
+                    data: {{ chart_values|safe }},
+                    backgroundColor: 'rgba(25, 135, 84, 0.6)',
+                    borderColor: 'rgba(25, 135, 84, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    })();
+</script>
+{% endif %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Invoices</h2>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" href="{% url 'homes_dashboard' %}">Go to Dash</a>
+        <a class="btn btn-outline-primary" href="{% url 'invoice_monthly_totals' %}">Monthly Totals</a>
+        <a class="btn btn-success" href="{% url 'invoice_create' %}">New Invoice</a>
+    </div>
+    </div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-striped table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Property</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th class="text-end">Before Tax</th>
+                    <th class="text-end">Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for inv in invoices %}
+                <tr>
+                    <td><a href="{% url 'invoice_detail' inv.id %}">{{ inv.number }}</a></td>
+                    <td>
+                        {% if inv.door %}
+                            <a href="{% url 'door_detail' inv.door.id %}">{{ inv.door.name }}</a>
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ inv.issue_date }}</td>
+                    <td>{{ inv.due_date }}</td>
+                    <td>{{ inv.get_status_display }}</td>
+                    <td class="text-end">{{ inv.subtotal }}</td>
+                    <td class="text-end">{{ inv.total }}</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" href="{% url 'invoice_update' inv.id %}">Edit</a>
+                        <a class="btn btn-sm btn-outline-danger" href="{% url 'invoice_delete' inv.id %}">Delete</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="9" class="text-center text-muted">No invoices yet.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+

@@ -28,7 +28,7 @@ urlpatterns = [
 				  path("", include("pen_tester.urls")),
 				  path("", include("reminders.urls")),
 				  path("", include("time_tracker.urls")),
-				  path("", include("invoicing.urls")),
+				  path("", include("horsten_homes.urls")),
 				  path('ckeditor5/', include('django_ckeditor_5.urls')),
 			  
 			  ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

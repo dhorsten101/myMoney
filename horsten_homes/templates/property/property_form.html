@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}{% if item %}Edit Property{% else %}New Property{% endif %}{% endblock %}
+
+{% block content %}
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<h1 class="mb-0">{% if item %}Edit Property{% else %}New Property{% endif %}</h1>
+		<a class="btn btn-outline-secondary" href="/property/">Back</a>
+	</div>
+
+	<div class="card shadow-sm">
+		<div class="card-body">
+			<form method="post">
+				{% csrf_token %}
+				<div class="mb-3">
+					<label class="form-label">Name</label>
+					{{ form.name }}
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Address</label>
+					{{ form.address }}
+				</div>
+				<!-- <div class="mb-3">
+					<label class="form-label">Description</label>
+					{{ form.description }}
+				</div> -->
+				<button type="submit" class="btn btn-primary">Save</button>
+			</form>
+		</div>
+	</div>
+{% endblock %}
+
+

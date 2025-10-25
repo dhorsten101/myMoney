@@ -13,7 +13,8 @@
             <a class="btn btn-outline-secondary" href="{% url 'rental_property_list' %}">Back</a>
         </div>
     </div>
-    {% include "_includes/back_button.html" with fallback_url=url 'rental_property_list' %}
+    {% url 'rental_property_list' as back_url %}
+    {% include "_includes/back_button.html" with fallback_url=back_url %}
 
     <div class="card shadow-sm mb-3">
         <div class="card-body">

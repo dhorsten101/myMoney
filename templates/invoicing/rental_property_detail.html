@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}{{ property.name }}{% endblock %}
+
+{% block content %}
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Door: {{ property.name }}</h2>
+        <div class="btn-group d-flex gap-2 ">
+            <a class="btn btn-outline-secondary" href="{% url 'door_list' %}">Back</a>
+            <a class="btn btn-outline-primary" href="{% url 'door_update' property.id %}">Edit</a>
+            <a class="btn btn-outline-danger" href="{% url 'invoice_create' %}?door={{ property.id }}">New Invoice</a>
+            <a class="btn btn-outline-info" href="{% url 'expense_create' %}?door={{ property.id }}">New Expense</a>
+            <a class="btn btn-outline-success" href="{% url 'door_earnings' property.id %}">Forecast</a>
+        </div>
+    </div>
+    {% url 'door_list' as back_url %}
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <p><strong>Address:</strong> {{ property.address }}</p>
+            {% if property.website %}
+                <p><strong>Website:</strong> <a href="{{ property.website }}" target="_blank" rel="noopener">{{ property.website }}</a></p>
+            {% endif %}
+            {% if property.agent %}
+                <p><strong>Rental Agent:</strong> <a href="{% url 'agent_detail' property.agent.id %}">{{ property.agent.name }}</a>{% if property.agent.phone %} ({{ property.agent.phone }}){% endif %}{% if property.agent.email %} - {{ property.agent.email }}{% endif %}</p>
+            {% endif %}
+            {% if property.estate_agent %}
+                <p><strong>Estate Agent:</strong> <a href="{% url 'estate_agent_detail' property.estate_agent.id %}">{{ property.estate_agent.name }}</a>{% if property.estate_agent.phone %} ({{ property.estate_agent.phone }}){% endif %}{% if property.estate_agent.email %} - {{ property.estate_agent.email }}{% endif %}
+                </p>
+            {% endif %}
+            {% if property.managing_agent %}
+                <p><strong>Managing Agent:</strong> <a href="{% url 'managing_agent_detail' property.managing_agent.id %}">{{ property.managing_agent.name }}</a>{% if property.managing_agent.phone %} ({{ property.managing_agent.phone }}){% endif %}{% if property.managing_agent.email %} -
+                    {{ property.managing_agent.email }}{% endif %}</p>
+            {% endif %}
+            <div class="row mb-3">
+                <div class="col-md-4"><strong>Capital Value:</strong> {{ property.capital_value }}</div>
+                <div class="col-md-4"><strong>Levies:</strong> {{ property.levies }}</div>
+                <div class="col-md-4"><strong>Rates & Taxes:</strong> {{ property.rates_taxes }}</div>
+                <div class="col-md-4"><strong>Water & Electricity:</strong> {{ property.water_electricity }}</div>
+                <div class="col-md-4"><strong>Internet:</strong> {{ property.internet }}</div>
+                <div class="col-md-4"><strong>Cost of Money (monthly @ 6%/yr):</strong> {{ property.cost_of_money_monthly }}</div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-md-12 text-info"><strong>Rental Income:</strong> {{ property.flow_value }}</div>
+                <div class="col-md-12 text-danger"><strong>Total Expenses:</strong> {{ property.total_expenses }}</div>
+                <!-- <div class="col-md-12 text-warning"><strong>Appreciation (monthly @ 5%/yr):</strong> {{ property.appreciation_monthly }}</div> -->
+                <div class="col-md-12 fw-bold  text-success"><strong>Profit:</strong> {{ property.income }}</div>
+            </div>
+        </div>
+    </div>
+
+    {% if month_labels %}
+        <div class="card shadow-sm mb-3">
+            <div class="card-header">Live-to-date Income vs Expenses</div>
+            <div class="card-body">
+                <canvas id="propIncomeExpenseChart" height="120"></canvas>
+            </div>
+        </div>
+        {{ month_labels|default:'[]'|json_script:'prop-month-labels' }}
+        {{ income_series|default:'[]'|json_script:'prop-income-series' }}
+        {{ expense_series|default:'[]'|json_script:'prop-expense-series' }}
+        <script>
+            (function () {
+                const elLabels = document.getElementById('prop-month-labels');
+                const elIncome = document.getElementById('prop-income-series');
+                const elExpenses = document.getElementById('prop-expense-series');
+                if (!elLabels) return;
+                const labels = JSON.parse(elLabels.textContent || '[]');
+                const income = elIncome ? JSON.parse(elIncome.textContent || '[]') : [];
+                const expenses = elExpenses ? JSON.parse(elExpenses.textContent || '[]') : [];
+
+                // Build cumulative series (life-to-date)
+                function toCumulative(arr) {
+                    let running = 0;
+                    return (arr || []).map(v => {
+                        const n = Number(v) || 0;
+                        running += n;
+                        return running;
+                    });
+                }
+
+                const cumIncome = toCumulative(income);
+                const cumExpenses = toCumulative(expenses);
+                if (!Array.isArray(labels) || labels.length === 0) return;
+                const ctx = document.getElementById('propIncomeExpenseChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Cumulative Income (paid)',
+                                data: cumIncome,
+                                borderColor: 'rgba(25, 135, 84, 1)',
+                                backgroundColor: 'rgba(25, 135, 84, 0.15)',
+                                tension: 0.2,
+                                fill: true,
+                            },
+                            {
+                                label: 'Cumulative Expenses',
+                                data: cumExpenses,
+                                borderColor: 'rgba(220, 53, 69, 1)',
+                                backgroundColor: 'rgba(220, 53, 69, 0.15)',
+                                tension: 0.2,
+                                fill: true,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        interaction: {mode: 'index', intersect: false},
+                        stacked: false,
+                        plugins: {
+                            legend: {position: 'top'},
+                            tooltip: {callbacks: {label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString()}`}}
+                        },
+                        scales: {
+                            y: {beginAtZero: true}
+                        }
+                    }
+                });
+            })();
+        </script>
+    {% endif %}
+
+
+
+
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            Linked Invoices
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Customer</th>
+                    <th>Issue Date</th>
+                    <th>Status</th>
+                    <th class="text-end">Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for inv in property.invoices.all %}
+                    <tr>
+                        <td><a href="{% url 'invoice_detail' inv.id %}">{{ inv.number }}</a></td>
+                        <td>{{ inv.customer_name }}</td>
+                        <td>{{ inv.issue_date }}</td>
+                        <td>{{ inv.get_status_display }}</td>
+                        <td class="text-end">{{ inv.total }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No invoices linked.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mt-3">
+        <div class="card-header">
+            Linked Expenses
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th class="text-end">Amount</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for exp in linked_expenses %}
+                    <tr>
+                        <td>{{ exp.date }}</td>
+                        <td>{{ exp.description }}</td>
+                        <td class="text-end">{{ exp.amount }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">No expenses linked.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-header">Images</div>
+        <div class="card-body">
+            <div class="row g-3 mb-3">
+                {% for img in property.images.all %}
+                    <div class="col-6 col-md-3">
+                        <img src="{{ img.image.url }}" alt="{{ property.name }}" class="img-fluid rounded border">
+                    </div>
+                {% empty %}
+                    <div class="text-muted">No images uploaded.</div>
+                {% endfor %}
+            </div>
+            <form method="post" enctype="multipart/form-data" action="{% url 'rental_property_upload_image' property.id %}">
+                {% csrf_token %}
+                <div class="input-group">
+                    {{ image_form.image }}
+                    <button class="btn btn-sm btn-primary" type="submit">Upload</button>
+                </div>
+            </form>
+            {% if property.website %}
+                <a class="btn btn-sm btn-outline-primary mt-2" href="{% url 'preview_images_from_url' %}?url={{ property.website|urlencode }}" target="_blank" rel="noopener">Preview Images From Website</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+

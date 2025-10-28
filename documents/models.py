@@ -9,6 +9,8 @@ CATEGORY_CHOICES = [
 	("work", "Work"),
 	("floorplan", "Floorplan"),
 	("finance", "Finance"),
+	("expense", "Expense"),
+	("invoice", "Invoice"),
 	("legal", "Legal"),
 	("other", "Other"),
 ]

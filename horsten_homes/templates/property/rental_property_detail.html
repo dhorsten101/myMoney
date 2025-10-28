@@ -24,7 +24,7 @@
                 <div class="col-md-4"><strong>Rates & Taxes:</strong> {{ property.rates_taxes }}</div>
                 <div class="col-md-4"><strong>Water & Electricity:</strong> {{ property.water_electricity }}</div>
                 <div class="col-md-4"><strong>Internet:</strong> {{ property.internet }}</div>
-                <div class="col-md-4"><strong>Cost of Money (monthly @ 6%/yr):</strong> {{ property.cost_of_money_monthly }}</div>
+                <div class="col-md-4"><strong>Cost of Money (6%/yr):</strong> {{ property.cost_of_money_monthly }}</div>
                 <div class="col-md-4 text-info"><strong>Rental Income:</strong> {{ property.flow_value }}</div>
                 <div class="col-md-4 text-danger"><strong>Total Expenses:</strong> {{ property.total_expenses }}</div>
                 <div class="col-md-4 fw-bold  text-success"><strong>Profit:</strong> {{ property.income }}</div>
@@ -227,11 +227,15 @@
                         <label class="form-label">Title</label>
                         {{ document_form.title }}
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label class="form-label">Category</label>
                         {{ document_form.category }}
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
+                        <label class="form-label">Create As</label>
+                        {{ document_form.create_as }}
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label">File</label>
                         {{ document_form.file }}
                     </div>

@@ -16,11 +16,14 @@ class DocumentForm(forms.ModelForm):
 class DocumentUploadForm(forms.ModelForm):
 	# Restrict category choices for door uploads per requirement
 	CATEGORY_CHOICES = [
-		('floorplan', 'Floorplan'),
-		('legal', 'Legal'),
+		('expense', 'Expense'),
+		('invoice', 'Invoice'),
 		('finance', 'Finance'),
+		('legal', 'Legal'),
+		('floorplan', 'Floorplan'),
 	]
 	category = forms.ChoiceField(choices=CATEGORY_CHOICES)
+	create_as = forms.ChoiceField(choices=[('expense', 'Create Expense'), ('invoice', 'Create Invoice')], initial='expense')
 
 	class Meta:
 		model = Document

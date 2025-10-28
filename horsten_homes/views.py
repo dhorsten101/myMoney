@@ -13,6 +13,7 @@ from cryptos.models import CryptoStats
 from horsten_homes.forms import InvoiceForm, PropertyForm, RentalPropertyForm, RentalPropertyImageForm, RentalPropertyPipelineForm, MonthlyExpenseForm, RentalAgentForm, EstateAgentForm, ManagingAgentForm, RentalPropertyPipelineImageForm
 from documents.forms import DocumentUploadForm
 from documents.models import Document
+from documents.parsers import extract_amount_and_date_from_file
 from horsten_homes.models import Invoice, Property, Door, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent
 from incomes.models import Income
 from sellables.models import Sellable
@@ -263,8 +264,8 @@ def expense_create(request):
 		form = MonthlyExpenseForm(request.POST)
 		if form.is_valid():
 			expense = form.save()
-			# If the expense is linked to a property, consider redirecting back there
-			if expense.property_id:
+			# If the expense is linked to a door, redirect back there
+			if expense.door_id:
 				return redirect("rental_property_detail", id=expense.door_id)
 			return redirect("expense_list")
 	else:
@@ -327,7 +328,11 @@ def homes_dashboard(request):
 	# Counts
 	total_properties_count = Property.objects.count()
 	total_doors_count = Door.objects.count()
-	total_agents_count = RentalAgent.objects.count()
+	total_agents_count = (
+		RentalAgent.objects.count()
+		+ EstateAgent.objects.count()
+		+ ManagingAgent.objects.count()
+	)
 	total_pipelines_count = DoorPipeline.objects.count()
 	total_invoices_count = Invoice.objects.count()
 	total_expenses_count = MonthlyExpense.objects.count()
@@ -972,7 +977,43 @@ def rental_property_upload_document(request, id):
 				doc.created_by = request.user
 			if not getattr(doc, "content", None):
 				doc.content = ""
+			# Ensure category correlates with selection
+			create_as = form.cleaned_data.get("create_as") or "expense"
+			if create_as in {"expense", "invoice"}:
+				doc.category = create_as
 			doc.save()
+			# Try to parse amount and date from the uploaded file
+			amount, parsed_date_iso = extract_amount_and_date_from_file(doc.file)
+			# Create Expense or Invoice accordingly
+			try:
+				from datetime import date, timedelta
+				if create_as == "expense":
+					from horsten_homes.models import MonthlyExpense
+					exp_date = date.fromisoformat(parsed_date_iso) if parsed_date_iso else date.today()
+					amt = amount or 0
+					MonthlyExpense.objects.create(
+						door=prop,
+						date=exp_date,
+						amount=amt,
+						description=(doc.title or "Document expense"),
+					)
+				elif create_as == "invoice":
+					from horsten_homes.models import Invoice
+					iss = date.fromisoformat(parsed_date_iso) if parsed_date_iso else date.today()
+					due = iss + timedelta(days=30)
+					inv = Invoice(
+						door=prop,
+						issue_date=iss,
+						due_date=due,
+						status=Invoice.STATUS_DRAFT,
+						total=(amount or 0),
+						customer_name=(prop.name or ""),
+						notes=(doc.title or ""),
+					)
+					inv.save()
+			except Exception:
+				# Silent fallback if parsing/creation fails; document is still saved
+				pass
 	return redirect("rental_property_detail", id=prop.id)
 
 

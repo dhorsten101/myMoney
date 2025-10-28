@@ -18,36 +18,36 @@
 
     <div class="card shadow-sm mb-3">
         <div class="card-body">
-            <p><strong>Address:</strong> {{ property.address }}</p>
-            {% if property.website %}
-                <p><strong>Website:</strong> <a href="{{ property.website }}" target="_blank" rel="noopener">{{ property.website }}</a></p>
-            {% endif %}
-            {% if property.agent %}
-                <p><strong>Rental Agent:</strong> <a href="{% url 'agent_detail' property.agent.id %}">{{ property.agent.name }}</a>{% if property.agent.phone %} ({{ property.agent.phone }}){% endif %}{% if property.agent.email %} - {{ property.agent.email }}{% endif %}</p>
-            {% endif %}
-            {% if property.estate_agent %}
-                <p><strong>Estate Agent:</strong> <a href="{% url 'estate_agent_detail' property.estate_agent.id %}">{{ property.estate_agent.name }}</a>{% if property.estate_agent.phone %} ({{ property.estate_agent.phone }}){% endif %}{% if property.estate_agent.email %} - {{ property.estate_agent.email }}{% endif %}
-                </p>
-            {% endif %}
-            {% if property.managing_agent %}
-                <p><strong>Managing Agent:</strong> <a href="{% url 'managing_agent_detail' property.managing_agent.id %}">{{ property.managing_agent.name }}</a>{% if property.managing_agent.phone %} ({{ property.managing_agent.phone }}){% endif %}{% if property.managing_agent.email %} -
-                    {{ property.managing_agent.email }}{% endif %}</p>
-            {% endif %}
-            <div class="row mb-3">
+            <div class="row mb-1">
                 <div class="col-md-4"><strong>Capital Value:</strong> {{ property.capital_value }}</div>
                 <div class="col-md-4"><strong>Levies:</strong> {{ property.levies }}</div>
                 <div class="col-md-4"><strong>Rates & Taxes:</strong> {{ property.rates_taxes }}</div>
                 <div class="col-md-4"><strong>Water & Electricity:</strong> {{ property.water_electricity }}</div>
                 <div class="col-md-4"><strong>Internet:</strong> {{ property.internet }}</div>
                 <div class="col-md-4"><strong>Cost of Money (monthly @ 6%/yr):</strong> {{ property.cost_of_money_monthly }}</div>
+                <div class="col-md-4 text-info"><strong>Rental Income:</strong> {{ property.flow_value }}</div>
+                <div class="col-md-4 text-danger"><strong>Total Expenses:</strong> {{ property.total_expenses }}</div>
+                <div class="col-md-4 fw-bold  text-success"><strong>Profit:</strong> {{ property.income }}</div>
             </div>
 
-            <div class="row mt-2">
-                <div class="col-md-12 text-info"><strong>Rental Income:</strong> {{ property.flow_value }}</div>
-                <div class="col-md-12 text-danger"><strong>Total Expenses:</strong> {{ property.total_expenses }}</div>
-                <!-- <div class="col-md-12 text-warning"><strong>Appreciation (monthly @ 5%/yr):</strong> {{ property.appreciation_monthly }}</div> -->
-                <div class="col-md-12 fw-bold  text-success"><strong>Profit:</strong> {{ property.income }}</div>
+            <div class="row align-items-center mb-1">
+                {% if property.agent %}
+                    <div class="col-md-4">
+                        <strong>Rental Agent:</strong> <a href="{% url 'agent_detail' property.agent.id %}">{{ property.agent.name }}</a>
+                    </div>
+                {% endif %}
+                {% if property.estate_agent %}
+                    <div class="col-md-4">
+                        <strong>Estate Agent:</strong> <a href="{% url 'estate_agent_detail' property.estate_agent.id %}">{{ property.estate_agent.name }}</a>
+                    </div>
+                {% endif %}
+                {% if property.managing_agent %}
+                    <div class="col-md-4">
+                        <strong>Managing Agent:</strong> <a href="{% url 'managing_agent_detail' property.managing_agent.id %}">{{ property.managing_agent.name }}</a>
+                    </div>
+                {% endif %}
             </div>
+            <p class="mb-0"><strong>Address:</strong> {{ property.address }}</p>
         </div>
     </div>
 
@@ -55,7 +55,7 @@
         <div class="card shadow-sm mb-3">
             <div class="card-header">Live-to-date Income vs Expenses</div>
             <div class="card-body">
-                <canvas id="propIncomeExpenseChart" height="120"></canvas>
+                <canvas id="propIncomeExpenseChart" height="100"></canvas>
             </div>
         </div>
         {{ month_labels|default:'[]'|json_script:'prop-month-labels' }}
@@ -193,6 +193,92 @@
         </div>
     </div>
 
+
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-header">Documents</div>
+        <div class="card-body">
+            <style>
+                /* Show preview when hovering any part of the row */
+                table.table tr.previewable { position: relative; }
+                .doc-preview-fixed {
+                    display: none;
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: min(65vw, 900px);
+                    max-height: 80vh;
+                    object-fit: contain;
+                    border: 1px solid #dee2e6;
+                    background: #fff;
+                    padding: 4px;
+                    border-radius: .25rem;
+                    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+                    z-index: 1060; /* above cards */
+                    pointer-events: none;
+                }
+                table.table tr.previewable:hover .doc-preview-fixed { display: block; }
+            </style>
+            <form method="post" enctype="multipart/form-data" action="{% url 'door_upload_document' property.id %}" class="mb-3">
+                {% csrf_token %}
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">Title</label>
+                        {{ document_form.title }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Category</label>
+                        {{ document_form.category }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">File</label>
+                        {{ document_form.file }}
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100" type="submit">Upload</button>
+                    </div>
+                </div>
+        
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Uploaded</th>
+                        <th>By</th>
+                        <th>File</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for doc in documents %}
+                        <tr class="previewable">
+                            <td>{{ doc.title }}</td>
+                            <td>{{ doc.get_category_display }}</td>
+                            <td>{{ doc.uploaded_at }}</td>
+                            <td>{% if doc.created_by %}{{ doc.created_by.username }}{% else %}-{% endif %}</td>
+                            <td>
+                                <a href="{{ doc.file.url }}" target="_blank" rel="noopener">Download</a>
+                                {% with url=doc.file.url|lower %}
+                                    {% if '.png' in url or '.jpg' in url or '.jpeg' in url or '.gif' in url or '.webp' in url %}
+                                        <img src="{{ doc.file.url }}" alt="{{ doc.title }}" class="doc-preview-fixed" loading="lazy">
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No documents uploaded.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     <div class="card shadow-sm mb-3">
         <div class="card-header">Images</div>
         <div class="card-body">

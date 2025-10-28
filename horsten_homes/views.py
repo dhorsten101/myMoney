@@ -11,6 +11,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 
 from cryptos.models import CryptoStats
 from horsten_homes.forms import InvoiceForm, PropertyForm, RentalPropertyForm, RentalPropertyImageForm, RentalPropertyPipelineForm, MonthlyExpenseForm, RentalAgentForm, EstateAgentForm, ManagingAgentForm, RentalPropertyPipelineImageForm
+from documents.forms import DocumentUploadForm
+from documents.models import Document
 from horsten_homes.models import Invoice, Property, Door, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent
 from incomes.models import Income
 from sellables.models import Sellable
@@ -869,6 +871,7 @@ def property_delete(request, id):
 def rental_property_detail(request, id):
 	prop = get_object_or_404(Door, id=id)
 	image_form = RentalPropertyImageForm()
+	document_form = DocumentUploadForm()
 	# Build life-to-date monthly series for income (paid invoices) and expenses for this property
 	# Use issue_date for invoices and date for expenses, grouped by month
 	from datetime import date
@@ -931,13 +934,17 @@ def rental_property_detail(request, id):
 	# Linked expenses ordered by most recent
 	linked_expenses = prop.monthly_expenses.order_by("-date", "-id")
 	
+	documents = Document.objects.filter(door=prop).order_by('-uploaded_at', '-id')
+
 	return render(request, "property/rental_property_detail.html", {
 		"property": prop,
 		"image_form": image_form,
+		"document_form": document_form,
 		"month_labels": month_labels,
 		"income_series": income_series,
 		"expense_series": expense_series,
 		"linked_expenses": linked_expenses,
+		"documents": documents,
 	})
 
 
@@ -950,6 +957,22 @@ def rental_property_upload_image(request, id):
 			img = form.save(commit=False)
 			img.door = prop
 			img.save()
+	return redirect("rental_property_detail", id=prop.id)
+
+
+@login_required
+def rental_property_upload_document(request, id):
+	prop = get_object_or_404(Door, id=id)
+	if request.method == "POST":
+		form = DocumentUploadForm(request.POST, request.FILES)
+		if form.is_valid():
+			doc = form.save(commit=False)
+			doc.door = prop
+			if request.user.is_authenticated:
+				doc.created_by = request.user
+			if not getattr(doc, "content", None):
+				doc.content = ""
+			doc.save()
 	return redirect("rental_property_detail", id=prop.id)
 
 

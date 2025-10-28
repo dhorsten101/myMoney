@@ -66,6 +66,7 @@ urlpatterns = [
 	path("door/new/", views.rental_property_create, name="door_create"),
 	path("door/<int:id>/", views.rental_property_detail, name="door_detail"),
 	path("door/<int:id>/upload_image/", views.rental_property_upload_image, name="door_upload_image"),
+	path("door/<int:id>/upload_document/", views.rental_property_upload_document, name="door_upload_document"),
 	path("door/<int:id>/edit/", views.rental_property_update, name="door_update"),
 	path("door/<int:id>/delete/", views.rental_property_delete, name="door_delete"),
 	path("door/<int:id>/earnings/", views.rental_property_earnings, name="door_earnings"),

@@ -7,6 +7,7 @@ from django_ckeditor_5.fields import CKEditor5Field
 CATEGORY_CHOICES = [
 	("personal", "Personal"),
 	("work", "Work"),
+	("floorplan", "Floorplan"),
 	("finance", "Finance"),
 	("legal", "Legal"),
 	("other", "Other"),
@@ -19,6 +20,7 @@ class Document(models.Model):
 	category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default="personal")
 	created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 	file = models.FileField(upload_to='documents/%Y/%m/')
+	door = models.ForeignKey('horsten_homes.Door', null=True, blank=True, on_delete=models.SET_NULL, related_name='documents')
 	description = models.TextField(blank=True)
 	tags = models.CharField(max_length=255, blank=True)
 	uploaded_at = models.DateTimeField(auto_now_add=True)

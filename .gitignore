@@ -21,7 +21,9 @@ VENV/
 .idea/
 process
 .log
-
+run_integrity_scan.log
+stormglass.log
+system_metrics.log
 process_dashboard.log
 fetch_quote.log
 

@@ -14,6 +14,10 @@ from horsten_homes.forms import InvoiceForm, PropertyForm, RentalPropertyForm, R
 from documents.forms import DocumentUploadForm
 from documents.models import Document
 from documents.parsers import extract_amount_and_date_from_file
+import logging
+from django.contrib import messages
+
+logger = logging.getLogger(__name__)
 from horsten_homes.models import Invoice, Property, Door, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent
 from incomes.models import Income
 from sellables.models import Sellable
@@ -978,42 +982,68 @@ def rental_property_upload_document(request, id):
 			if not getattr(doc, "content", None):
 				doc.content = ""
 			# Ensure category correlates with selection
-			create_as = form.cleaned_data.get("create_as") or "expense"
-			if create_as in {"expense", "invoice"}:
-				doc.category = create_as
+			create_as = (form.cleaned_data.get("create_as") or "none").strip()
+			selected_category = (form.cleaned_data.get("category") or "").strip()
+			# Always store the explicitly selected category on the document
+			doc.category = selected_category or doc.category
+			# If user didn't pick a create action but chose an expense/invoice category, infer action
+			if create_as == "none" and selected_category in {"expense", "invoice"}:
+				create_as = selected_category
 			doc.save()
-			# Try to parse amount and date from the uploaded file
-			amount, parsed_date_iso = extract_amount_and_date_from_file(doc.file)
-			# Create Expense or Invoice accordingly
-			try:
-				from datetime import date, timedelta
-				if create_as == "expense":
-					from horsten_homes.models import MonthlyExpense
-					exp_date = date.fromisoformat(parsed_date_iso) if parsed_date_iso else date.today()
-					amt = amount or 0
-					MonthlyExpense.objects.create(
-						door=prop,
-						date=exp_date,
-						amount=amt,
-						description=(doc.title or "Document expense"),
-					)
-				elif create_as == "invoice":
-					from horsten_homes.models import Invoice
-					iss = date.fromisoformat(parsed_date_iso) if parsed_date_iso else date.today()
-					due = iss + timedelta(days=30)
-					inv = Invoice(
-						door=prop,
-						issue_date=iss,
-						due_date=due,
-						status=Invoice.STATUS_DRAFT,
-						total=(amount or 0),
-						customer_name=(prop.name or ""),
-						notes=(doc.title or ""),
-					)
-					inv.save()
-			except Exception:
-				# Silent fallback if parsing/creation fails; document is still saved
-				pass
+			logger.info("Doc upload: door=%s, doc_id=%s, create_as=%s, category=%s", prop.id, getattr(doc, 'id', None), create_as, selected_category)
+			# Parse and create records only when explicitly requested
+			if create_as in {"expense", "invoice"}:
+				# Create Expense or Invoice accordingly (wrap parse + create in one try)
+				try:
+					# Try to parse amount and date from the uploaded file
+					amount, parsed_date_iso = extract_amount_and_date_from_file(doc.file)
+					logger.info("Parsed for doc %s -> amount=%s, date=%s", getattr(doc, 'id', None), amount, parsed_date_iso)
+					from datetime import date, timedelta
+					if create_as == "expense":
+						from horsten_homes.models import MonthlyExpense
+
+						# Always create the expense, then try to enhance with parsed values
+						default_date = date.today()
+						exp = MonthlyExpense.objects.create(
+							door=prop,
+							date=default_date,
+							amount=0,
+							description=(doc.title or "Document expense"),
+						)
+						# Try parse and update
+						try:
+							parsed_amount, parsed_date_iso = extract_amount_and_date_from_file(doc.file)
+							if parsed_amount is not None and parsed_amount >= 0:
+								exp.amount = parsed_amount
+							if parsed_date_iso:
+								from datetime import date as _date
+								exp.date = _date.fromisoformat(parsed_date_iso)
+							exp.save()
+							if parsed_amount is None:
+								messages.warning(request, "Could not detect amount from the document; created expense with 0.00.")
+						except Exception as pe:
+							logger.warning("Parse update failed for expense %s: %s", exp.id, pe)
+						messages.success(request, f"Expense created for R {float(exp.amount):.2f} on {exp.date}.")
+					elif create_as == "invoice":
+						from horsten_homes.models import Invoice
+						iss = date.fromisoformat(parsed_date_iso) if parsed_date_iso else date.today()
+						due = iss + timedelta(days=30)
+						inv = Invoice(
+							door=prop,
+							issue_date=iss,
+							due_date=due,
+							status=Invoice.STATUS_DRAFT,
+							total=(amount or 0),
+							customer_name=(prop.name or ""),
+							notes=(doc.title or ""),
+						)
+						inv.save()
+						messages.success(request, f"Invoice draft created for R {float(amount or 0):.2f}.")
+				except Exception as e:
+					logger.exception("Auto-create %s failed for doc %s: %s", create_as, getattr(doc, 'id', None), e)
+		else:
+			# Provide feedback on form errors so user can correct
+			messages.error(request, f"Upload failed: {form.errors.as_text()}")
 	return redirect("rental_property_detail", id=prop.id)
 
 

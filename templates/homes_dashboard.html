@@ -93,6 +93,24 @@
             </div>
         </div>
 
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Total Expenses</h6>
+                    <div class="display-6 text-danger">R {{ total_rental_expenses|floatformat:2 }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Profit</h6>
+                    <div class="display-6 {% if total_rental_net >= 0 %}text-success{% else %}text-danger{% endif %}">R {{ total_rental_net|floatformat:2 }}</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- <div class="card shadow-sm mb-3">

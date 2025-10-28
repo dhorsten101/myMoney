@@ -23,7 +23,14 @@ class DocumentUploadForm(forms.ModelForm):
 		('floorplan', 'Floorplan'),
 	]
 	category = forms.ChoiceField(choices=CATEGORY_CHOICES)
-	create_as = forms.ChoiceField(choices=[('expense', 'Create Expense'), ('invoice', 'Create Invoice')], initial='expense')
+	create_as = forms.ChoiceField(
+		choices=[
+			('none', 'Just Upload (no analysis)'),
+			('expense', 'Create Expense'),
+			('invoice', 'Create Invoice'),
+		],
+		initial='none'
+	)
 
 	class Meta:
 		model = Document

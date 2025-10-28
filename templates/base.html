@@ -139,6 +139,13 @@
 
 <!-- Main Content Area -->
 <main class="{% block main_class %}container{% endblock %} mt-4 flex-grow-1">
+    {% if messages %}
+        <div class="container mb-2">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} py-2" role="alert">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
     {% block content %}
     {% endblock %}
 </main>

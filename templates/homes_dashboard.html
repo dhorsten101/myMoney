@@ -83,15 +83,16 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-3">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h6 class="text-muted mb-1">Net Income</h6>
-                    <div class="display-6 {% if total_rental_net >= 0 %}text-success{% else %}text-danger{% endif %}">R {{ total_rental_net|floatformat:2 }}</div>
+                    <h6 class="text-muted mb-1">Total Income</h6>
+                    <div class="display-6 text-success">R {{ total_rental_income|floatformat:2 }}</div>
                 </div>
             </div>
         </div>
+
+
 
         <div class="col-md-3">
             <div class="card shadow-sm">
@@ -106,10 +107,12 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted mb-1">Profit</h6>
-                    <div class="display-6 {% if total_rental_net >= 0 %}text-success{% else %}text-danger{% endif %}">R {{ total_rental_net|floatformat:2 }}</div>
+                    <div class="display-6 {% if total_rental_net >= 0 %}text-primary{% else %}text-danger{% endif %}">R {{ total_rental_net|floatformat:2 }}</div>
                 </div>
             </div>
         </div>
+
+
 
     </div>
 

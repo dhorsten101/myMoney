@@ -1,6 +1,6 @@
 from django import forms
 
-from horsten_homes.models import Invoice, Property, Door, DoorImage, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, DoorPipelineImage
+from horsten_homes.models import Invoice, Property, Door, DoorImage, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, DoorPipelineImage, Tenant
 
 
 class InvoiceForm(forms.ModelForm):
@@ -203,4 +203,27 @@ class RentalPropertyManagingAgentForm(forms.ModelForm):
 		fields = ["managing_agent"]
 		widgets = {
 			"managing_agent": forms.Select(attrs={"class": "form-select"}),
+		}
+
+
+class TenantForm(forms.ModelForm):
+	class Meta:
+		model = Tenant
+		fields = [
+			"name",
+			"email",
+			"phone",
+			"move_in_date",
+			"move_out_date",
+			"door",
+			"notes",
+		]
+		widgets = {
+			"name": forms.TextInput(attrs={"class": "form-control"}),
+			"email": forms.EmailInput(attrs={"class": "form-control"}),
+			"phone": forms.TextInput(attrs={"class": "form-control"}),
+			"move_in_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+			"move_out_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+			"door": forms.Select(attrs={"class": "form-select"}),
+			"notes": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
 		}

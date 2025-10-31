@@ -18,7 +18,7 @@ import logging
 from django.contrib import messages
 
 logger = logging.getLogger(__name__)
-from horsten_homes.models import Invoice, Property, Door, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent
+from horsten_homes.models import Invoice, Property, Door, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, Tenant
 from incomes.models import Income
 from sellables.models import Sellable
 from worth.models import Worth
@@ -332,6 +332,8 @@ def homes_dashboard(request):
 	# Counts
 	total_properties_count = Property.objects.count()
 	total_doors_count = Door.objects.count()
+	total_door_squares = Door.objects.aggregate(Sum("squares")).get("squares__sum") or 0
+	total_tenants_count = Tenant.objects.count()
 	total_agents_count = (
 		RentalAgent.objects.count()
 		+ EstateAgent.objects.count()
@@ -448,6 +450,8 @@ def homes_dashboard(request):
 		"total_rental_net": rental_net_total,
 		"total_properties_count": total_properties_count,
 		"total_doors_count": total_doors_count,
+		"total_door_squares": total_door_squares,
+		"total_tenants_count": total_tenants_count,
 		"total_agents_count": total_agents_count,
 		"total_pipelines_count": total_pipelines_count,
 		"total_invoices_count": total_invoices_count,
@@ -787,6 +791,63 @@ def managing_agent_delete(request, id):
 		agent.delete()
 		return redirect("managing_agent_list")
 	return render(request, "agents/managing_agent_confirm_delete.html", {"agent": agent})
+
+
+# Tenant CRUD
+@login_required
+def tenant_list(request):
+	items = Tenant.objects.select_related("door").order_by("name")
+	return render(request, "tenant/tenant_list.html", {"items": items})
+
+
+@login_required
+def tenant_create(request):
+	from horsten_homes.forms import TenantForm
+	if request.method == "POST":
+		form = TenantForm(request.POST)
+		if form.is_valid():
+			item = form.save()
+			return redirect("tenant_detail", id=item.id)
+	else:
+		# Optionally preselect door via ?door=<id>
+		door_id = (request.GET.get("door") or "").strip()
+		initial = {}
+		if door_id.isdigit():
+			try:
+				initial["door"] = Door.objects.get(id=int(door_id))
+			except Door.DoesNotExist:
+				pass
+		form = TenantForm(initial=initial)
+	return render(request, "tenant/tenant_form.html", {"form": form})
+
+
+@login_required
+def tenant_detail(request, id):
+	item = get_object_or_404(Tenant, id=id)
+	return render(request, "tenant/tenant_detail.html", {"item": item})
+
+
+@login_required
+def tenant_update(request, id):
+	from horsten_homes.forms import TenantForm
+	item = get_object_or_404(Tenant, id=id)
+	if request.method == "POST":
+		form = TenantForm(request.POST, instance=item)
+		if form.is_valid():
+			item = form.save()
+			return redirect("tenant_detail", id=item.id)
+	else:
+		form = TenantForm(instance=item)
+	return render(request, "tenant/tenant_form.html", {"form": form, "item": item})
+
+
+@login_required
+def tenant_delete(request, id):
+	item = get_object_or_404(Tenant, id=id)
+	if request.method == "POST":
+		item.delete()
+		return redirect("tenant_list")
+	return render(request, "tenant/tenant_confirm_delete.html", {"item": item})
 
 
 @login_required

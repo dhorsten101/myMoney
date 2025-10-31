@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Tenant{% endblock %}
+
+{% block content %}
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Delete Tenant</h5>
+            <p>Are you sure you want to delete tenant <strong>{{ item.name }}</strong>?</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete</button>
+                <a href="{% url 'tenant_detail' item.id %}" class="btn btn-outline-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+

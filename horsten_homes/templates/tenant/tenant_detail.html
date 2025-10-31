@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Tenant {{ item.name }}{% endblock %}
+
+{% block content %}
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">Tenant: {{ item.name }}</h1>
+        <div>
+            <a class="btn btn-outline-secondary" href="{% url 'tenant_update' item.id %}">Edit</a>
+            <a class="btn btn-outline-danger" href="{% url 'tenant_delete' item.id %}">Delete</a>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-3">Details</h6>
+                    <div class="mb-2"><strong>Name:</strong> {{ item.name }}</div>
+                    <div class="mb-2"><strong>Email:</strong> {{ item.email|default:"—" }}</div>
+                    <div class="mb-2"><strong>Phone:</strong> {{ item.phone|default:"—" }}</div>
+                    <div class="mb-2"><strong>Move In:</strong> {{ item.move_in_date }}</div>
+                    <div class="mb-2"><strong>Move Out:</strong> {% if item.move_out_date %}{{ item.move_out_date }}{% else %}—{% endif %}</div>
+                    <div class="mb-2"><strong>Door:</strong> {% if item.door %}<a href="{% url 'rental_property_detail' item.door.id %}">{{ item.door.name }}</a>{% else %}—{% endif %}</div>
+                    <div class="mb-0"><strong>Notes:</strong><br>{{ item.notes|linebreaksbr }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+

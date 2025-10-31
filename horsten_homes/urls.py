@@ -70,4 +70,11 @@ urlpatterns = [
 	path("door/<int:id>/edit/", views.rental_property_update, name="door_update"),
 	path("door/<int:id>/delete/", views.rental_property_delete, name="door_delete"),
 	path("door/<int:id>/earnings/", views.rental_property_earnings, name="door_earnings"),
+
+	# Tenants
+	path("tenants/", views.tenant_list, name="tenant_list"),
+	path("tenants/new/", views.tenant_create, name="tenant_create"),
+	path("tenants/<int:id>/", views.tenant_detail, name="tenant_detail"),
+	path("tenants/<int:id>/edit/", views.tenant_update, name="tenant_update"),
+	path("tenants/<int:id>/delete/", views.tenant_delete, name="tenant_delete"),
 ]

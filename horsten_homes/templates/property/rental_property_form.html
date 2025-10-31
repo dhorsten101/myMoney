@@ -53,6 +53,18 @@
                         {{ form.internet|add_class:"form-control" }}
                     </div>
                     <div class="col-md-3">
+                        <label class="form-label" for="{{ form.squares.id_for_label }}">{{ form.squares.label }}</label>
+                        {{ form.squares|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="{{ form.total_beds.id_for_label }}">{{ form.total_beds.label }}</label>
+                        {{ form.total_beds|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="{{ form.total_toilets.id_for_label }}">{{ form.total_toilets.label }}</label>
+                        {{ form.total_toilets|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label" for="{{ form.other_expenses.id_for_label }}">{{ form.other_expenses.label }}</label>
                         {{ form.other_expenses|add_class:"form-control" }}
                     </div>

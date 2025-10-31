@@ -23,6 +23,10 @@
                     <th>Rental Agent</th>
                     <th>Estate Agent</th>
                     <th>Managing Agent</th>
+                    <th class="text-end">Squares</th>
+                    <th class="text-end">Beds</th>
+                    <th class="text-end">Toilets</th>
+                    <th class="text-end">Capital Value</th>
                     <!-- <th class="text-end">Capital</th> -->
                     <!-- <th class="text-end">Rental Income</th>
                     <th class="text-end">Income (Net)</th>
@@ -49,6 +53,10 @@
                         <td>{% if p.agent %}<a href="{% url 'agent_detail' p.agent.id %}">{{ p.agent.name }}</a>{% else %}<span class="text-muted">—</span>{% endif %}</td>
                         <td>{% if p.estate_agent %}<a href="{% url 'estate_agent_detail' p.estate_agent.id %}">{{ p.estate_agent.name }}</a>{% else %}<span class="text-muted">—</span>{% endif %}</td>
                         <td>{% if p.managing_agent %}<a href="{% url 'managing_agent_detail' p.managing_agent.id %}">{{ p.managing_agent.name }}</a>{% else %}<span class="text-muted">—</span>{% endif %}</td>
+                        <td class="text-end">{{ p.squares }}</td>
+                        <td class="text-end">{{ p.total_beds }}</td>
+                        <td class="text-end">{{ p.total_toilets }}</td>
+                        <td class="text-end">{{ p.capital_value }}</td>
                         <!-- <td class="text-end">{{ p.capital_value }}</td> -->
                         <!-- <td class="text-end">{{ p.flow_value }}</td>
                         <td class="text-end">{{ p.income }}</td>

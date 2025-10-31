@@ -19,6 +19,12 @@
                     <th>Name</th>
                     <th>Address</th>
                     <th class="text-end">Doors</th>
+                    <th class="text-end">Capital</th>
+                    <th class="text-end">Rooms</th>
+                    <th class="text-end">Bathrooms</th>
+                    <th class="text-end">Squares</th>
+                    <th class="text-end">Income</th>
+                    <th class="text-end">Expenses</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -27,6 +33,12 @@
                         <td><a href="/property/{{ p.id }}/">{{ p.name }}</a></td>
                         <td>{{ p.address }}</td>
                         <td class="text-end">{{ p.rental_properties.count }}</td>
+                        <td class="text-end">{{ p.total_capital_doors }}</td>
+                        <td class="text-end">{{ p.total_rooms }}</td>
+                        <td class="text-end">{{ p.total_bathrooms }}</td>
+                        <td class="text-end">{{ p.total_squares }}</td>
+                        <td class="text-end">{{ p.total_income }}</td>
+                        <td class="text-end">{{ p.total_expense }}</td>
                     </tr>
                 {% empty %}
                     <tr>

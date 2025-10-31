@@ -7,11 +7,53 @@ class Property(models.Model):
 	name = models.CharField(max_length=200)
 	address = models.CharField(max_length=255, blank=True)
 	description = models.TextField(blank=True)
+	# Aggregated totals over related doors/expenses
+	total_capital_doors = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+	total_rooms = models.IntegerField(default=0)
+	total_bathrooms = models.IntegerField(default=0)
+	total_expense = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+	total_squares = models.IntegerField(default=0)
+	total_income = models.DecimalField(max_digits=14, decimal_places=2, default=0)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
 		return self.name
+
+	def recalc_totals(self):
+		from django.db.models import Sum
+		# Doors aggregate
+		doors = self.rental_properties.all()
+		tot_cap = doors.aggregate(Sum("capital_value")).get("capital_value__sum") or 0
+		tot_rooms = doors.aggregate(Sum("total_beds")).get("total_beds__sum") or 0
+		tot_baths = doors.aggregate(Sum("total_toilets")).get("total_toilets__sum") or 0
+		tot_squares = doors.aggregate(Sum("squares")).get("squares__sum") or 0
+		tot_income = doors.aggregate(Sum("flow_value")).get("flow_value__sum") or 0
+		# Expenses across all doors under this property
+		try:
+			from horsten_homes.models import MonthlyExpense
+			exp_total = (
+				MonthlyExpense.objects.filter(door__property_group=self)
+				.aggregate(Sum("amount"))
+				.get("amount__sum") or 0
+			)
+		except Exception:
+			exp_total = 0
+		self.total_capital_doors = Decimal(str(tot_cap)) if not isinstance(tot_cap, Decimal) else tot_cap
+		self.total_rooms = int(tot_rooms)
+		self.total_bathrooms = int(tot_baths)
+		self.total_squares = int(tot_squares)
+		self.total_income = Decimal(str(tot_income)) if not isinstance(tot_income, Decimal) else tot_income
+		self.total_expense = Decimal(str(exp_total)) if not isinstance(exp_total, Decimal) else exp_total
+		super().save(update_fields=[
+			"total_capital_doors",
+			"total_rooms",
+			"total_bathrooms",
+			"total_squares",
+			"total_income",
+			"total_expense",
+			"updated_at",
+		])
 
 
 class Door(models.Model):
@@ -19,6 +61,9 @@ class Door(models.Model):
 	address = models.CharField(max_length=255)
 	website = models.URLField(blank=True)
 	property_group = models.ForeignKey('Property', null=True, blank=True, on_delete=models.SET_NULL, related_name='rental_properties')
+	squares = models.IntegerField(default=0)
+	total_beds = models.IntegerField(default=0)
+	total_toilets = models.IntegerField(default=0)
 	capital_value = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 	flow_value = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 	levies = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -64,6 +109,12 @@ class Door(models.Model):
 		# Total income = rental income + appreciation
 		self.total_income = (self.income or Decimal("0")) + (self.appreciation_monthly or Decimal("0"))
 		super().save(*args, **kwargs)
+		# After door save, update the linked property's aggregates
+		if self.property_group_id:
+			try:
+				self.property_group.recalc_totals()
+			except Exception:
+				pass
 
 
 class Invoice(models.Model):

@@ -18,6 +18,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Address</th>
+                    <th>Purchase Date</th>
                     <th class="text-end">Doors</th>
                     <th class="text-end">Capital</th>
                     <th class="text-end">Rooms</th>
@@ -32,6 +33,7 @@
                     <tr>
                         <td><a href="/property/{{ p.id }}/">{{ p.name }}</a></td>
                         <td>{{ p.address }}</td>
+                        <td>{% if p.purchase_date %}{{ p.purchase_date }}{% else %}<span class="text-muted">—</span>{% endif %}</td>
                         <td class="text-end">{{ p.rental_properties.count }}</td>
                         <td class="text-end">{{ p.total_capital_doors }}</td>
                         <td class="text-end">{{ p.total_rooms }}</td>

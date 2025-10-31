@@ -9,7 +9,7 @@
     </div>
 
     <div class="row g-3 mb-3">
-        <h5 class="text-muted mb-1">Totals</h5>
+        <h5 class="text-muted mb-1">Totals from Start date 1st March 2025</h5>
         <div class="col-md-2">
             <a href="/property/" class="text-decoration-none d-block">
                 <div class="card shadow-sm">
@@ -185,7 +185,6 @@
     {{ payoff_growing_label_all|json_script:'agg-payoff-grow' }}
     {{ months_to_payoff_flow_all|json_script:'agg-payoff-flow-months' }}
     {{ months_to_payoff_growing_all|json_script:'agg-payoff-grow-months' }}
-
     {# Property markers for map #}
     {{ property_markers|json_script:'property-markers' }}
 

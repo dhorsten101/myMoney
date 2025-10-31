@@ -25,6 +25,7 @@ class Document(models.Model):
 	created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 	file = models.FileField(upload_to='documents/%Y/%m/')
 	door = models.ForeignKey('horsten_homes.Door', null=True, blank=True, on_delete=models.SET_NULL, related_name='documents')
+	property = models.ForeignKey('horsten_homes.Property', null=True, blank=True, on_delete=models.SET_NULL, related_name='documents')
 	description = models.TextField(blank=True)
 	tags = models.CharField(max_length=255, blank=True)
 	uploaded_at = models.DateTimeField(auto_now_add=True)

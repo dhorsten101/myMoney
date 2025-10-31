@@ -917,7 +917,13 @@ def property_list(request):
 def property_detail(request, id):
 	item = get_object_or_404(Property, id=id)
 	rental_props = item.rental_properties.order_by("name")
-	return render(request, "property/property_detail.html", {"item": item, "rental_properties": rental_props})
+	from horsten_homes.forms import PropertyImageForm
+	from documents.forms import DocumentUploadForm
+	image_form = PropertyImageForm()
+	document_form = DocumentUploadForm()
+	from documents.models import Document
+	documents = Document.objects.filter(property=item).order_by('-uploaded_at', '-id')
+	return render(request, "property/property_detail.html", {"item": item, "rental_properties": rental_props, "image_form": image_form, "document_form": document_form, "documents": documents})
 
 
 @login_required
@@ -952,6 +958,36 @@ def property_delete(request, id):
 		item.delete()
 		return redirect("property_list")
 	return render(request, "property/property_confirm_delete.html", {"item": item})
+
+
+@login_required
+def property_upload_image(request, id):
+	item = get_object_or_404(Property, id=id)
+	if request.method == "POST":
+		from horsten_homes.forms import PropertyImageForm
+		form = PropertyImageForm(request.POST, request.FILES)
+		if form.is_valid():
+			img = form.save(commit=False)
+			img.property = item
+			img.save()
+	return redirect("property_detail", id=item.id)
+
+
+@login_required
+def property_upload_document(request, id):
+	item = get_object_or_404(Property, id=id)
+	if request.method == "POST":
+		from documents.forms import DocumentUploadForm
+		form = DocumentUploadForm(request.POST, request.FILES)
+		if form.is_valid():
+			doc = form.save(commit=False)
+			doc.property = item
+			if request.user.is_authenticated:
+				doc.created_by = request.user
+			if not getattr(doc, "content", None):
+				doc.content = ""
+			doc.save()
+	return redirect("property_detail", id=item.id)
 
 
 @login_required

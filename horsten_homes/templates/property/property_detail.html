@@ -13,18 +13,12 @@
         </div>
     </div>
 
-
-    {% if item.description %}
-        <div class="card shadow-sm mb-3">
-            <div class="card-body">
-                {% if item.address %}<p class="mb-1"><strong>Address:</strong> {{ item.address }}</p>{% endif %}
-                {% if item.description %}<p class="mb-0">{{ item.description }}</p>{% endif %}
-            </div>
-        </div>
-    {% endif %}
-
-    <div class="card shadow-sm">
+    <div class="card shadow-sm mb-3">
         <div class="card-body">
+            {% if item.address %}<p class="mb-1"><strong>Address:</strong> {{ item.address }}</p>{% endif %}
+            {% if item.purchase_date %}<p class="mb-1"><strong>Purchase Date:</strong> {{ item.purchase_date }}</p>{% endif %}
+            {% if item.description %}<p class="mb-0">{{ item.description }}</p>{% endif %}
+
             <div class="row mb-3">
                 <div class="col-md-4"><strong>Total Doors Capital:</strong> {{ item.total_capital_doors }}</div>
                 <div class="col-md-4"><strong>Total Rooms:</strong> {{ item.total_rooms }}</div>
@@ -62,6 +56,113 @@
             </div>
         </div>
     </div>
+    
+    <div class="card shadow-sm mb-3">
+        <div class="card-header">Documents</div>
+        <div class="card-body">
+            <style>
+                table.table tr.previewable { position: relative; }
+                .doc-preview-fixed {
+                    display: none;
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: min(65vw, 900px);
+                    max-height: 80vh;
+                    object-fit: contain;
+                    border: 1px solid #dee2e6;
+                    background: #fff;
+                    padding: 4px;
+                    border-radius: .25rem;
+                    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+                    z-index: 1060;
+                    pointer-events: none;
+                }
+                table.table tr.previewable:hover .doc-preview-fixed { display: block; }
+            </style>
+            <form method="post" enctype="multipart/form-data" action="{% url 'property_upload_document' item.id %}" class="mb-3">
+                {% csrf_token %}
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">Title</label>
+                        {{ document_form.title }}
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Category</label>
+                        {{ document_form.category }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">File</label>
+                        {{ document_form.file }}
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100" type="submit">Upload</button>
+                    </div>
+                </div>
+            </form>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Uploaded</th>
+                        <th>By</th>
+                        <th>File</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for doc in documents %}
+                        <tr class="previewable">
+                            <td>{{ doc.title }}</td>
+                            <td>{{ doc.get_category_display }}</td>
+                            <td>{{ doc.uploaded_at }}</td>
+                            <td>{% if doc.created_by %}{{ doc.created_by.username }}{% else %}-{% endif %}</td>
+                            <td>
+                                <a href="{{ doc.file.url }}" target="_blank" rel="noopener">Download</a>
+                                {% with url=doc.file.url|lower %}
+                                    {% if '.png' in url or '.jpg' in url or '.jpeg' in url or '.gif' in url or '.webp' in url %}
+                                        <img src="{{ doc.file.url }}" alt="{{ doc.title }}" class="doc-preview-fixed" loading="lazy">
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No documents uploaded.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-header">Images</div>
+        <div class="card-body">
+            <div class="row g-3 mb-3">
+                {% for img in item.images.all %}
+                    <div class="col-6 col-md-3">
+                        <img src="{{ img.image.url }}" alt="{{ item.name }}" class="img-fluid rounded border">
+                    </div>
+                {% empty %}
+                    <div class="text-muted">No images uploaded.</div>
+                {% endfor %}
+            </div>
+            <form method="post" enctype="multipart/form-data" action="{% url 'property_upload_image' item.id %}">
+                {% csrf_token %}
+                <div class="input-group">
+                    {{ image_form.image }}
+                    <button class="btn btn-sm btn-primary" type="submit">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+   
 {% endblock %}
 
 

@@ -1,6 +1,6 @@
 from django import forms
 
-from horsten_homes.models import Invoice, Property, Door, DoorImage, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, DoorPipelineImage, Tenant
+from horsten_homes.models import Invoice, Property, Door, DoorImage, PropertyImage, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, DoorPipelineImage, Tenant
 
 
 class InvoiceForm(forms.ModelForm):
@@ -111,12 +111,13 @@ class RentalPropertyForm(forms.ModelForm):
 class PropertyForm(forms.ModelForm):
 	class Meta:
 		model = Property
-		fields = ["name", "address", "description", "property_type", "latitude", "longitude"]
+		fields = ["name", "address", "description", "property_type", "purchase_date", "latitude", "longitude"]
 		widgets = {
 			"name": forms.TextInput(attrs={"class": "form-control"}),
 			"address": forms.TextInput(attrs={"class": "form-control"}),
 			"description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
 			"property_type": forms.Select(attrs={"class": "form-select"}),
+			"purchase_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
 			"latitude": forms.NumberInput(attrs={"class": "form-control", "step": "0.000001"}),
 			"longitude": forms.NumberInput(attrs={"class": "form-control", "step": "0.000001"}),
 		}
@@ -125,6 +126,15 @@ class PropertyForm(forms.ModelForm):
 class RentalPropertyImageForm(forms.ModelForm):
 	class Meta:
 		model = DoorImage
+		fields = ["image"]
+		widgets = {
+			"image": forms.ClearableFileInput(attrs={"class": "form-control"}),
+		}
+
+
+class PropertyImageForm(forms.ModelForm):
+	class Meta:
+		model = PropertyImage
 		fields = ["image"]
 		widgets = {
 			"image": forms.ClearableFileInput(attrs={"class": "form-control"}),

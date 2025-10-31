@@ -11,6 +11,8 @@ CATEGORY_CHOICES = [
 	("finance", "Finance"),
 	("expense", "Expense"),
 	("invoice", "Invoice"),
+	("leases", "Leases"),
+	("deeds", "Deeds"),
 	("legal", "Legal"),
 	("other", "Other"),
 ]

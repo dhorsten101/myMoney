@@ -44,7 +44,7 @@ class DoorPipelineAdmin(admin.ModelAdmin):
 
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
-	list_display = ("name", "created_at")
+	list_display = ("name", "property_type", "created_at")
 	search_fields = ("name",)
 
 

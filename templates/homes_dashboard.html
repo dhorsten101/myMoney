@@ -186,7 +186,12 @@
     {{ months_to_payoff_flow_all|json_script:'agg-payoff-flow-months' }}
     {{ months_to_payoff_growing_all|json_script:'agg-payoff-grow-months' }}
 
+    {# Property markers for map #}
+    {{ property_markers|json_script:'property-markers' }}
+
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         (function () {
             const elLabelsAgg = document.getElementById('agg-labels');
@@ -260,6 +265,37 @@
                         }
                     }
                 }
+            });
+        })();
+    </script>
+
+    <div class="card shadow-sm mt-3">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Properties Map</h5>
+            <div id="propertiesMap" style="height: 420px; border-radius: .5rem; overflow: hidden;"></div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const el = document.getElementById('property-markers');
+            if (!el) return;
+            const markers = JSON.parse(el.textContent || '[]');
+            if (!markers.length) return;
+
+            const map = L.map('propertiesMap');
+            const coords = markers.map(m => [m.lat, m.lng]);
+            const bounds = L.latLngBounds(coords);
+            map.fitBounds(bounds.pad(0.1));
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            markers.forEach(m => {
+                const popup = `<div><strong>${m.name}</strong><br>${m.address || ''}<br><a href="${m.url}">View</a></div>`;
+                L.marker([m.lat, m.lng]).addTo(map).bindPopup(popup);
             });
         })();
     </script>

@@ -2,11 +2,20 @@ from decimal import Decimal, ROUND_HALF_UP
 
 from django.db import models, transaction
 
+PROPERTY_TYPE_CHOICES = [
+	("commercial", "Commercial"),
+	("residential", "Residential"),
+	("mixed", "Mixed"),
+]
+
 
 class Property(models.Model):
 	name = models.CharField(max_length=200)
 	address = models.CharField(max_length=255, blank=True)
 	description = models.TextField(blank=True)
+	latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+	longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+	property_type = models.CharField(max_length=20, choices=PROPERTY_TYPE_CHOICES, default="residential")
 	# Aggregated totals over related doors/expenses
 	total_capital_doors = models.DecimalField(max_digits=14, decimal_places=2, default=0)
 	total_rooms = models.IntegerField(default=0)
@@ -16,10 +25,10 @@ class Property(models.Model):
 	total_income = models.DecimalField(max_digits=14, decimal_places=2, default=0)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
-
+	
 	def __str__(self):
 		return self.name
-
+	
 	def recalc_totals(self):
 		from django.db.models import Sum
 		# Doors aggregate
@@ -33,9 +42,9 @@ class Property(models.Model):
 		try:
 			from horsten_homes.models import MonthlyExpense
 			exp_total = (
-				MonthlyExpense.objects.filter(door__property_group=self)
-				.aggregate(Sum("amount"))
-				.get("amount__sum") or 0
+					MonthlyExpense.objects.filter(door__property_group=self)
+					.aggregate(Sum("amount"))
+					.get("amount__sum") or 0
 			)
 		except Exception:
 			exp_total = 0
@@ -228,7 +237,6 @@ class DoorPipelineImage(models.Model):
 		return f"Image for pipeline {self.pipeline.id}"
 
 
-
 class MonthlyExpense(models.Model):
 	door = models.ForeignKey(Door, null=True, blank=True, on_delete=models.SET_NULL, related_name="monthly_expenses")
 	date = models.DateField()
@@ -288,6 +296,6 @@ class Tenant(models.Model):
 	door = models.ForeignKey(Door, on_delete=models.SET_NULL, null=True, blank=True, related_name="tenants")
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
-
+	
 	def __str__(self):
 		return self.name

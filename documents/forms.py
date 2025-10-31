@@ -21,6 +21,8 @@ class DocumentUploadForm(forms.ModelForm):
 		('finance', 'Finance'),
 		('legal', 'Legal'),
 		('floorplan', 'Floorplan'),
+		('leases', 'Leases'),
+		('deeds', 'Deeds'),
 	]
 	category = forms.ChoiceField(choices=CATEGORY_CHOICES)
 	create_as = forms.ChoiceField(

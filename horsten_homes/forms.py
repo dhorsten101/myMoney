@@ -111,11 +111,14 @@ class RentalPropertyForm(forms.ModelForm):
 class PropertyForm(forms.ModelForm):
 	class Meta:
 		model = Property
-		fields = ["name", "address", "description"]
+		fields = ["name", "address", "description", "property_type", "latitude", "longitude"]
 		widgets = {
 			"name": forms.TextInput(attrs={"class": "form-control"}),
 			"address": forms.TextInput(attrs={"class": "form-control"}),
 			"description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+			"property_type": forms.Select(attrs={"class": "form-select"}),
+			"latitude": forms.NumberInput(attrs={"class": "form-control", "step": "0.000001"}),
+			"longitude": forms.NumberInput(attrs={"class": "form-control", "step": "0.000001"}),
 		}
 
 

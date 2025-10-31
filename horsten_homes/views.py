@@ -8,6 +8,7 @@ from django.db import models
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth, TruncDay
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 
 from cryptos.models import CryptoStats
 from horsten_homes.forms import InvoiceForm, PropertyForm, RentalPropertyForm, RentalPropertyImageForm, RentalPropertyPipelineForm, MonthlyExpenseForm, RentalAgentForm, EstateAgentForm, ManagingAgentForm, RentalPropertyPipelineImageForm
@@ -439,6 +440,21 @@ def homes_dashboard(request):
 				months_to_payoff_growing_all = len(agg_labels)
 			i += 1
 	
+	# Build property markers for map (only those with coordinates)
+	property_markers = []
+	for p in Property.objects.exclude(latitude__isnull=True).exclude(longitude__isnull=True):
+		try:
+			property_markers.append({
+				"id": p.id,
+				"name": p.name,
+				"address": p.address,
+				"lat": float(p.latitude),
+				"lng": float(p.longitude),
+				"url": reverse("property_detail", args=[p.id]),
+			})
+		except Exception:
+			pass
+
 	return render(request, "homes_dashboard.html", {
 		"totals": totals,
 		"recent": recent,
@@ -467,6 +483,7 @@ def homes_dashboard(request):
 		"months_to_payoff_flow_all": months_to_payoff_flow_all,
 		"months_to_payoff_growing_all": months_to_payoff_growing_all,
 		"growth_rate_percent": float(rate_percent),
+		"property_markers": property_markers,
 	})
 
 

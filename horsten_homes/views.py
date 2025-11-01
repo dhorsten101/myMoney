@@ -20,6 +20,7 @@ from django.contrib import messages
 
 logger = logging.getLogger(__name__)
 from horsten_homes.models import Invoice, Property, Door, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, Tenant, PropertyImage
+from contractors.models import Contractor
 from incomes.models import Income
 from sellables.models import Sellable
 from worth.models import Worth
@@ -335,6 +336,7 @@ def homes_dashboard(request):
 	total_doors_count = Door.objects.count()
 	total_door_squares = Door.objects.aggregate(Sum("squares")).get("squares__sum") or 0
 	total_tenants_count = Tenant.objects.count()
+	total_contractors_count = Contractor.objects.count()
 	total_agents_count = (
 		RentalAgent.objects.count()
 		+ EstateAgent.objects.count()
@@ -469,6 +471,7 @@ def homes_dashboard(request):
 		"total_door_squares": total_door_squares,
 		"total_tenants_count": total_tenants_count,
 		"total_agents_count": total_agents_count,
+		"total_contractors_count": total_contractors_count,
 		"total_pipelines_count": total_pipelines_count,
 		"total_invoices_count": total_invoices_count,
 		"total_expenses_count": total_expenses_count,

@@ -3,17 +3,18 @@
 {% block title %}Delete Expense{% endblock %}
 
 {% block content %}
-<div class="card shadow-sm">
-    <div class="card-body">
-        <h5 class="card-title">Delete Expense</h5>
-        <p>Are you sure you want to delete the expense on <strong>{{ expense.date }}</strong> for <strong>{{ expense.amount }}</strong>?</p>
-        <form method="post">
-            {% csrf_token %}
-            <button class="btn btn-danger" type="submit">Confirm Delete</button>
-            <a class="btn btn-outline-secondary" href="{% url 'expense_list' %}">Cancel</a>
-        </form>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Delete Expense</h5>
+            <p>Are you sure you want to delete the expense on <strong>{{ expense.date }}</strong> for <strong>{{ expense.amount }}</strong>?</p>
+            <form method="post">
+                {% csrf_token %}
+                <button class="btn btn-danger" type="submit">Confirm Delete</button>
+                <a class="btn btn-outline-secondary" href="{% url 'expense_list' %}">Cancel</a>
+            </form>
+        </div>
     </div>
-</div>
+    
 {% endblock %}
 
 

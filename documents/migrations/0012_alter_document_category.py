@@ -4,28 +4,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    dependencies = [
-        ("documents", "0011_document_door_alter_document_category"),
-    ]
-
-    operations = [
-        migrations.AlterField(
-            model_name="document",
-            name="category",
-            field=models.CharField(
-                choices=[
-                    ("personal", "Personal"),
-                    ("work", "Work"),
-                    ("floorplan", "Floorplan"),
-                    ("finance", "Finance"),
-                    ("expense", "Expense"),
-                    ("invoice", "Invoice"),
-                    ("legal", "Legal"),
-                    ("other", "Other"),
-                ],
-                default="personal",
-                max_length=20,
-            ),
-        ),
-    ]
+	dependencies = [
+		("documents", "0011_document_door_alter_document_category"),
+	]
+	
+	operations = [
+		migrations.AlterField(
+			model_name="document",
+			name="category",
+			field=models.CharField(
+				choices=[
+					("personal", "Personal"),
+					("work", "Work"),
+					("floorplan", "Floorplan"),
+					("finance", "Finance"),
+					("expense", "Expense"),
+					("invoice", "Invoice"),
+					("legal", "Legal"),
+					("other", "Other"),
+				],
+				default="personal",
+				max_length=20,
+			),
+		),
+	]

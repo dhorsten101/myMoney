@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}{% if item %}Edit Attorney{% else %}New Attorney{% endif %}{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">{% if item %}Edit Attorney{% else %}New Attorney{% endif %}</h1>
+        <a class="btn btn-outline-secondary" href="{% url 'attorney_list' %}">Back</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Name</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Email</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Phone</label>
+                        {{ form.phone }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Notes</label>
+                        {{ form.notes }}
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+

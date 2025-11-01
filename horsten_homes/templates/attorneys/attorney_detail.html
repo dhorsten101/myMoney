@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Attorney {{ item.name }}{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">{{ item.name }}</h1>
+        <div class="btn-group gap-2">
+            <a class="btn btn-outline-secondary" href="{% url 'attorney_list' %}">Back</a>
+            <a class="btn btn-outline-primary" href="{% url 'attorney_update' item.id %}">Edit</a>
+            <a class="btn btn-outline-danger" href="{% url 'attorney_delete' item.id %}">Delete</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6"><strong>Email:</strong> {{ item.email|default:"—" }}</div>
+                <div class="col-md-6"><strong>Phone:</strong> {{ item.phone|default:"—" }}</div>
+                <div class="col-12"><strong>Notes:</strong><br>{{ item.notes|linebreaksbr }}</div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+

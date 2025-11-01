@@ -17,6 +17,7 @@ class Property(models.Model):
 	latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 	longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 	property_type = models.CharField(max_length=20, choices=PROPERTY_TYPE_CHOICES, default="residential")
+	attorney = models.ForeignKey('Attorney', null=True, blank=True, on_delete=models.SET_NULL, related_name='properties')
 	# Aggregated totals over related doors/expenses
 	total_capital_doors = models.DecimalField(max_digits=14, decimal_places=2, default=0)
 	total_rooms = models.IntegerField(default=0)
@@ -292,6 +293,18 @@ class ManagingAgent(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
 	
+	def __str__(self):
+		return self.name
+
+
+class Attorney(models.Model):
+	name = models.CharField(max_length=200)
+	email = models.EmailField(blank=True)
+	phone = models.CharField(max_length=50, blank=True)
+	notes = models.TextField(blank=True)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
 	def __str__(self):
 		return self.name
 

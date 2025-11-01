@@ -53,6 +53,13 @@ urlpatterns = [
 	path("managing-agents/<int:id>/", views.managing_agent_detail, name="managing_agent_detail"),
 	path("managing-agents/<int:id>/edit/", views.managing_agent_update, name="managing_agent_update"),
 	path("managing-agents/<int:id>/delete/", views.managing_agent_delete, name="managing_agent_delete"),
+
+	# Attorneys
+	path("attorneys/", views.attorney_list, name="attorney_list"),
+	path("attorneys/new/", views.attorney_create, name="attorney_create"),
+	path("attorneys/<int:id>/", views.attorney_detail, name="attorney_detail"),
+	path("attorneys/<int:id>/edit/", views.attorney_update, name="attorney_update"),
+	path("attorneys/<int:id>/delete/", views.attorney_delete, name="attorney_delete"),
 	
 	# Property groups (top-level properties)
 	path("property/", views.property_list, name="property_list"),

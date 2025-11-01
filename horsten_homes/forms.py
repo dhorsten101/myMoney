@@ -1,6 +1,6 @@
 from django import forms
 
-from horsten_homes.models import Invoice, Property, Door, DoorImage, PropertyImage, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, DoorPipelineImage, Tenant
+from horsten_homes.models import Invoice, Property, Door, DoorImage, PropertyImage, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, DoorPipelineImage, Tenant, Attorney
 
 
 class InvoiceForm(forms.ModelForm):
@@ -111,15 +111,28 @@ class RentalPropertyForm(forms.ModelForm):
 class PropertyForm(forms.ModelForm):
 	class Meta:
 		model = Property
-		fields = ["name", "address", "description", "property_type", "purchase_date", "latitude", "longitude"]
+		fields = ["name", "address", "description", "property_type", "attorney", "purchase_date", "latitude", "longitude"]
 		widgets = {
 			"name": forms.TextInput(attrs={"class": "form-control"}),
 			"address": forms.TextInput(attrs={"class": "form-control"}),
 			"description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
 			"property_type": forms.Select(attrs={"class": "form-select"}),
+			"attorney": forms.Select(attrs={"class": "form-select"}),
 			"purchase_date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
 			"latitude": forms.NumberInput(attrs={"class": "form-control", "step": "0.000001"}),
 			"longitude": forms.NumberInput(attrs={"class": "form-control", "step": "0.000001"}),
+		}
+
+
+class AttorneyForm(forms.ModelForm):
+	class Meta:
+		model = Attorney
+		fields = ["name", "email", "phone", "notes"]
+		widgets = {
+			"name": forms.TextInput(attrs={"class": "form-control"}),
+			"email": forms.EmailInput(attrs={"class": "form-control"}),
+			"phone": forms.TextInput(attrs={"class": "form-control"}),
+			"notes": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
 		}
 
 

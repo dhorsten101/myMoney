@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from horsten_homes.models import Invoice, Property, Door, DoorPipeline, RentalAgent, EstateAgent, ManagingAgent, Tenant, PropertyImage
+from horsten_homes.models import Invoice, Property, Door, DoorPipeline, RentalAgent, EstateAgent, ManagingAgent, Tenant, PropertyImage, Attorney
 
 
 @admin.register(Invoice)
@@ -52,6 +52,12 @@ class PropertyAdmin(admin.ModelAdmin):
 class PropertyImageAdmin(admin.ModelAdmin):
 	list_display = ("property", "uploaded_at")
 	search_fields = ("property__name",)
+
+
+@admin.register(Attorney)
+class AttorneyAdmin(admin.ModelAdmin):
+	list_display = ("name", "email", "phone")
+	search_fields = ("name", "email", "phone")
 
 
 @admin.register(Tenant)

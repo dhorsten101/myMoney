@@ -19,7 +19,7 @@ import logging
 from django.contrib import messages
 
 logger = logging.getLogger(__name__)
-from horsten_homes.models import Invoice, Property, Door, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, Tenant, PropertyImage
+from horsten_homes.models import Invoice, Property, Door, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, Tenant, PropertyImage, Attorney
 from contractors.models import Contractor
 from incomes.models import Income
 from sellables.models import Sellable
@@ -337,6 +337,7 @@ def homes_dashboard(request):
 	total_door_squares = Door.objects.aggregate(Sum("squares")).get("squares__sum") or 0
 	total_tenants_count = Tenant.objects.count()
 	total_contractors_count = Contractor.objects.count()
+	total_attorneys_count = Attorney.objects.count()
 	total_agents_count = (
 		RentalAgent.objects.count()
 		+ EstateAgent.objects.count()
@@ -472,6 +473,7 @@ def homes_dashboard(request):
 		"total_tenants_count": total_tenants_count,
 		"total_agents_count": total_agents_count,
 		"total_contractors_count": total_contractors_count,
+		"total_attorneys_count": total_attorneys_count,
 		"total_pipelines_count": total_pipelines_count,
 		"total_invoices_count": total_invoices_count,
 		"total_expenses_count": total_expenses_count,
@@ -811,6 +813,57 @@ def managing_agent_delete(request, id):
 		agent.delete()
 		return redirect("managing_agent_list")
 	return render(request, "agents/managing_agent_confirm_delete.html", {"agent": agent})
+
+
+# Attorney CRUD
+@login_required
+def attorney_list(request):
+	items = Attorney.objects.order_by("name")
+	return render(request, "attorneys/attorney_list.html", {"items": items})
+
+
+@login_required
+def attorney_create(request):
+	from horsten_homes.forms import AttorneyForm
+	if request.method == "POST":
+		form = AttorneyForm(request.POST)
+		if form.is_valid():
+			att = form.save()
+			return redirect("attorney_detail", id=att.id)
+	else:
+		form = AttorneyForm()
+	return render(request, "attorneys/attorney_form.html", {"form": form})
+
+
+@login_required
+def attorney_update(request, id):
+	from horsten_homes.forms import AttorneyForm
+	item = get_object_or_404(Attorney, id=id)
+	if request.method == "POST":
+		form = AttorneyForm(request.POST, instance=item)
+		if form.is_valid():
+			item = form.save()
+			return redirect("attorney_detail", id=item.id)
+	else:
+		form = AttorneyForm(instance=item)
+	return render(request, "attorneys/attorney_form.html", {"form": form, "item": item})
+
+
+@login_required
+def attorney_detail(request, id):
+	item = get_object_or_404(Attorney, id=id)
+	return render(request, "attorneys/attorney_detail.html", {"item": item})
+
+
+@login_required
+def attorney_delete(request, id):
+	item = get_object_or_404(Attorney, id=id)
+	if request.method == "POST":
+		item.delete()
+		return redirect("attorney_list")
+	return render(request, "attorneys/attorney_confirm_delete.html", {"item": item})
+
+
 
 
 # Tenant CRUD

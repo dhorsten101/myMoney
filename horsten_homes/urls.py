@@ -60,6 +60,7 @@ urlpatterns = [
 	path("property/<int:id>/", views.property_detail, name="property_detail"),
 	path("property/<int:id>/upload_image/", views.property_upload_image, name="property_upload_image"),
 	path("property/<int:id>/upload_document/", views.property_upload_document, name="property_upload_document"),
+	path("property/image/<int:image_id>/delete/", views.property_delete_image, name="property_delete_image"),
 	path("property/<int:id>/edit/", views.property_update, name="property_update"),
 	path("property/<int:id>/delete/", views.property_delete, name="property_delete"),
 	

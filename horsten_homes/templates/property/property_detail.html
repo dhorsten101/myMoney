@@ -145,7 +145,13 @@
             <div class="row g-3 mb-3">
                 {% for img in item.images.all %}
                     <div class="col-6 col-md-3">
-                        <img src="{{ img.image.url }}" alt="{{ item.name }}" class="img-fluid rounded border">
+                        <div class="border rounded p-2 h-100 d-flex flex-column">
+                            <img src="{{ img.image.url }}" alt="{{ item.name }}" class="img-fluid rounded mb-2">
+                            <form method="post" action="{% url 'property_delete_image' img.id %}" onsubmit="return confirm('Delete this image?');">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-outline-danger w-100" type="submit">Delete</button>
+                            </form>
+                        </div>
                     </div>
                 {% empty %}
                     <div class="text-muted">No images uploaded.</div>

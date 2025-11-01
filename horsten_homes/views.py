@@ -19,7 +19,7 @@ import logging
 from django.contrib import messages
 
 logger = logging.getLogger(__name__)
-from horsten_homes.models import Invoice, Property, Door, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, Tenant
+from horsten_homes.models import Invoice, Property, Door, DoorPipeline, MonthlyExpense, RentalAgent, EstateAgent, ManagingAgent, Tenant, PropertyImage
 from incomes.models import Income
 from sellables.models import Sellable
 from worth.models import Worth
@@ -974,6 +974,22 @@ def property_upload_image(request, id):
 
 
 @login_required
+def property_delete_image(request, image_id):
+	img = get_object_or_404(PropertyImage, id=image_id)
+	prop_id = img.property_id
+	if request.method == "POST":
+		try:
+			# Delete the file from storage first
+			if getattr(img, "image", None):
+				img.image.delete(save=False)
+		except Exception:
+			pass
+		img.delete()
+		messages.success(request, "Image deleted.")
+	return redirect("property_detail", id=prop_id)
+
+
+@login_required
 def property_upload_document(request, id):
 	item = get_object_or_404(Property, id=id)
 	if request.method == "POST":
@@ -987,6 +1003,9 @@ def property_upload_document(request, id):
 			if not getattr(doc, "content", None):
 				doc.content = ""
 			doc.save()
+			messages.success(request, "Document uploaded successfully.")
+		else:
+			messages.error(request, f"Upload failed: {form.errors.as_text()}")
 	return redirect("property_detail", id=item.id)
 
 

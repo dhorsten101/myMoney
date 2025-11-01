@@ -31,7 +31,8 @@ class DocumentUploadForm(forms.ModelForm):
 			('expense', 'Create Expense'),
 			('invoice', 'Create Invoice'),
 		],
-		initial='none'
+		initial='none',
+		required=False,
 	)
 
 	class Meta:

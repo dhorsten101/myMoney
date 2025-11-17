@@ -54,6 +54,7 @@
                     <th>Issue Date</th>
                     <th>Due Date</th>
                     <th>Status</th>
+                    <th>Description</th>
                     <th class="text-end">Before Tax</th>
                     <th class="text-end">Total</th>
                     <th></th>
@@ -73,6 +74,7 @@
                     <td>{{ inv.issue_date }}</td>
                     <td>{{ inv.due_date }}</td>
                     <td>{{ inv.get_status_display }}</td>
+                    <td>{{ inv.description }}</td>
                     <td class="text-end">{{ inv.subtotal }}</td>
                     <td class="text-end">{{ inv.total }}</td>
                     <td class="text-end">

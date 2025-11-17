@@ -146,6 +146,7 @@ class Invoice(models.Model):
 	number = models.PositiveIntegerField(unique=True, editable=False)
 	customer_name = models.CharField(max_length=200)
 	customer_email = models.EmailField(blank=True)
+	description = models.CharField(max_length=255, blank=True)
 	issue_date = models.DateField()
 	due_date = models.DateField()
 	status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_DRAFT)

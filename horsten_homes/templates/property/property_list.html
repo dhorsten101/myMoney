@@ -26,6 +26,7 @@
                     <th class="text-end">Squares</th>
                     <th class="text-end">Income</th>
                     <th class="text-end">Expenses</th>
+                    <th class="text-end">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -41,10 +42,16 @@
                         <td class="text-end">{{ p.total_squares }}</td>
                         <td class="text-end">{{ p.total_income }}</td>
                         <td class="text-end">{{ p.total_expense }}</td>
+                        <td class="text-end">
+                            <form method="post" action="{% url 'property_delete' p.id %}" onsubmit="return confirm('Delete property {{ p.name }}?');" class="d-inline">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="2" class="text-center text-muted">No properties yet.</td>
+                        <td colspan="11" class="text-center text-muted">No properties yet.</td>
                     </tr>
                 {% endfor %}
                 </tbody>

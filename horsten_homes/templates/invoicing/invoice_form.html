@@ -31,6 +31,11 @@
                     {{ form.door|add_class:"form-select" }}
                 </div>
 
+                <div class="col-md-6">
+                    <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                    {{ form.description|add_class:"form-control" }}
+                </div>
+
                 <div class="col-md-4">
                     <label for="{{ form.total.id_for_label }}" class="form-label">{{ form.total.label }}</label>
                     {{ form.total|add_class:"form-control" }}

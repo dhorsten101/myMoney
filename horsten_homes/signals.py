@@ -25,3 +25,5 @@ def on_expense_deleted(sender, instance: MonthlyExpense, **kwargs):
 
 
 
+
+

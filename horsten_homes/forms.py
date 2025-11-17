@@ -11,12 +11,14 @@ class InvoiceForm(forms.ModelForm):
 			"due_date",
 			"status",
 			"door",
+			"description",
 			"total",  # capture Gross Total (incl. VAT) directly
 			"notes",
 		]
 		widgets = {
 			"issue_date": forms.DateInput(attrs={"type": "date"}),
 			"due_date": forms.DateInput(attrs={"type": "date"}),
+			"description": forms.TextInput(attrs={"class": "form-control", "placeholder": "What is this invoice for?"}),
 		}
 	
 	def __init__(self, *args, **kwargs):

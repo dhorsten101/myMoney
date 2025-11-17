@@ -23,6 +23,7 @@
                             <th>Door</th>
                             <th>Issue Date</th>
                             <th>Status</th>
+                            <th>Description</th>
                             <th class="text-end">Before Tax</th>
                             <th class="text-end">Tax</th>
                             <th class="text-end">Total</th>
@@ -41,6 +42,7 @@
                             </td>
                             <td>{{ inv.issue_date }}</td>
                             <td>{{ inv.get_status_display }}</td>
+                            <td>{{ inv.description }}</td>
                             <td class="text-end">{{ inv.subtotal }}</td>
                             <td class="text-end">{{ inv.tax }}</td>
                             <td class="text-end">{{ inv.total }}</td>

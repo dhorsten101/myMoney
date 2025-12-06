@@ -11,8 +11,24 @@
         </div>
     </div>
 
-
-
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <div class="row mb-1">
+                <div class="col-md-4"><strong>Capital Value:</strong> {{ property.capital_value }}</div>
+                <div class="col-md-4"><strong>Levies:</strong> {{ property.levies }}</div>
+                <div class="col-md-4"><strong>Rates & Taxes:</strong> {{ property.rates_taxes }}</div>
+                <div class="col-md-4"><strong>Water & Electricity:</strong> {{ property.water_electricity }}</div>
+                <div class="col-md-4"><strong>Internet:</strong> {{ property.internet }}</div>
+                <div class="col-md-4"><strong>Cost of Money (6%/yr):</strong> {{ property.cost_of_money_monthly }}</div>
+                <div class="col-md-4"><strong>Squares:</strong> {{ property.squares }}</div>
+                <div class="col-md-4"><strong>Beds:</strong> {{ property.total_beds }}</div>
+                <div class="col-md-4"><strong>Toilets:</strong> {{ property.total_toilets }}</div>
+                <div class="col-md-4 text-info"><strong>Rental Income:</strong> {{ property.flow_value }}</div>
+                <div class="col-md-4 text-danger"><strong>Total Expenses:</strong> {{ property.total_expenses }}</div>
+                <div class="col-md-4 fw-bold  text-success"><strong>Profit:</strong> {{ property.income }}</div>
+            </div>
+        </div>
+    </div>
 
 
     <div class="card shadow-sm mb-3">

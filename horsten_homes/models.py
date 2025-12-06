@@ -14,6 +14,7 @@ class Property(models.Model):
 	address = models.CharField(max_length=255, blank=True)
 	description = models.TextField(blank=True)
 	purchase_date = models.DateField(null=True, blank=True)
+	previous_sold_value = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 	latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 	longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 	property_type = models.CharField(max_length=20, choices=PROPERTY_TYPE_CHOICES, default="residential")

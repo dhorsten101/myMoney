@@ -17,6 +17,7 @@
         <div class="card-body">
             {% if item.address %}<p class="mb-1"><strong>Address:</strong> {{ item.address }}</p>{% endif %}
             {% if item.purchase_date %}<p class="mb-1"><strong>Purchase Date:</strong> {{ item.purchase_date }}</p>{% endif %}
+            <p class="mb-1"><strong>Previous Sold Value:</strong> {{ item.previous_sold_value }}</p>
             {% if item.description %}<p class="mb-0">{{ item.description }}</p>{% endif %}
 
             <div class="row mb-3">

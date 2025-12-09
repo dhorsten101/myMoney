@@ -178,6 +178,9 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Camera streams (HLS) storage
+CAMERA_STREAMS_ROOT = MEDIA_ROOT / "camera_streams"
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 DEFAULT_FROM_EMAIL = "dhorsten101@gmail.com"

@@ -11,6 +11,9 @@ urlpatterns = [
 	path("login/", auth_views.LoginView.as_view(), name="login"),
 	path("logout/", auth_views.LogoutView.as_view(), name="logout"),
 	path("register/", views.register, name="register"),
+	# Simple in-app password reset (no email)
+	path("password-reset/", views.password_reset, name="app_password_reset"),
+	path("password_reset/", views.password_reset, name="password_reset"),
 	path("pricing/", views.pricing, name="pricing"),
 	path("contact/", views.contact_view, name="contact"),
 	path("error-logs/", error_log_list, name="error_log_list"),

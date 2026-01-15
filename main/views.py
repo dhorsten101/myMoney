@@ -1,9 +1,12 @@
 # views.py
 import logging
 
+from django import forms
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.password_validation import validate_password
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -27,6 +30,45 @@ from weight.models import Weight
 from worth.models import Worth
 
 logger = logging.getLogger('django')  # uses the 'django' logger from settings
+
+
+class SimplePasswordResetForm(forms.Form):
+	email = forms.EmailField(widget=forms.EmailInput(attrs={"class": "form-control"}))
+	new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control"}))
+	new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control"}))
+
+	def clean(self):
+		cleaned = super().clean()
+		p1 = cleaned.get("new_password1")
+		p2 = cleaned.get("new_password2")
+		if p1 and p2 and p1 != p2:
+			raise forms.ValidationError("Passwords do not match.")
+		if p1:
+			validate_password(p1)
+		return cleaned
+
+
+def password_reset(request):
+	"""
+	Simple in-app reset: email + new password. No email links, no messages.
+	Always redirects back to login on success (or if user is not found).
+	"""
+	if request.method == "POST":
+		form = SimplePasswordResetForm(request.POST)
+		if form.is_valid():
+			User = get_user_model()
+			email = form.cleaned_data["email"].strip()
+			new_password = form.cleaned_data["new_password1"]
+			try:
+				user = User.objects.get(email__iexact=email)
+				user.set_password(new_password)
+				user.save(update_fields=["password"])
+			except User.DoesNotExist:
+				pass
+			return redirect("login")
+	else:
+		form = SimplePasswordResetForm()
+	return render(request, "registration/password_reset_form.html", {"form": form})
 
 
 # Register view

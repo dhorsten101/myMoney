@@ -16,6 +16,22 @@ def connect_signals():
 		post_delete.connect(log_delete, sender=model, dispatch_uid=f"{model.__name__}_delete")
 
 
+def _safe_object_id(instance) -> int:
+	"""
+	AuditLog.object_id is an integer field, but some Django models (e.g. Session)
+	use a string primary key. Never let audit logging crash the request.
+	"""
+	pk = getattr(instance, "pk", None)
+	if pk is None:
+		return 0
+	if isinstance(pk, int):
+		return pk
+	try:
+		return int(pk)
+	except Exception:
+		return 0
+
+
 def log_save(sender, instance, created, **kwargs):
 	user = get_current_user()
 	request = get_current_request()
@@ -55,7 +71,7 @@ def log_save(sender, instance, created, **kwargs):
 		user=user,
 		action="created" if created else "updated",
 		model_name=sender.__name__,
-		object_id=instance.pk,
+		object_id=_safe_object_id(instance),
 		object_repr=object_repr,
 		changes=changes or None,
 		remote_ip=request.META.get("REMOTE_ADDR") if request else None,
@@ -79,7 +95,7 @@ def log_delete(sender, instance, **kwargs):
 		user=user,
 		action="deleted",
 		model_name=sender.__name__,
-		object_id=instance.pk,
+		object_id=_safe_object_id(instance),
 		object_repr=str(instance),
 		remote_ip=getattr(request, "META", {}).get("REMOTE_ADDR") if request else None,
 		user_agent=request.META.get("HTTP_USER_AGENT") if request else None,

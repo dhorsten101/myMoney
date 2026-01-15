@@ -1,5 +1,5 @@
 # models.py
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django_ckeditor_5.fields import CKEditor5Field
@@ -22,7 +22,7 @@ class Document(models.Model):
 	title = models.CharField(max_length=255)
 	content = CKEditor5Field('Content', config_name='default')
 	category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default="personal")
-	created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+	created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 	file = models.FileField(upload_to='documents/%Y/%m/')
 	door = models.ForeignKey('horsten_homes.Door', null=True, blank=True, on_delete=models.SET_NULL, related_name='documents')
 	property = models.ForeignKey('horsten_homes.Property', null=True, blank=True, on_delete=models.SET_NULL, related_name='documents')

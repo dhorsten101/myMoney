@@ -62,6 +62,8 @@ INSTALLED_APPS = [
 	"time_tracker",
 	"horsten_homes",
 	"contractors",
+	"authentication",
+
 ]
 
 # CKEditor 5 config
@@ -153,6 +155,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
+
+AUTH_USER_MODEL = "authentication.User"
 
 # Redirect user after login
 LOGIN_REDIRECT_URL = "home"

@@ -41,6 +41,7 @@
 </head>
 
 <body class="d-flex flex-column min-vh-100">
+{% load auth_groups %}
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-success sticky-top shadow-sm">
@@ -53,12 +54,16 @@
 
         <!-- Global dropdowns -->
         <ul class="navbar-nav ">
-            <li class=" mx-1 nav-item d-flex align-items-center">
-                <a class="nav-link" href="/money/" onclick="setPortal('mymoney')">MyMoney</a>
-            </li>
-            <li class="mx-1 nav-item d-flex align-items-center">
-                <a class="nav-link" href="/homes/" onclick="setPortal('homes')">HorstenHomes</a>
-            </li>
+            {% if not user.is_authenticated or not user|has_group:"horstenhomes" %}
+                <li class=" mx-1 nav-item d-flex align-items-center">
+                    <a class="nav-link" href="/money/" onclick="setPortal('mymoney')">MyMoney</a>
+                </li>
+            {% endif %}
+            {% if not user.is_authenticated or not user|has_group:"mymoney" %}
+                <li class="mx-1 nav-item d-flex align-items-center">
+                    <a class="nav-link" href="/homes/" onclick="setPortal('homes')">HorstenHomes</a>
+                </li>
+            {% endif %}
 
             <li class="mx-1 nav-item dropdown d-flex align-items-center">
                 <a class="nav-link" href="#" id="navbarDropdownProductivity" role="button" data-bs-toggle="dropdown" aria-expanded="false">Productivity</a>
@@ -123,6 +128,8 @@
                     <li><a class="dropdown-item" href="/metrics/">Metrics</a></li>
                     <li><a class="dropdown-item" href="/logs/">Logs</a></li>
                     <li><a class="dropdown-item" href="/system/">System</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'system_user_list' %}">Users</a></li>
                 </ul>
             </li>
         </ul>
@@ -133,7 +140,7 @@
                 <form method="POST" action="{% url 'logout' %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-secondary btn-sm float-end mx-2 py-0 px-1">Logout</button>
-                    {{ user.username }}
+                    {{ user.get_username }}
                 </form>
             {% endif %}
         </div>

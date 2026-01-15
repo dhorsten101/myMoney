@@ -5,7 +5,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
+from authentication.forms import CustomUserCreationForm
 from django.contrib.auth.password_validation import validate_password
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
@@ -74,7 +74,7 @@ def password_reset(request):
 # Register view
 def register(request):
 	if request.method == "POST":
-		form = UserCreationForm(request.POST)
+		form = CustomUserCreationForm(request.POST)
 		if form.is_valid():
 			user = form.save()
 			from django.contrib.auth import login
@@ -82,7 +82,7 @@ def register(request):
 			login(request, user)
 			return redirect("home")
 	else:
-		form = UserCreationForm()
+		form = CustomUserCreationForm()
 	return render(request, "registration/register.html", {"form": form})
 
 

@@ -8,6 +8,7 @@ class CreditForm(forms.ModelForm):
     class Meta:
         model = Credit
         fields = [
+            "user",
             "name",
             "description",
             "balance",

@@ -17,6 +17,7 @@
                 <thead class="table-dark">
                 <tr>
                     <th scope="col">Name</th>
+                    <th scope="col">User</th>
                     <th scope="col">Description</th>
                     <th scope="col">Balance</th>
                     <th scope="col">Created At</th>
@@ -28,6 +29,7 @@
                 {% for income in incomes %}
                     <tr>
                         <td>{{ income.name }}</td>
+                        <td>{{ income.user|default:"-" }}</td>
                         <td>{{ income.description }}</td>
                         <td>{{ income.balance|floatformat:2 }}</td>
                         <td>{{ income.created_at|date:"Y-m-d H:i:s" }}</td>
@@ -47,13 +49,13 @@
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="8" class="text-center">No Income available</td>
+                        <td colspan="7" class="text-center">No Income available</td>
                     </tr>
                 {% endfor %}
                 </tbody>
                 <tfoot class="table-dark fw-bold">
                 <tr>
-                    <td colspan="2" class="text-end fw-bold">Totals:</td>
+                    <td colspan="3" class="text-end fw-bold">Totals:</td>
                     <td>{{ total_balance|floatformat:2|intcomma }}</td>
                     <td colspan="3"></td>
                 </tr>

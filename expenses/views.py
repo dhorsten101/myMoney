@@ -8,7 +8,7 @@ from expenses.models import Expense
 
 @login_required
 def expense_list(request):
-	expenses = Expense.objects.all()
+	expenses = (Expense.objects.all() if request.user.is_superuser else Expense.objects.filter(user=request.user)).order_by("-created_at")
 	total_balance = (
 			expenses.aggregate(Sum("balance"))["balance__sum"] or 0
 	)  # Sum up all the balances
@@ -24,7 +24,12 @@ def expense_create(request):
 	if request.method == "POST":
 		form = ExpenseForm(request.POST)
 		if form.is_valid():
-			form.save()
+			expense = form.save(commit=False)
+			if not request.user.is_superuser:
+				expense.user = request.user
+			elif not expense.user:
+				expense.user = request.user
+			expense.save()
 			return redirect("expense_list")
 	else:
 		form = ExpenseForm()
@@ -33,11 +38,20 @@ def expense_create(request):
 
 @login_required
 def expense_update(request, id):
-	expense = get_object_or_404(Expense, id=id)
+	expense = (
+		get_object_or_404(Expense, id=id)
+		if request.user.is_superuser
+		else get_object_or_404(Expense, id=id, user=request.user)
+	)
 	if request.method == "POST":
 		form = ExpenseForm(request.POST, instance=expense)
 		if form.is_valid():
-			form.save()
+			updated = form.save(commit=False)
+			if not request.user.is_superuser:
+				updated.user = request.user
+			elif not updated.user:
+				updated.user = request.user
+			updated.save()
 			return redirect("expense_list")
 	else:
 		form = ExpenseForm(instance=expense)
@@ -46,7 +60,11 @@ def expense_update(request, id):
 
 @login_required
 def expense_delete(request, id):
-	expense = get_object_or_404(Expense, id=id)
+	expense = (
+		get_object_or_404(Expense, id=id)
+		if request.user.is_superuser
+		else get_object_or_404(Expense, id=id, user=request.user)
+	)
 	if request.method == "POST":
 		expense.delete()
 		return redirect("expense_list")

@@ -1,8 +1,10 @@
 # models.py
+from django.conf import settings
 from django.db import models
 
 
 class Folder(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="folders", null=True, blank=True)
 	name = models.CharField(max_length=255)
 	parent = models.ForeignKey('self', null=True, blank=True, related_name='subfolders', on_delete=models.CASCADE)
 	
@@ -34,6 +36,7 @@ class Folder(models.Model):
 
 class StoredFile(models.Model):
 	folder = models.ForeignKey(Folder, related_name='files', on_delete=models.CASCADE)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="stored_files", null=True, blank=True)
 	file = models.FileField(upload_to='shared_files/%Y/%m/')
 	title = models.CharField(max_length=255)
 	uploaded_at = models.DateTimeField(auto_now_add=True)

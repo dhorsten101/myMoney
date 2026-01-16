@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -13,6 +14,7 @@ class Worth(models.Model):
 	]
 	
 	name = models.CharField(max_length=100)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="worth_items", null=True, blank=True)
 	quick_value = models.DecimalField(max_digits=20, decimal_places=2)
 	real_value = models.DecimalField(max_digits=20, decimal_places=2)
 	notes = models.TextField()

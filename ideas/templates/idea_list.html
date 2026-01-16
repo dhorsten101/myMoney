@@ -17,6 +17,7 @@
                 <thead class="table-dark">
                 <tr>
                     <th scope="col" style="position: sticky; top: 0; z-index: 100;">Name</th>
+                    <th scope="col" style="position: sticky; top: 0; z-index: 100;">User</th>
                     <th scope="col" style="position: sticky; top: 0; z-index: 100;">Description</th>
                     <th scope="col" style="position: sticky; top: 0; z-index: 100;">Action</th>
 
@@ -27,6 +28,7 @@
                 {% for idea in idea %}
                     <tr>
                         <td>{{ idea.name }}</td>
+                        <td>{{ idea.user|default:"-" }}</td>
                         <td>{{ idea.description }}</td>
                         <td>
                             <button onclick="window.location.href='{% url 'idea_update' idea.id %}'"
@@ -43,7 +45,7 @@
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="8" class="text-center">No ideas</td>
+                        <td colspan="4" class="text-center">No ideas</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -55,4 +57,4 @@
 
     <!-- JavaScript for handling right-click -->
 
-{% endblock %}ß
+{% endblock %}

@@ -9,8 +9,9 @@ from worth.forms import WorthForm
 from .models import Worth
 
 
+@login_required
 def worth_list(request):
-	worth_qs = Worth.objects.all().order_by("category")
+	worth_qs = (Worth.objects.all() if request.user.is_superuser else Worth.objects.filter(user=request.user)).order_by("category")
 	
 	total_values = worth_qs.aggregate(
 		total_real_value=Sum("real_value"),
@@ -50,7 +51,12 @@ def worth_create(request):
 	if request.method == "POST":
 		form = WorthForm(request.POST)
 		if form.is_valid():
-			form.save()
+			worth = form.save(commit=False)
+			if not request.user.is_superuser:
+				worth.user = request.user
+			elif not worth.user:
+				worth.user = request.user
+			worth.save()
 			return redirect("worth_list")
 	else:
 		form = WorthForm()
@@ -59,11 +65,20 @@ def worth_create(request):
 
 @login_required
 def worth_update(request, id):
-	worth = get_object_or_404(Worth, id=id)
+	worth = (
+		get_object_or_404(Worth, id=id)
+		if request.user.is_superuser
+		else get_object_or_404(Worth, id=id, user=request.user)
+	)
 	if request.method == "POST":
 		form = WorthForm(request.POST, instance=worth)
 		if form.is_valid():
-			form.save()
+			updated = form.save(commit=False)
+			if not request.user.is_superuser:
+				updated.user = request.user
+			elif not updated.user:
+				updated.user = request.user
+			updated.save()
 			return redirect("worth_list")
 	else:
 		form = WorthForm(instance=worth)
@@ -72,7 +87,11 @@ def worth_update(request, id):
 
 @login_required
 def worth_delete(request, id):
-	worth = get_object_or_404(Worth, id=id)
+	worth = (
+		get_object_or_404(Worth, id=id)
+		if request.user.is_superuser
+		else get_object_or_404(Worth, id=id, user=request.user)
+	)
 	if request.method == "POST":
 		worth.delete()
 		return redirect("worth_list")

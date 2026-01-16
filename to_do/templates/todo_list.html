@@ -23,6 +23,7 @@
                 <thead class="table-dark">
                 <tr>
                     <th>Name</th>
+                    <th>User</th>
                     <th>Created At</th>
                     <th>Actions</th>
                 </tr>
@@ -32,6 +33,7 @@
                     {% if not todo.completed %}
                         <tr>
                             <td>{{ todo.name }}</td>
+                            <td>{{ todo.user|default:"-" }}</td>
                             <td>{{ todo.created_at|date:"Y-m-d H:i:s" }}</td>
                             <td>
                                 <button onclick="window.location.href='{% url 'todo_update' todo.id %}'"
@@ -53,12 +55,13 @@
                         </tr>
                         {% if filter == 'all' and forloop.counter == incomplete_count %}
                             <tr>
-                                <td colspan="3" style="height: 40px; opacity: 0"></td>
+                                <td colspan="4" style="height: 40px; opacity: 0"></td>
                             </tr>
                         {% endif %}
                     {% else %}
                         <tr class="table-secondary opacity-75">
                             <td><span class="text-decoration-line-through text-danger">{{ todo.name }}</span></td>
+                            <td class="text-decoration-line-through text-danger">{{ todo.user|default:"-" }}</td>
                             <td class="text-decoration-line-through text-danger">{{ todo.created_at|date:"Y-m-d H:i:s" }}</td>
                             <td>
                                 <button onclick="window.location.href='{% url 'todo_delete' todo.id %}'"
@@ -71,7 +74,7 @@
                     {% endif %}
                 {% empty %}
                     <tr>
-                        <td colspan="3" class="text-center">No ToDo available</td>
+                        <td colspan="4" class="text-center">No ToDo available</td>
                     </tr>
                 {% endfor %}
                 </tbody>

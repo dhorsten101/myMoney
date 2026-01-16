@@ -40,12 +40,13 @@
                 {% for category, data in category_totals.items %}
                     <!-- Category title row -->
                     <tr style=" border: none;" class="text-center text-uppercase fs-4">
-                        <th colspan="8" class="border-0 text-info  ">{{ category }}</th>
+                        <th colspan="7" class="border-0 text-info  ">{{ category }}</th>
                     </tr>
 
                     <!-- Column headings for this category -->
                     <tr class="table-success opacity-75" style="border: none;">
                         <th class="border-0">Name</th>
+                        <th class="border-0">User</th>
                         <th class="border-0">Real Value</th>
                         <th class="border-0">Quick Sale</th>
                         <th class="border-0">Created At</th>
@@ -56,6 +57,7 @@
                     {% for item in data.items %}
                         <tr>
                             <td>{{ item.name }}</td>
+                            <td>{{ item.user|default:"-" }}</td>
                             <td>R {{ item.real_value|floatformat:0|intcomma }}</td>
                             <td>R {{ item.quick_value|floatformat:0|intcomma }}</td>
                             <td>{{ item.created_at|date:"Y-m-d H" }}</td>
@@ -84,7 +86,7 @@
                         <td colspan="4"></td>
                     </tr>
                     <tr>
-                        <td class="opacity-0 border-0" colspan="8" style="height: 30px; border: none;"></td>
+                        <td class="opacity-0 border-0" colspan="7" style="height: 30px; border: none;"></td>
                     </tr>
                 {% endfor %}
                 </tbody>

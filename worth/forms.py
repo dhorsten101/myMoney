@@ -8,6 +8,7 @@ class WorthForm(forms.ModelForm):
 	class Meta:
 		model = Worth
 		fields = [
+			"user",
 			"name",
 			# "notes",
 			"quick_value",

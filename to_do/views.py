@@ -11,15 +11,16 @@ from to_do.models import ToDo
 @login_required
 def todo_list(request):
 	filter_option = request.GET.get("filter", "incomplete")  # ✅ default = incomplete
+	base_qs = ToDo.objects.all() if request.user.is_superuser else ToDo.objects.filter(user=request.user)
 	
 	if filter_option == "incomplete":
-		todos = ToDo.objects.filter(completed=False).order_by('-created_at')
+		todos = base_qs.filter(completed=False).order_by('-created_at')
 	elif filter_option == "completed":
-		todos = ToDo.objects.filter(completed=True).order_by('-created_at')
+		todos = base_qs.filter(completed=True).order_by('-created_at')
 	else:  # "all"
-		todos = ToDo.objects.all().order_by('completed', '-created_at')
+		todos = base_qs.order_by('completed', '-created_at')
 	
-	incomplete_count = ToDo.objects.filter(completed=False).count()
+	incomplete_count = base_qs.filter(completed=False).count()
 	
 	return render(request, "todo_list.html", {
 		"to_do": todos,
@@ -33,7 +34,12 @@ def todo_create(request):
 	if request.method == "POST":
 		form = ToDoForm(request.POST)
 		if form.is_valid():
-			form.save()
+			todo = form.save(commit=False)
+			if not request.user.is_superuser:
+				todo.user = request.user
+			elif not todo.user:
+				todo.user = request.user
+			todo.save()
 			return redirect("todo_list")
 	else:
 		form = ToDoForm()
@@ -42,11 +48,20 @@ def todo_create(request):
 
 @login_required
 def todo_update(request, id):
-	to_do = get_object_or_404(ToDo, id=id)
+	to_do = (
+		get_object_or_404(ToDo, id=id)
+		if request.user.is_superuser
+		else get_object_or_404(ToDo, id=id, user=request.user)
+	)
 	if request.method == "POST":
 		form = ToDoForm(request.POST, instance=to_do)
 		if form.is_valid():
-			form.save()
+			todo = form.save(commit=False)
+			if not request.user.is_superuser:
+				todo.user = request.user
+			elif not todo.user:
+				todo.user = request.user
+			todo.save()
 			return redirect("todo_list")
 	else:
 		form = ToDoForm(instance=to_do)
@@ -55,7 +70,11 @@ def todo_update(request, id):
 
 @login_required
 def todo_delete(request, id):
-	todo = get_object_or_404(ToDo, id=id)
+	todo = (
+		get_object_or_404(ToDo, id=id)
+		if request.user.is_superuser
+		else get_object_or_404(ToDo, id=id, user=request.user)
+	)
 	if request.method == "POST":
 		todo.delete()
 		return redirect("todo_list")
@@ -65,7 +84,11 @@ def todo_delete(request, id):
 # views.py
 @login_required
 def todo_toggle_complete(request, id):
-	todo = get_object_or_404(ToDo, id=id)
+	todo = (
+		get_object_or_404(ToDo, id=id)
+		if request.user.is_superuser
+		else get_object_or_404(ToDo, id=id, user=request.user)
+	)
 	todo.completed = not todo.completed
 	todo.save()
 	return redirect("todo_list")

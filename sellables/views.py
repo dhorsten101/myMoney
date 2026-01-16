@@ -9,7 +9,7 @@ from .models import Sellable, SellableImage
 
 @login_required
 def sellable_list(request):
-	sellables = Sellable.objects.all()  # Fetch all sellable items
+	sellables = (Sellable.objects.all() if request.user.is_superuser else Sellable.objects.filter(user=request.user)).order_by("-created_at")  # Fetch sellable items
 	total_sold_price = sellables.aggregate(Sum("sold_price"))["sold_price__sum"]
 	total_price = sellables.aggregate(Sum("price"))["price__sum"]
 	
@@ -22,7 +22,12 @@ def sellable_create(request):
 		form = SellableForm(request.POST, request.FILES)
 		
 		if form.is_valid():
-			form.save()
+			sellable = form.save(commit=False)
+			if not request.user.is_superuser:
+				sellable.user = request.user
+			elif not sellable.user:
+				sellable.user = request.user
+			sellable.save()
 			return redirect("sellable_list")
 	else:
 		form = SellableForm()
@@ -32,13 +37,22 @@ def sellable_create(request):
 
 @login_required
 def sellable_update(request, id):
-	sellable = get_object_or_404(Sellable, id=id)
+	sellable = (
+		get_object_or_404(Sellable, id=id)
+		if request.user.is_superuser
+		else get_object_or_404(Sellable, id=id, user=request.user)
+	)
 	
 	if request.method == "POST":
 		form = SellableForm(request.POST, request.FILES, instance=sellable)
 		
 		if form.is_valid():
-			form.save()
+			updated = form.save(commit=False)
+			if not request.user.is_superuser:
+				updated.user = request.user
+			elif not updated.user:
+				updated.user = request.user
+			updated.save()
 			return redirect("sellable_list")
 	else:
 		form = SellableForm(instance=sellable)
@@ -48,7 +62,11 @@ def sellable_update(request, id):
 
 @login_required
 def sellable_detail(request, pk):
-	sellable = get_object_or_404(Sellable, pk=pk)
+	sellable = (
+		get_object_or_404(Sellable, pk=pk)
+		if request.user.is_superuser
+		else get_object_or_404(Sellable, pk=pk, user=request.user)
+	)
 	
 	# Handle image upload
 	if request.method == "POST" and 'image' in request.FILES:
@@ -67,7 +85,11 @@ def sellable_detail(request, pk):
 
 @login_required
 def sellable_delete(request, id):
-	sellable = get_object_or_404(Sellable, id=id)
+	sellable = (
+		get_object_or_404(Sellable, id=id)
+		if request.user.is_superuser
+		else get_object_or_404(Sellable, id=id, user=request.user)
+	)
 	if request.method == "POST":
 		sellable.delete()
 		return redirect("sellable_list")
@@ -79,7 +101,11 @@ from django.shortcuts import redirect
 
 @login_required
 def delete_image(request, image_id):
-	image = get_object_or_404(SellableImage, id=image_id)
+	image = (
+		get_object_or_404(SellableImage, id=image_id)
+		if request.user.is_superuser
+		else get_object_or_404(SellableImage, id=image_id, sellable__user=request.user)
+	)
 	
 	# Keep track of the associated sellable
 	sellable = image.sellable

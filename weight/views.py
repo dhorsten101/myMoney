@@ -1,12 +1,23 @@
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 
 from weight.forms import WeightForm
 from weight.models import Weight
 
 
+def _admin_required(view_func):
+	@login_required
+	def _wrapped(request, *args, **kwargs):
+		if request.user.is_superuser or request.user.groups.filter(name="admin").exists():
+			return view_func(request, *args, **kwargs)
+		raise PermissionDenied
+	return _wrapped
+
+
+@_admin_required
 def weight_list(request):
 	weights = Weight.objects.order_by('-created_at')
 	latest_weight = weights.first()  # Gets the most recent one by date
@@ -22,7 +33,7 @@ def weight_list(request):
 	return render(request, 'weight_list.html', context)
 
 
-@login_required
+@_admin_required
 def weight_create(request):
 	if request.method == "POST":
 		form = WeightForm(request.POST)
@@ -34,7 +45,7 @@ def weight_create(request):
 	return render(request, "weight_form.html", {"form": form})
 
 
-@login_required
+@_admin_required
 def weight_update(request, id):
 	weight = get_object_or_404(Weight, id=id)
 	if request.method == "POST":
@@ -47,7 +58,7 @@ def weight_update(request, id):
 	return render(request, "weight_form.html", {"form": form})
 
 
-@login_required
+@_admin_required
 def weight_delete(request, id):
 	weight = get_object_or_404(Weight, id=id)
 	if request.method == "POST":

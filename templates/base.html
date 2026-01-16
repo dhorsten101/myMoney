@@ -79,13 +79,13 @@
                     <li><a class="dropdown-item" href="/time/">Time</a></li>
                 </ul>
             </li>
-            <li class="mx-1 nav-item dropdown d-flex align-items-center">
-                <a class="nav-link" href="#" id="navbarDropdownHealth" role="button" data-bs-toggle="dropdown" aria-expanded="false">Health</a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdownHealth">
-                    <li><a class="dropdown-item" href="/weight/">Weight</a></li>
-                </ul>
-            </li>
             {% if user|has_group:"admin" %}
+                <li class="mx-1 nav-item dropdown d-flex align-items-center">
+                    <a class="nav-link" href="#" id="navbarDropdownHealth" role="button" data-bs-toggle="dropdown" aria-expanded="false">Health</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownHealth">
+                        <li><a class="dropdown-item" href="/weight/">Weight</a></li>
+                    </ul>
+                </li>
                 <li class="mx-1 nav-item dropdown d-flex align-items-center">
                     <a class="nav-link" href="#" id="navbarDropdownTools" role="button" data-bs-toggle="dropdown" aria-expanded="false">Security</a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownTools">

@@ -31,6 +31,7 @@
             margin-left: .2rem; /* tighter to label */
             vertical-align: .1em;
         }
+
         .navbar .dropdown-toggle-split::after {
             border-top-width: .55em;
             border-right-width: .55em;
@@ -82,20 +83,22 @@
                     <li><a class="dropdown-item" href="/weight/">Weight</a></li>
                 </ul>
             </li>
-            <li class="mx-1 nav-item dropdown d-flex align-items-center">
-                <a class="nav-link" href="#" id="navbarDropdownTools" role="button" data-bs-toggle="dropdown" aria-expanded="false">Security</a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdownTools">
-                    <li><a class="dropdown-item" href="/cameras/">Cameras</a></li>
-                </ul>
-            </li>
-            <li class="mx-1 nav-item dropdown d-flex align-items-center">
-                <a class="nav-link" href="#" id="navbarDropdownTools" role="button" data-bs-toggle="dropdown" aria-expanded="false">Tools</a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdownTools">
-                    <li><a class="dropdown-item" href="/pen_tester/">Pen Test</a></li>
-                    <li><a class="dropdown-item" href="/monitoring/">Monitoring</a></li>
-                </ul>
-            </li>
-            
+            {% if user|has_group:"admin" %}
+                <li class="mx-1 nav-item dropdown d-flex align-items-center">
+                    <a class="nav-link" href="#" id="navbarDropdownTools" role="button" data-bs-toggle="dropdown" aria-expanded="false">Security</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownTools">
+                        <li><a class="dropdown-item" href="/cameras/">Cameras</a></li>
+                    </ul>
+                </li>
+                <li class="mx-1 nav-item dropdown d-flex align-items-center">
+                    <a class="nav-link" href="#" id="navbarDropdownTools" role="button" data-bs-toggle="dropdown" aria-expanded="false">Tools</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownTools">
+                        <li><a class="dropdown-item" href="/pen_tester/">Pen Test</a></li>
+                        <li><a class="dropdown-item" href="/monitoring/">Monitoring</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+
         </ul>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -107,8 +110,6 @@
             <ul class="navbar-nav">
             </ul>
         </div>
-
-        
 
 
         <form class="d-flex" method="get" action="{% url 'global_search' %}">
@@ -128,12 +129,13 @@
                     <li><a class="dropdown-item" href="/metrics/">Metrics</a></li>
                     <li><a class="dropdown-item" href="/logs/">Logs</a></li>
                     <li><a class="dropdown-item" href="/system/">System</a></li>
-                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
                     <li><a class="dropdown-item" href="{% url 'system_user_list' %}">Users</a></li>
                 </ul>
             </li>
         </ul>
-        <a class="nav-link active text-black mx-2" href="/pricing">Pricing</a>
 
         <div class="text-white mx-4">
             {% if user.is_authenticated %}

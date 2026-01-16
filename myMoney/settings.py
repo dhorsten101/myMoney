@@ -251,16 +251,16 @@ LOGGING = {
 	},
 }
 
-LOGGING = {
-	"version": 1,
-	"disable_existing_loggers": False,
-	"handlers": {
-		"console": {"class": "logging.StreamHandler"},
-	},
-	"loggers": {
-		"horsten_homes": {"handlers": ["console"], "level": "INFO"},
-		"documents": {"handlers": ["console"], "level": "INFO"},
-		# root logger if you want everything:
-		"": {"handlers": ["console"], "level": "INFO"},
-	},
-}
+# LOGGING = {
+# 	"version": 1,
+# 	"disable_existing_loggers": False,
+# 	"handlers": {
+# 		"console": {"class": "logging.StreamHandler"},
+# 	},
+# 	"loggers": {
+# 		"horsten_homes": {"handlers": ["console"], "level": "INFO"},
+# 		"documents": {"handlers": ["console"], "level": "INFO"},
+# 		# root logger if you want everything:
+# 		"": {"handlers": ["console"], "level": "INFO"},
+# 	},
+# }

@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import Case, IntegerField, Value, When
 from django.shortcuts import render, get_object_or_404, redirect
 
 from to_do.forms import ToDoForm
@@ -12,13 +13,20 @@ from to_do.models import ToDo
 def todo_list(request):
 	filter_option = request.GET.get("filter", "incomplete")  # ✅ default = incomplete
 	base_qs = ToDo.objects.all() if request.user.is_superuser else ToDo.objects.filter(user=request.user)
+	base_qs = base_qs.annotate(
+		priority_rank=Case(
+			When(priority=ToDo.PRIORITY_HIGH, then=Value(0)),
+			default=Value(1),
+			output_field=IntegerField(),
+		)
+	)
 	
 	if filter_option == "incomplete":
-		todos = base_qs.filter(completed=False).order_by('-created_at')
+		todos = base_qs.filter(completed=False).order_by('priority_rank', '-created_at')
 	elif filter_option == "completed":
-		todos = base_qs.filter(completed=True).order_by('-created_at')
+		todos = base_qs.filter(completed=True).order_by('priority_rank', '-created_at')
 	else:  # "all"
-		todos = base_qs.order_by('completed', '-created_at')
+		todos = base_qs.order_by('completed', 'priority_rank', '-created_at')
 	
 	incomplete_count = base_qs.filter(completed=False).count()
 	
@@ -35,14 +43,12 @@ def todo_create(request):
 		form = ToDoForm(request.POST)
 		if form.is_valid():
 			todo = form.save(commit=False)
-			if not request.user.is_superuser:
-				todo.user = request.user
-			elif not todo.user:
+			if not todo.user:
 				todo.user = request.user
 			todo.save()
 			return redirect("todo_list")
 	else:
-		form = ToDoForm()
+		form = ToDoForm(initial={"user": request.user})
 	return render(request, "todo_form.html", {"form": form})
 
 
@@ -57,9 +63,7 @@ def todo_update(request, id):
 		form = ToDoForm(request.POST, instance=to_do)
 		if form.is_valid():
 			todo = form.save(commit=False)
-			if not request.user.is_superuser:
-				todo.user = request.user
-			elif not todo.user:
+			if not todo.user:
 				todo.user = request.user
 			todo.save()
 			return redirect("todo_list")

@@ -10,5 +10,9 @@ class ToDoForm(forms.ModelForm):
 		fields = [
 			"user",
 			"name",
+			"priority",
 		
 		]
+		widgets = {
+			"priority": forms.RadioSelect(attrs={"class": "btn-check"}),
+		}

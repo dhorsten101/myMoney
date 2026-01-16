@@ -22,16 +22,24 @@
         <form method="POST" class="bg-light p-4 border rounded">
             {% csrf_token %}
 
-            {% if user.is_superuser %}
-                <div class="mb-3">
-                    {{ form.user.label_tag }}
-                    {{ form.user|add_class:"form-select" }}
-                </div>
-            {% endif %}
+            <div class="mb-3">
+                {{ form.user.label_tag }}
+                {{ form.user|add_class:"form-select" }}
+            </div>
 
             <div class="mb-3">
                 {{ form.name.label_tag }}
                 {{ form.name|add_class:"form-control"|attr:"id:todoInput" }}
+            </div>
+
+            <div class="mb-3">
+                <div class="form-label mb-2">Priority</div>
+                <div class="btn-group" role="group" aria-label="Priority selector">
+                    {% for radio in form.priority %}
+                        {{ radio.tag }}
+                        <label class="btn btn-outline-danger" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                    {% endfor %}
+                </div>
             </div>
 
             <div class="mt-4">

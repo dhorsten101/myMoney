@@ -23,6 +23,7 @@
                 <thead class="table-dark">
                 <tr>
                     <th>Name</th>
+                    <th>Priority</th>
                     <th>User</th>
                     <th>Created At</th>
                     <th>Actions</th>
@@ -33,6 +34,13 @@
                     {% if not todo.completed %}
                         <tr>
                             <td>{{ todo.name }}</td>
+                            <td>
+                                {% if todo.priority == "high" %}
+                                    <span class="badge text-bg-danger">High</span>
+                                {% else %}
+                                    <span class="badge text-bg-secondary">Low</span>
+                                {% endif %}
+                            </td>
                             <td>{{ todo.user|default:"-" }}</td>
                             <td>{{ todo.created_at|date:"Y-m-d H:i:s" }}</td>
                             <td>
@@ -55,12 +63,19 @@
                         </tr>
                         {% if filter == 'all' and forloop.counter == incomplete_count %}
                             <tr>
-                                <td colspan="4" style="height: 40px; opacity: 0"></td>
+                                <td colspan="5" style="height: 40px; opacity: 0"></td>
                             </tr>
                         {% endif %}
                     {% else %}
                         <tr class="table-secondary opacity-75">
                             <td><span class="text-decoration-line-through text-danger">{{ todo.name }}</span></td>
+                            <td class="text-decoration-line-through text-danger">
+                                {% if todo.priority == "high" %}
+                                    High
+                                {% else %}
+                                    Low
+                                {% endif %}
+                            </td>
                             <td class="text-decoration-line-through text-danger">{{ todo.user|default:"-" }}</td>
                             <td class="text-decoration-line-through text-danger">{{ todo.created_at|date:"Y-m-d H:i:s" }}</td>
                             <td>
@@ -74,7 +89,7 @@
                     {% endif %}
                 {% empty %}
                     <tr>
-                        <td colspan="4" class="text-center">No ToDo available</td>
+                        <td colspan="5" class="text-center">No ToDo available</td>
                     </tr>
                 {% endfor %}
                 </tbody>

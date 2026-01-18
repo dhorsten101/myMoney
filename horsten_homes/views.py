@@ -332,6 +332,7 @@ def homes_dashboard(request):
 	totals = {k: v or Decimal("0.00") for k, v in totals.items()}
 	
 	# Counts
+	from items.models import Item
 	total_properties_count = Property.objects.count()
 	total_doors_count = Door.objects.count()
 	total_door_squares = Door.objects.aggregate(Sum("squares")).get("squares__sum") or 0
@@ -346,6 +347,7 @@ def homes_dashboard(request):
 	total_pipelines_count = DoorPipeline.objects.count()
 	total_invoices_count = Invoice.objects.count()
 	total_expenses_count = MonthlyExpense.objects.count()
+	total_items_count = Item.objects.count()
 	
 	# Recent invoices
 	recent = Invoice.objects.order_by("-issue_date", "-id")[:10]
@@ -477,6 +479,7 @@ def homes_dashboard(request):
 		"total_pipelines_count": total_pipelines_count,
 		"total_invoices_count": total_invoices_count,
 		"total_expenses_count": total_expenses_count,
+		"total_items_count": total_items_count,
 		# Aggregated projection context
 		"agg_labels": agg_labels,
 		"agg_cumulative": agg_cumulative,

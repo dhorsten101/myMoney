@@ -63,6 +63,7 @@ INSTALLED_APPS = [
 	"horsten_homes",
 	"contractors",
 	"authentication",
+	"items",
 
 ]
 

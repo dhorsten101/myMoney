@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Item: {{ item.name }}{% endblock %}
+
+{% block content %}
+    <div class="container mt-4" style="max-width: 900px;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="mb-0">{{ item.name }}</h1>
+            <div>
+                <a href="{% url 'item_update' item.id %}" class="btn btn-primary btn-sm">Edit</a>
+                <a href="{% url 'item_delete' item.id %}" class="btn btn-danger btn-sm">Delete</a>
+                <a href="{% url 'item_list' %}" class="btn btn-outline-secondary btn-sm">Back</a>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">SKU</dt>
+                    <dd class="col-sm-9">{{ item.sku|default:"-" }}</dd>
+
+                    <dt class="col-sm-3">Description</dt>
+                    <dd class="col-sm-9">{{ item.sku_description|default:"-" }}</dd>
+
+                    <dt class="col-sm-3">Model</dt>
+                    <dd class="col-sm-9">{{ item.model|default:"-" }}</dd>
+
+                    <dt class="col-sm-3">Quantity</dt>
+                    <dd class="col-sm-9">{{ item.quantity|intcomma }}</dd>
+
+                    <dt class="col-sm-3">Status</dt>
+                    <dd class="col-sm-9">
+                        {% if item.is_active %}
+                            <span class="badge text-bg-success">Active</span>
+                        {% else %}
+                            <span class="badge text-bg-secondary">Inactive</span>
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-3">Notes</dt>
+                    <dd class="col-sm-9">{{ item.notes|default:"-" }}</dd>
+
+                    <dt class="col-sm-3">Updated</dt>
+                    <dd class="col-sm-9">{{ item.updated_at|date:"Y-m-d H:i" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

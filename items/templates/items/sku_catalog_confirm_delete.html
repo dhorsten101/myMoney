@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Delete SKU{% endblock %}
+
+{% block content %}
+    <div class="container mt-4" style="max-width: 720px;">
+        <h1 class="mb-3">Delete SKU</h1>
+
+        <div class="alert alert-warning">
+            Are you sure you want to delete <strong>{{ item.sku }}</strong>?
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="{% url 'sku_catalog_detail' item.id %}" class="btn btn-secondary ms-2">Cancel</a>
+        </form>
+    </div>
+{% endblock %}
+

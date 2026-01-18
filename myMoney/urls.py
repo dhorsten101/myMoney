@@ -30,6 +30,7 @@ urlpatterns = [
 				  path("", include("time_tracker.urls")),
 				  path("", include("horsten_homes.urls")),
 				  path("", include("contractors.urls")),
+				  path("", include("items.urls")),
 				  path('ckeditor5/', include('django_ckeditor_5.urls')),
 			  ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \
 			    + static("/camera_streams/", document_root=settings.CAMERA_STREAMS_ROOT)

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}SKU Catalog{% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="mb-0">SKU Catalog</h1>
+            <a href="{% url 'sku_catalog_create' %}" class="btn btn-primary btn-sm">New</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-sm table-striped table-hover">
+                <thead class="table-dark">
+                <tr>
+                    <th>SKU</th>
+                    <th>Description</th>
+                    <th>Model</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>
+                            <a class="text-decoration-none" href="{% url 'sku_catalog_detail' item.id %}">
+                                {{ item.sku }}
+                            </a>
+                        </td>
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.model|default:"-" }}</td>
+                        <td>
+                            <a href="{% url 'sku_catalog_update' item.id %}" class="btn btn-link p-0 me-2 text-primary text-decoration-none" title="Edit">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a href="{% url 'sku_catalog_delete' item.id %}" class="btn btn-link p-0 text-danger text-decoration-none" title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">No SKUs yet.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <a href="{% url 'item_list' %}" class="btn btn-outline-secondary btn-sm">Back to Items</a>
+    </div>
+{% endblock %}
+

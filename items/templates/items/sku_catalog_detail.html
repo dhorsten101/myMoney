@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}SKU: {{ item.sku }}{% endblock %}
+
+{% block content %}
+    <div class="container mt-4" style="max-width: 900px;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="mb-0">{{ item.sku }}</h1>
+            <div>
+                <a href="{% url 'sku_catalog_update' item.id %}" class="btn btn-primary btn-sm">Edit</a>
+                <a href="{% url 'sku_catalog_delete' item.id %}" class="btn btn-danger btn-sm">Delete</a>
+                <a href="{% url 'sku_catalog_list' %}" class="btn btn-outline-secondary btn-sm">Back</a>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Description</dt>
+                    <dd class="col-sm-9">{{ item.description }}</dd>
+
+                    <dt class="col-sm-3">Model</dt>
+                    <dd class="col-sm-9">{{ item.model|default:"-" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
